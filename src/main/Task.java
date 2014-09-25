@@ -42,4 +42,16 @@ public class Task {
 	public long getDeadline() {
 		return deadline;
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+
+		if(object instanceof Task) {
+			Task task = (Task) object;
+			return timeStamp==task.getTimeStamp();
+		}
+		else {
+			return false;
+		}
+	}
 }
