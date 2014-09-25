@@ -1,4 +1,7 @@
-package main;
+/**
+ * @author Samuel Lim Yi Jie
+ *
+ */
 
 public class Label {
 	

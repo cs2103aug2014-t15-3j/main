@@ -1,5 +1,7 @@
-package main;
-
+/**
+ * @author Samuel Lim Yi Jie
+ *
+ */
 public class Task {
 	
 	private final static String TO_DO_LABEL = "To-Do";
