@@ -90,8 +90,8 @@ public class GUI {
 		frame.getContentPane().setLayout(null);
 		
 		JPanel inputPanel = new JPanel();
-		inputPanel.setBackground(new Color(240, 248, 255));
 		inputPanel.setBounds(10, 239, 432, 30);
+		inputPanel.setBackground(new Color(240, 248, 255));
 		frame.getContentPane().add(inputPanel);
 		inputPanel.setLayout(new FlowLayout());
 		
@@ -104,18 +104,21 @@ public class GUI {
 		frame.getContentPane().add(displayPanel);
 		displayPanel.setLayout(new FlowLayout());
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(411, 0, 21, 220);
+		displayPanel.add(scrollPane, BorderLayout.EAST);
+		
 		mainDisplay = new JTextArea();
+		frame.getContentPane().add(mainDisplay);
+		mainDisplay.setColumns(35);
+		mainDisplay.setRows(15);
 		mainDisplay.setForeground(new Color(0, 0, 0));
 		mainDisplay.setFont(new Font("Beatnik SF", Font.BOLD, 13));
 		mainDisplay.setBackground(new Color(211, 211, 211));
 		mainDisplay.setEditable(false);
 		mainDisplay.setText("Welcome to Remembra!");
-		mainDisplay.setBounds(0, 0, 200, 50);
-		//displayPanel.add(mainDisplay);
-		
-		JScrollPane scrollPane = new JScrollPane(mainDisplay);
-		scrollPane.setBounds(411, 0, 21, 220);
-		displayPanel.add(scrollPane, BorderLayout.EAST);
+		mainDisplay.setBounds(14, 22, 323, 120);
+		displayPanel.add(mainDisplay);
 		
 		//frame.pack();
 		frame.setVisible(true);
