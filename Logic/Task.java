@@ -56,4 +56,10 @@ public class Task {
 			return false;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		
+		return "["+name+","+description+"]";
+	}
 }
