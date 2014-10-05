@@ -2,7 +2,7 @@
  * @author Samuel Lim Yi Jie
  *
  */
-public class Task {
+public class Task implements java.io.Serializable{
 	
 	private final static String TO_DO_LABEL = "To-Do";
 	

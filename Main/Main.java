@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * 
@@ -47,9 +48,27 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		//Hi guys after updating, run the program once first and make sure you see this
-		//output before starting to code to ensure that there's no problem with the code
-		System.out.print("Starting Remembra...");
+		System.out.println("Starting Remembra...");
+
+		
+		
+		/******************************* STORAGE TEST **********************************************/	
+		//Task Stubs for Storage
+		LinkedList<Task> taskList = new LinkedList<Task>();
+		LinkedList<Task> taskListStored = new LinkedList<Task>();
+		Task task1 = new Task("task1","to love Remembra 1");
+		Task task2 = new Task("task2","to love Remembra 2");
+		taskList.add(task1);
+		taskList.add(task2);
+		
+		//Storage Creation (Only need to create once)
+		StorageMain storage = new StorageMain();
+		
+		//Storage Call
+		storage.storeObject(taskList);
+		storage.retrieveObject(taskListStored);	
+		/******************************* STORAGE TEST **********************************************/
+		
 		
 	}
 
