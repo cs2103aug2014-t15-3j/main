@@ -43,13 +43,12 @@ public class StorageMain {
 		
 	}
 	
-	String retrieveObject(Object obj){
+	Object retrieveObject(Object obj){
 		
 		//Still looking into generic classes instance compares
 		if(obj instanceof LinkedList<?>){
 			
-			taskStorage.retrieveStoredTasks();
-			return OBJECT_RETRIEVED;		
+			return taskStorage.retrieveStoredTasks();		
 		}
 		else{
 			
