@@ -14,7 +14,7 @@ The logic component offers these features
 	LogicMain.processInput(someStringText)
 
 	
- <b>2. OperationsConstant</b>4
+ <b>2. OperationsConstant</b>
  This class contains all the operations constant. 
  
  Example:
