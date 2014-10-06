@@ -1,4 +1,7 @@
-//@author Samuel Lim Yi Jie
+/**
+ * @author Samuel Lim Yi Jie
+ *
+ */
 
 public class Label {
 	
