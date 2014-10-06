@@ -20,6 +20,15 @@ public class OperationsConstant {
 		return operations;
 	}
 	
+	public static LinkedList<String> getNameOperations() {
+		
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add("@!name");
+		operations.add("@!title");
+		
+		return operations;
+	}
+	
 	public static LinkedList<String> getDescriptionOperations() {
 		
 		LinkedList<String> operations = new LinkedList<>();
@@ -53,7 +62,8 @@ public class OperationsConstant {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add("@!delete");
-		operations.add("@!remove");		
+		operations.add("@!remove");	
+		operations.add("@!-");		
 		
 		return operations;
 	}
