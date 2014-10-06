@@ -1,7 +1,5 @@
-/**
- * @author Samuel Lim Yi Jie
- *
- */
+//@author Samuel Lim Yi Jie
+
 public class Task implements java.io.Serializable{
 	
 	private final static String TO_DO_LABEL = "To-Do";
@@ -11,6 +9,10 @@ public class Task implements java.io.Serializable{
 	private String label;
 	private long timeStamp;
 	private long deadline;
+	
+	public Task(String name) {
+		this(name, "", TO_DO_LABEL, -1);
+	}
 	
 	public Task(String name, String description) {
 		this(name, description, TO_DO_LABEL, -1);
@@ -60,6 +62,6 @@ public class Task implements java.io.Serializable{
 	@Override
 	public String toString() {
 		
-		return "["+name+","+description+"]";
+		return "{Name: \""+name+"\", Description: \""+description+"\"}";
 	}
 }
