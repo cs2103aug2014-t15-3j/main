@@ -42,7 +42,7 @@ public class GuiMain {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public void launch() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -63,17 +63,17 @@ public class GuiMain {
 						if(displayStr.equals("Welcome to Remembra!\nFor a quick guide, type help and press enter.")){
 							displayStr = "";
 						}
-											
-						
+
+
 						//this prints the input text on the display
 						mainDisplay.setText(displayStr + inputStr + "\n");
 						//this clears the input field
 						inputField.setText("");
-						
+
 						//This sends the input text to LogicMain's proceesInput() for processing and prints the return text in mainDisplay
 						mainDisplay.setText(mainDisplay.getText()+ LogicMain.processInput(inputStr) + "\n");
 						//mainDisplay.setText(mainDisplay.getText() + LogicMain.bufferList.toString() + "\n");
-						
+
 					}
 				});
 			}
@@ -85,7 +85,7 @@ public class GuiMain {
 	 */
 	public GuiMain() {
 		initialize();
-		
+
 	}
 
 	/**
@@ -105,37 +105,38 @@ public class GuiMain {
 					System.exit(0);
 					//I can add a save to file code here
 				}
-				
+
 			}
+
 		});
 		frameRemembra.setResizable(false);
 		frameRemembra.getContentPane().setBackground(new Color(0, 0, 0));
 		frameRemembra.setBounds(100, 100, 587, 398);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
-		
+
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBounds(0, 325, 581, 34);
 		inputPanel.setBackground(new Color(178, 34, 34));
 		frameRemembra.getContentPane().add(inputPanel);
 		inputPanel.setLayout(new FlowLayout());
-		
+
 		inputField = new JTextField();
 		inputField.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		inputField.setForeground(new Color(165, 42, 42));
 		inputField.setBackground(new Color(230, 230, 250));
 		inputPanel.add("SOUTH", inputField);
 		inputField.setColumns(43);
-		
+
 		JPanel displayPanel = new JPanel();
 		displayPanel.setBackground(new Color(107, 142, 35));
 		displayPanel.setBounds(10, 11, 561, 303);
 		frameRemembra.getContentPane().add(displayPanel);
 		displayPanel.setLayout(new FlowLayout());
-		
+
 		scrollPane = new JScrollPane();
 		displayPanel.add(scrollPane);
-		
+
 		mainDisplay = new JTextArea();
 		scrollPane.setViewportView(mainDisplay);
 		mainDisplay.setColumns(78);

@@ -47,16 +47,25 @@ import java.util.LinkedList;
 public class Main {
 
 	static StorageMain storage;
+	static GuiMain gui;
 	
 	public static void main(String[] args) {
-
+		
+		gui = new GuiMain();
 		System.out.println("Starting Remembra...");
 
+		
+		
+		gui.launch();
+		
+		
 		
 		/******************** HOW TO USE STORAGE ******************************/
 		
 		//@Sam Here's a simple implementation so you can save some time on how to use storage :D
 		//I've prepared my TaskStorage for your LinkedList to just simply stored it in, here's an example.
+		
+		
 		
 		//Storage Creation (Only need to create once)
 		storage = new StorageMain();
