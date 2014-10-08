@@ -66,7 +66,7 @@ public class Main {
 		//I've prepared my TaskStorage for your LinkedList to just simply stored it in, here's an example.
 		
 		
-		
+		/*
 		//Storage Creation (Only need to create once)
 		storage = new StorageMain();
 		
@@ -83,7 +83,7 @@ public class Main {
 		//Storage Call
 		storage.storeObject(taskListBuffered);
 		storage.retrieveObject(taskListStored);	
-		
+		*/
 		//I've currently system.out the stored data(s) in my class for this example for testing purposes,
 		//but no worries you can still grab the data via the return object of retrieveObject :D
 		
