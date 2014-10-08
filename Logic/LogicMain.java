@@ -65,9 +65,9 @@ public class LogicMain {
 			}
 			else
 			{
-				returnTask = new Task( "<empty>" );
+				returnTask = new Task(OperationsConstant.EMPTY_MESSAGE);
 				returnTask.editState(OperationsConstant.VIEW_OPERATION);
-				bufferList.add(returnTask);
+				packageTasks.add(returnTask);
 			}
 			
 			return packageTasks;
@@ -75,12 +75,17 @@ public class LogicMain {
 		else if( deleteOperations.contains(mainOperation) ) {
 			
 			packageTasks.add(executeDelete());
+			
 			return packageTasks;
 		}
 		else if( saveOperations.contains(mainOperation) ) {
 			
 			commitToStorage();
-			return bufferList;
+			packageTasks = new LinkedList<Task>();
+			Task saveTask = new Task(OperationsConstant.EMPTY_MESSAGE);
+			saveTask.editState(OperationsConstant.SAVE_OPERATION);
+			packageTasks.add(saveTask);
+			return packageTasks;
 		}
 		else {
 			return packageTasks;
@@ -202,7 +207,9 @@ public class LogicMain {
 			return deleteTask;
 		}
 		else {
-			return null;
+			Task deleteTask = new Task(OperationsConstant.EMPTY_MESSAGE);
+			deleteTask.editState(OperationsConstant.DELETE_OPERATION);
+			return deleteTask;
 		}
 	}
 	
