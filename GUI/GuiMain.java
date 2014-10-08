@@ -100,6 +100,8 @@ public class GuiMain {
 			public void windowClosing(WindowEvent arg0) {
 				int option = JOptionPane.showConfirmDialog(frameRemembra, "Are you sure you want to exit?\n(Progress will be saved automatically.)", "Exit?", JOptionPane.YES_NO_OPTION);
 				if (option == 0){
+					String saveOperation = OperationsConstant.getSaveOperations().get(0);
+					LogicMain.processInput(saveOperation);
 					System.exit(0);
 					//I can add a save to file code here
 				}
