@@ -56,10 +56,19 @@ public class LogicMain {
 			
 			packageTasks = new LinkedList<Task>(bufferList);
 			
-			Task returnTask = new Task( packageTasks.get(0) );
-			returnTask.editState(OperationsConstant.VIEW_OPERATION);
+			Task returnTask;
 			
-			packageTasks.set(0, returnTask);
+			if(bufferList.size() != 0) {
+				returnTask = new Task( packageTasks.get(0) );
+				returnTask.editState(OperationsConstant.VIEW_OPERATION);
+				packageTasks.set(0, returnTask);
+			}
+			else
+			{
+				returnTask = new Task( "<empty>" );
+				returnTask.editState(OperationsConstant.VIEW_OPERATION);
+				bufferList.add(returnTask);
+			}
 			
 			return packageTasks;
 		}
