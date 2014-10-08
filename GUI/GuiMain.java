@@ -30,6 +30,7 @@ import javax.swing.ScrollPaneConstants;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.LinkedList;
 
 
 public class GuiMain {
@@ -70,8 +71,62 @@ public class GuiMain {
 						//this clears the input field
 						inputField.setText("");
 
+						LinkedList<Task> tasks = LogicMain.processInput(inputStr);
+
+						if(!tasks.isEmpty()) {
+
+							Task firstTask = tasks.get(0);
+							String state = firstTask.getState();
+
+							if(state.equals(OperationsConstant.ADD_OPERATION)) {
+								mainDisplay.setText(mainDisplay.getText()+
+										"The following task has been added:\n" + 
+										firstTask.toString());
+							}
+							else if(state.equals(OperationsConstant.EDIT_OPERATION)) {
+								mainDisplay.setText(mainDisplay.getText()+
+										"The following task has been edited:\n" + 
+										firstTask.toString());
+							}
+							else if(state.equals(OperationsConstant.VIEW_OPERATION)) {
+
+								if(!firstTask.getName().equals(OperationsConstant.EMPTY_MESSAGE)) {
+									for(int i=0; i<tasks.size(); i++) {
+										Task tempTask = tasks.get(i);
+										mainDisplay.setText(mainDisplay.getText()+
+												i + ".\n" + tempTask);
+									}
+								}
+								else {
+									mainDisplay.setText(mainDisplay.getText()+
+											"No tasks found!\n\n");
+								}
+							}
+							else if(state.equals(OperationsConstant.DELETE_OPERATION)) {
+
+								if(!firstTask.getName().equals(OperationsConstant.EMPTY_MESSAGE)) {
+									mainDisplay.setText(mainDisplay.getText()+
+											"The following task has been deleted:\n" + 
+											firstTask.toString());
+								}
+								else {
+									mainDisplay.setText(mainDisplay.getText()+
+											"You have specified an invalid task to delete\n\n");
+								}
+							}
+							else if(state.equals(OperationsConstant.SAVE_OPERATION)) {
+								mainDisplay.setText(mainDisplay.getText()+
+										"The save is successful!\n\n");
+							}
+						}
+						else {
+
+							mainDisplay.setText(mainDisplay.getText()+
+									"Remembra doesn't understand your input!\n\n");
+						}
+
 						//This sends the input text to LogicMain's proceesInput() for processing and prints the return text in mainDisplay
-						mainDisplay.setText(mainDisplay.getText()+ LogicMain.processInput(inputStr) + "\n");
+						//mainDisplay.setText(mainDisplay.getText()+ LogicMain.processInput(inputStr) + "\n");
 						//mainDisplay.setText(mainDisplay.getText() + LogicMain.bufferList.toString() + "\n");
 
 					}
@@ -103,7 +158,6 @@ public class GuiMain {
 					String saveOperation = OperationsConstant.getSaveOperations().get(0);
 					LogicMain.processInput(saveOperation);
 					System.exit(0);
-					//I can add a save to file code here
 				}
 
 			}
