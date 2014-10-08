@@ -5,13 +5,18 @@ import java.util.Scanner;
 
 public class LogicMain {
 	
+	//Use to check if the program has initialized.
 	private static boolean isInitialize = false;
 	
+	//Use to connect with StorageMain
 	private static StorageMain storageMain;
 	
+	//Data structures
 	private static LinkedList<LogicInputPair> inputList;
 	private static LinkedList<Task> bufferList = new LinkedList<Task>();
+	private static String[] inputArray;
 	
+	//Constants Operation
 	private static LinkedList<String> addOperations = OperationsConstant.getAddOperations();
 	private static LinkedList<String> nameOperations = OperationsConstant.getNameOperations();
 	private static LinkedList<String> descriptionOperations = OperationsConstant.getDescriptionOperations();
@@ -20,10 +25,9 @@ public class LogicMain {
 	private static LinkedList<String> deleteOperations = OperationsConstant.getDeleteOperations();
 	private static LinkedList<String> saveOperations = OperationsConstant.getSaveOperations();
 	
-	private static String[] inputArray;
-	
-	private static String MESSAGE_OPERATION_NOT_FOUND = "Remembra doesn't understand your input. Please try again..";
-	
+	//@author A0111942N
+	//API: This method will process the user's input and perform either
+	//add, edit, view, delete or save based on the input.
 	public static LinkedList<Task> processInput(String input) {
 		
 		initialize();
@@ -74,6 +78,9 @@ public class LogicMain {
 		}
 	}
 	
+	//@author A0111942N
+	//This method checks if the component has been initialized.
+	//It will initialize the component if it is not. 
 	private static void initialize() {
 		
 		if(!isInitialize) {
@@ -92,10 +99,16 @@ public class LogicMain {
 		}
 	}
 	
+	//@author A0111942N
+	//This method cleans up the input string by removing
+	//empty spaces and breaks at the front and back of it.
 	private static String cleanUpInput(String input) {
 		return input.trim();
 	}
 	
+	//@author A0111942N
+	//This method will pre-process the user's input and categories
+	//them into a list.
 	private static void preProcessInput(String input) {
 		
 		inputList = new LinkedList<LogicInputPair>();
@@ -133,6 +146,8 @@ public class LogicMain {
 		}
 	}
 	
+	//@author A0111942N
+	//This method executes the "add" functionality of the program
 	private static Task executeAdd() {
 		
 		String name = "";
@@ -161,6 +176,8 @@ public class LogicMain {
 		return newTask;
 	}
 	
+	//@author A0111942N
+	//This method executes the "delete" functionality of the program
 	private static Task executeDelete() {
 		
 		int deleteID = 0;
@@ -180,6 +197,8 @@ public class LogicMain {
 		}
 	}
 	
+	//@author A0111942N
+	//This method executes the "edit" functionality of the program
 	private static Task executeEdit() {
 		
 		int editID = -1;
@@ -234,6 +253,8 @@ public class LogicMain {
 		return editTask;
 	}
 	
+	//@author A0111942N
+	//This method checks if the input word is an operation.
 	private static boolean isOperation(String word) {
 		
 		if(word.startsWith("@!")) {
@@ -244,10 +265,19 @@ public class LogicMain {
 		}
 	}
 	
+	//@author A0111942N
+	//This method will contact StorageMain to export the bufferList
+	//into a text file.
 	private static boolean commitToStorage() {
 		
 		storageMain.storeObject(bufferList);
 		return true;
+	}
+	
+	//@author A0111942N
+	//API: This method returns the list of all the tasks.
+	public static LinkedList<Task> getAllTasks() {
+		return bufferList;
 	}
 	
 	//Mainly for testing purposes only
@@ -263,8 +293,10 @@ public class LogicMain {
 		
 		while(scanner.hasNextLine()) {
 			
-			System.out.println(LogicMain.processInput(scanner.nextLine()));
-			System.out.println(LogicMain.bufferList.toString());
+			String testInput = scanner.nextLine();
+			
+			System.out.println(LogicMain.processInput(testInput));
+			System.out.println(LogicMain.getAllTasks());
 		}
 		
 		scanner.close();

@@ -11,14 +11,17 @@ public class Task implements java.io.Serializable {
 	private long deadline;
 	private String state;
 	
+	//Constructor (When provided with task's name only)
 	public Task(String name) {
 		this(name, "", TO_DO_LABEL, -1);
 	}
 	
+	//Constructor (When provided with task's name and description only)
 	public Task(String name, String description) {
 		this(name, description, TO_DO_LABEL, -1);
 	}
 	
+	//Constructor (When provided with another task object)
 	public Task(Task oldTask) {
 		
 		this.name = oldTask.getName();
@@ -29,6 +32,7 @@ public class Task implements java.io.Serializable {
 		this.state = "";
 	}
 	
+	//Constructor (When provided with task's name, description, label and deadline)
 	public Task(String name, String description, String label, long deadline) {
 		
 		this.name = name;
@@ -39,6 +43,7 @@ public class Task implements java.io.Serializable {
 		this.state = "";
 	}
 	
+	//Accessor: Return name
 	public String getName() {
 		return name;
 	}
