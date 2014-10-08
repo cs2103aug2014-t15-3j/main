@@ -64,6 +64,10 @@ public class Task implements java.io.Serializable {
 		return deadline;
 	}
 	
+	public String getState() {
+		return state;
+	}
+	
 	public String editName(String name) {
 		this.name = name;
 		return name;
@@ -94,6 +98,6 @@ public class Task implements java.io.Serializable {
 	@Override
 	public String toString() {
 		
-		return "{Name: \""+name+"\", Description: \""+description+"\", \""+state+"\"}";
+		return "Task: "+name+"\nDescription: "+description+"\n\n";
 	}
 }
