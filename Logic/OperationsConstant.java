@@ -9,6 +9,7 @@ public class OperationsConstant {
 	public static String VIEW_OPERATION = "view";
 	public static String DELETE_OPERATION = "delete";
 	public static String SAVE_OPERATION = "save";
+	public static String EMPTY_MESSAGE = "<empty>";
 	
 	public static LinkedList<String> getAddOperations() {
 		
