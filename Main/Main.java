@@ -57,42 +57,7 @@ public class Main {
 		
 		
 		gui.launch();
-		
-		
-		
-		/******************** HOW TO USE STORAGE ******************************/
-		
-		//@Sam Here's a simple implementation so you can save some time on how to use storage :D
-		//I've prepared my TaskStorage for your LinkedList to just simply stored it in, here's an example.
-		
-		
-		/*
-		//Storage Creation (Only need to create once)
-		storage = new StorageMain();
-		
-		//Tasks Stubs - Feel free to chang or add more task to try them out.
-		LinkedList<Task> taskListBuffered = new LinkedList<Task>();
-		LinkedList<Task> taskListStored = new LinkedList<Task>(); //Create a stub Linkedlist for example
-		Task task1 = new Task("task1","to love Remembra 1");
-		Task task2 = new Task("task2","to love Remembra 2");
-		Task task3 = new Task("task3","to love Remembra 3");
-		taskListBuffered.add(task1);
-		taskListBuffered.add(task2);
-		taskListBuffered.add(task3);
-		
-		//Storage Call
-		storage.storeObject(taskListBuffered);
-		storage.retrieveObject(taskListStored);	
-		*/
-		//I've currently system.out the stored data(s) in my class for this example for testing purposes,
-		//but no worries you can still grab the data via the return object of retrieveObject :D
-		
-		//Do let me know what kind of other retrieval types for tasks do you need too!
-		
-		/******************** HOW TO USE STORAGE ******************************/
-		
-		
-		
+				
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
 		/******************************* STORAGE TEST **********************************************/	
 		/*
