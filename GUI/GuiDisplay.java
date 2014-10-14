@@ -11,26 +11,27 @@ public class GuiDisplay {
 	}
 
 	static void display(String inputStr) {
-		LinkedList<Task> tasks = LogicMain.processInput(inputStr);
+		LogicMain logic = new LogicMain();
+		LinkedList<Task> tasks = logic.processInput(inputStr);
 	
 		if(!tasks.isEmpty()) {
 	
 			Task firstTask = tasks.get(0);
 			String state = firstTask.getState();
 	
-			if(state.equals(OperationsConstant.ADD_OPERATION)) {
+			if(state.equals(Operations.ADD_OPERATION)) {
 				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
 						"The following task has been added:\n\n" + 
 						firstTask.toString());
 			}
-			else if(state.equals(OperationsConstant.EDIT_OPERATION)) {
+			else if(state.equals(Operations.EDIT_OPERATION)) {
 				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
 						"The following task has been edited:\n\n" + 
 						firstTask.toString());
 			}
-			else if(state.equals(OperationsConstant.VIEW_OPERATION)) {
+			else if(state.equals(Operations.VIEW_OPERATION)) {
 	
-				if(!firstTask.getName().equals(OperationsConstant.EMPTY_MESSAGE)) {
+				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 					for(int i=0; i<tasks.size(); i++) {
 						Task tempTask = tasks.get(i);
 						GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
@@ -42,9 +43,9 @@ public class GuiDisplay {
 							"No tasks found!\n\n");
 				}
 			}
-			else if(state.equals(OperationsConstant.DELETE_OPERATION)) {
+			else if(state.equals(Operations.DELETE_OPERATION)) {
 	
-				if(!firstTask.getName().equals(OperationsConstant.EMPTY_MESSAGE)) {
+				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 					GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
 							"The following task has been deleted:\n\n" + 
 							firstTask.toString());
@@ -54,7 +55,7 @@ public class GuiDisplay {
 							"You have specified an invalid task to delete\n\n");
 				}
 			}
-			else if(state.equals(OperationsConstant.SAVE_OPERATION)) {
+			else if(state.equals(Operations.SAVE_OPERATION)) {
 				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
 						"The save is successful!\n\n");
 			}

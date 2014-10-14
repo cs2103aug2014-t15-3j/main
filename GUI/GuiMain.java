@@ -39,6 +39,9 @@ public class GuiMain {
 	private static JTextField inputField;
 	private JScrollPane scrollPane;
 
+	private Operations operations;
+	private LogicMain logic;
+
 	/**
 	 * Launch the application.
 	 */
@@ -69,13 +72,13 @@ public class GuiMain {
 						mainDisplay.setText(displayStr + inputStr + "\n");
 						//this clears the input field
 						inputField.setText("");
-						
+
 						if (inputStr.equalsIgnoreCase("help")){
 							GuiDisplay.displayHelp();
 						}else {
 							GuiDisplay.display(inputStr);
 						}
-						
+
 					}
 
 
@@ -91,7 +94,7 @@ public class GuiMain {
 		initialize();
 
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -104,8 +107,11 @@ public class GuiMain {
 			public void windowClosing(WindowEvent arg0) {
 				int option = JOptionPane.showConfirmDialog(frameRemembra, "Do you want to save changes before exiting?", "Save and Exit?", JOptionPane.YES_NO_OPTION);
 				if (option == 0){
-					String saveOperation = OperationsConstant.getSaveOperations().get(0);
-					LogicMain.processInput(saveOperation);
+
+					operations = new Operations();
+					logic = new LogicMain();
+					String saveOperation = operations.saveOperations.get(0);
+					logic.processInput(saveOperation);
 				}
 
 			}
