@@ -73,7 +73,6 @@ public class LogicMain {
 		
 		initialize();
 		
-		LinkedList<Task> packageTasks = new LinkedList<Task>();
 		input = cleanUpInput(input);
 		preProcessInput(input);
 		
@@ -81,55 +80,27 @@ public class LogicMain {
 				
 		if( operations.addOperations.contains(mainOperation) ) {
 			
-			Task returnTask = new Task( executeAdd() );
-			returnTask.editState(Operations.ADD_OPERATION);
-			packageTasks.add(returnTask);
-			return packageTasks;
+			return postAdd();
 		}
 		else if( operations.editOperations.contains(mainOperation) ) {
 			
-			Task returnTask = new Task( executeEdit() );
-			returnTask.editState(Operations.EDIT_OPERATION);
-			packageTasks.add(returnTask);
-			return packageTasks;
+			return postEdit();
 		}
 		else if( operations.viewOperations.contains(mainOperation) ) {
 			
-			packageTasks = new LinkedList<Task>(bufferList);
-			
-			Task returnTask;
-			
-			if(bufferList.size() != 0) {
-				returnTask = new Task( packageTasks.get(0) );
-				returnTask.editState(Operations.VIEW_OPERATION);
-				packageTasks.set(0, returnTask);
-			}
-			else
-			{
-				returnTask = new Task(Operations.EMPTY_MESSAGE);
-				returnTask.editState(Operations.VIEW_OPERATION);
-				packageTasks.add(returnTask);
-			}
-			
-			return packageTasks;
+			return postView();
 		}
 		else if( operations.deleteOperations.contains(mainOperation) ) {
 			
-			packageTasks.add(executeDelete());
-			
-			return packageTasks;
+			return postDelete();
 		}
 		else if( operations.saveOperations.contains(mainOperation) ) {
 			
-			commitToStorage();
-			packageTasks = new LinkedList<Task>();
-			Task saveTask = new Task(Operations.EMPTY_MESSAGE);
-			saveTask.editState(Operations.SAVE_OPERATION);
-			packageTasks.add(saveTask);
-			return packageTasks;
+			return postSave();
 		}
 		else {
-			return packageTasks;
+			
+			return new LinkedList<Task>();
 		}
 	}
 	
@@ -335,6 +306,73 @@ public class LogicMain {
 	//API: This method returns the list of all the tasks.
 	public LinkedList<Task> getAllTasks() {
 		return bufferList;
+	}
+	
+	private LinkedList<Task> postAdd() {
+		
+		LinkedList<Task> packageTasks = new LinkedList<Task>();
+		
+		Task addTask = executeAdd();
+		
+		if(addTask != null) {
+			Task returnTask = new Task( executeAdd() );
+			returnTask.editState(Operations.ADD_OPERATION);
+			packageTasks.add(returnTask);
+		}
+		
+		return packageTasks;
+	}
+	
+	private LinkedList<Task> postEdit() {
+
+		LinkedList<Task> packageTasks = new LinkedList<Task>();
+		Task returnTask = new Task( executeEdit() );
+		returnTask.editState(Operations.EDIT_OPERATION);
+		packageTasks.add(returnTask);
+		
+		return packageTasks;
+	}
+	
+	private LinkedList<Task> postView() {
+
+		LinkedList<Task> packageTasks = new LinkedList<Task>();
+		packageTasks = new LinkedList<Task>(bufferList);
+		
+		Task returnTask;
+		
+		if(bufferList.size() != 0) {
+			returnTask = new Task( packageTasks.get(0) );
+			returnTask.editState(Operations.VIEW_OPERATION);
+			packageTasks.set(0, returnTask);
+		}
+		else
+		{
+			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returnTask.editState(Operations.VIEW_OPERATION);
+			packageTasks.add(returnTask);
+		}
+		
+		return packageTasks;
+	}
+	
+	private LinkedList<Task> postDelete() {
+
+		LinkedList<Task> packageTasks = new LinkedList<Task>();
+		packageTasks.add(executeDelete());
+		
+		return packageTasks;
+	}
+	
+	private LinkedList<Task> postSave() {
+
+		LinkedList<Task> packageTasks = new LinkedList<Task>();
+		commitToStorage();
+		packageTasks = new LinkedList<Task>();
+		Task saveTask = new Task(Operations.EMPTY_MESSAGE);
+		saveTask.editState(Operations.SAVE_OPERATION);
+		packageTasks.add(saveTask);
+		
+		return packageTasks;
 	}
 	
 	//Mainly for testing purposes only
