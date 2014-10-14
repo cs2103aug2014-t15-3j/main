@@ -78,8 +78,27 @@ public class Main {
 		
 		//Storage Call
 		storage.storeObject(taskList);
-		storage.retrieveObject(taskListStored);	
+		//storage.retrieveObject(taskListStored);	
 		
+		
+		//Test for search task by date
+		LinkedList<Task> _211014 = new LinkedList<Task>();
+		_211014 = storage.searchTask(true, false, "211014");
+		
+		System.out.println("By date Test");
+		for(Task t:_211014){
+			System.out.println(t.getName());
+		}
+		
+		
+		//Test for search task by label
+		LinkedList<Task> labelList = new LinkedList<Task>();
+		labelList = storage.searchTask(false, true, "lala");
+
+		System.out.println("By label Test");
+		for(Task t:labelList){
+			System.out.println(t.getName());
+		}
 		
 		
 		/******************************* STORAGE TEST **********************************************/
