@@ -10,6 +10,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @ChuanWei - StorageBase.java
+//
+// 1. 
+//
+//
+//
+//
+//
+// @ChuanWei - StorageBase.java
+/*********************************************************************/
+/*********************************************************************/
 
 
 public abstract class StorageBase{

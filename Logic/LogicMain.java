@@ -3,6 +3,49 @@
 import java.util.LinkedList;
 import java.util.Scanner;
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @Sam - LogicMain.java
+//
+// 1. Would it be possible if you could alter your comments of the
+//    functions to the java comments structure given in the java
+//	  coding standards?
+//
+// 2. Do edit your code structure for certain areas as mentioned
+//    in the coding standards, to group related codes together
+//
+//	  For example:
+//		
+//		//Object creation (this heading is for explanation not part of the code)
+//		LinkedList<Task> packageTasks = new LinkedList<Task>();
+//		
+//		//function calls (this heading is for explanation not part of the code)		//
+//		input = cleanUpInput(input);
+//		preProcessInput(input);
+//
+//    Another example: //Seperate by Object Creation, function call, return type
+//
+//		Task returnTask = new Task( executeEdit() );
+//
+//		returnTask.editState(Operations.EDIT_OPERATION);
+//		packageTasks.add(returnTask);
+//		
+//		return packageTasks;
+//
+// 3. Do check code structure for if/else,
+//
+//	  Example of correct implementation:
+//		
+//		if(){                  if(){
+//		}else if(){     or     }else{ 
+//		}                      }
+//	
+// @Sam - LogicMain.java
+/*********************************************************************/
+/*********************************************************************/
+
+
 public class LogicMain {
 	
 	//Use to check if the program has initialized.

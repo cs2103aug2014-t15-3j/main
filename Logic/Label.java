@@ -1,5 +1,18 @@
 //@author Samuel Lim Yi Jie
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @Sam - Label.java
+//
+// 1. Would it be possible if you could alter your comments of the
+//    functions to the java comments structure given in the java
+//	  coding standards?
+//
+// @Sam - Label.java
+/*********************************************************************/
+/*********************************************************************/
+
 public class Label {
 	
 	//Class variables

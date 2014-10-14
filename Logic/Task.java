@@ -1,5 +1,20 @@
 //@author Samuel Lim Yi Jie
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @Sam - Task.java
+//
+// 1. Would it be possible if you could alter your comments of the
+//    functions to the java comments structure given in the java
+//	  coding standards?
+// 2. Would it be possible to complete the function comments for the 
+//	  rest of the functions
+//
+// @Sam - Task.java
+/*********************************************************************/
+/*********************************************************************/
+
 public class Task implements java.io.Serializable {
 	
 	private final static String TO_DO_LABEL = "To-Do";

@@ -31,6 +31,22 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @Sankalp - GuiMain.java
+//
+// 1. could you add in some comments into the code?
+// 2. for lines > 80 char do indent them to the next line 
+// 3. Do correct me if i'm seeing it wrongly, For initialize(), 
+//    is that a function in a function?
+//    If it is you might want to do something about the nested function 
+//    'windowClosing()'. Nested functions are strictly not allowed?
+//	  Do extract it out is possible.
+//
+// @Sankalp - GuiMain.java
+/*********************************************************************/
+/*********************************************************************/
 
 public class GuiMain {
 

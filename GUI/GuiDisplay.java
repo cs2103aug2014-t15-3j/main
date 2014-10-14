@@ -1,5 +1,19 @@
 import java.util.LinkedList;
 
+/*********************************************************************/
+/******************* QA I - Refactor Code I***************************/
+/*********************************************************************/
+// @Sankalp - GuiDisplay.java
+//
+// 1. could you add in some comments into the code?
+// 2. perhaps you can consider using switch cases for the checks in
+//    the display() function
+// 3. for lines > 80 char do indent them to the next line i.e. line 20
+//
+// @Sankalp - GuiDisplay.java
+/*********************************************************************/
+/*********************************************************************/
+
 
 public class GuiDisplay {
 	//Some very basic Help text for now.
