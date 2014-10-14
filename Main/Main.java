@@ -51,16 +51,15 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		gui = new GuiMain();
 		System.out.println("Starting Remembra...");
-
 		
-		
+		gui = new GuiMain();
 		gui.launch();
+		
 				
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
 		/******************************* STORAGE TEST **********************************************/	
-		/*
+		
 		//Task Stubs for Storage
 		LinkedList<Task> taskList = new LinkedList<Task>();
 		LinkedList<Task> taskListStored = new LinkedList<Task>();
@@ -75,7 +74,9 @@ public class Main {
 		//Storage Call
 		storage.storeObject(taskList);
 		storage.retrieveObject(taskListStored);	
-		*/
+		
+		
+		
 		/******************************* STORAGE TEST **********************************************/
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
 		

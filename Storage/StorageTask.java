@@ -40,13 +40,13 @@ public class StorageTask extends StorageBase{
 		
 		
 		/* FOR TESTING OBJECTS STORED*/
-	
+		/*
 		for(Task task:storedTasks){
 			
 			System.out.println(task.getName());			
 			System.out.println(task.getDescription());	
 		}
-		
+		*/
 
 		return storedTasks;
 	}
@@ -56,5 +56,34 @@ public class StorageTask extends StorageBase{
 		return retrieveObject();
 	}
 	
+public LinkedList<Task> retrieveStoredTasks(long queryDate){
+		
+		LinkedList<Task> storedTasks = retrieveObject();
+		LinkedList<Task> queryTasks = new LinkedList<Task>();
+		
+		for(Task t:storedTasks){
+			
+			if(t.getDeadline() == queryDate){
+				queryTasks.add(t);
+			}
+		}
+		
+		return queryTasks;
+	}
+	
+	public LinkedList<Task> retrieveStoredTasks(String queryLabel){
+		
+		LinkedList<Task> storedTasks = retrieveObject();
+		LinkedList<Task> queryTasks = new LinkedList<Task>();
+		
+		for(Task t:storedTasks){
+			
+			if(t.getLabel().equals(queryLabel)){
+				queryTasks.add(t);
+			}
+		}
+		
+		return queryTasks;
+	}
 	
 }
