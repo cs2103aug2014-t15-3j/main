@@ -49,13 +49,30 @@ public class StorageMain {
 		if(obj instanceof LinkedList<?>){
 			
 			return taskStorage.retrieveStoredTasks();		
-		}
-		else{
+		
+		}else{
 			
 			System.out.print(FORMAT_NOT_SUPPORTED);
 			
 			return FORMAT_NOT_SUPPORTED;
 		}
 		
+	}
+	
+	
+	LinkedList<Task> searchTask(boolean byDate, boolean byLabel, String... queryParams){
+		
+		if(byDate){
+			
+			return taskStorage.retrieveStoredTasks(Long.parseLong(queryParams[0]));			
+		
+		}else if(byLabel){
+		
+			return taskStorage.retrieveStoredTasks(queryParams[0]);
+		
+		}
+		
+		return null;
+
 	}
 }
