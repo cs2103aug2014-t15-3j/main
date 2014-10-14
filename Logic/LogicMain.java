@@ -8,6 +8,8 @@ public class LogicMain {
 	//Use to check if the program has initialized.
 	private static boolean isInitialize = false;
 	
+	Operations operations;
+	
 	//Use to connect with StorageMain
 	private static StorageMain storageMain;
 	
@@ -16,19 +18,15 @@ public class LogicMain {
 	private static LinkedList<Task> bufferList = new LinkedList<Task>();
 	private static String[] inputArray;
 	
-	//Constants Operation
-	private static LinkedList<String> addOperations = OperationsConstant.getAddOperations();
-	private static LinkedList<String> nameOperations = OperationsConstant.getNameOperations();
-	private static LinkedList<String> descriptionOperations = OperationsConstant.getDescriptionOperations();
-	private static LinkedList<String> editOperations = OperationsConstant.getEditOperations();
-	private static LinkedList<String> viewOperations = OperationsConstant.getViewOperations();
-	private static LinkedList<String> deleteOperations = OperationsConstant.getDeleteOperations();
-	private static LinkedList<String> saveOperations = OperationsConstant.getSaveOperations();
+	public LogicMain() {
+		
+		operations = new Operations();
+	}
 	
 	//@author A0111942N
 	//API: This method will process the user's input and perform either
 	//add, edit, view, delete or save based on the input.
-	public static LinkedList<Task> processInput(String input) {
+	public LinkedList<Task> processInput(String input) {
 		
 		initialize();
 		
@@ -38,21 +36,21 @@ public class LogicMain {
 		
 		String mainOperation = inputList.get(0).getOperation();
 				
-		if( addOperations.contains(mainOperation) ) {
+		if( operations.addOperations.contains(mainOperation) ) {
 			
 			Task returnTask = new Task( executeAdd() );
-			returnTask.editState(OperationsConstant.ADD_OPERATION);
+			returnTask.editState(Operations.ADD_OPERATION);
 			packageTasks.add(returnTask);
 			return packageTasks;
 		}
-		else if( editOperations.contains(mainOperation) ) {
+		else if( operations.editOperations.contains(mainOperation) ) {
 			
 			Task returnTask = new Task( executeEdit() );
-			returnTask.editState(OperationsConstant.EDIT_OPERATION);
+			returnTask.editState(Operations.EDIT_OPERATION);
 			packageTasks.add(returnTask);
 			return packageTasks;
 		}
-		else if( viewOperations.contains(mainOperation) ) {
+		else if( operations.viewOperations.contains(mainOperation) ) {
 			
 			packageTasks = new LinkedList<Task>(bufferList);
 			
@@ -60,30 +58,30 @@ public class LogicMain {
 			
 			if(bufferList.size() != 0) {
 				returnTask = new Task( packageTasks.get(0) );
-				returnTask.editState(OperationsConstant.VIEW_OPERATION);
+				returnTask.editState(Operations.VIEW_OPERATION);
 				packageTasks.set(0, returnTask);
 			}
 			else
 			{
-				returnTask = new Task(OperationsConstant.EMPTY_MESSAGE);
-				returnTask.editState(OperationsConstant.VIEW_OPERATION);
+				returnTask = new Task(Operations.EMPTY_MESSAGE);
+				returnTask.editState(Operations.VIEW_OPERATION);
 				packageTasks.add(returnTask);
 			}
 			
 			return packageTasks;
 		}
-		else if( deleteOperations.contains(mainOperation) ) {
+		else if( operations.deleteOperations.contains(mainOperation) ) {
 			
 			packageTasks.add(executeDelete());
 			
 			return packageTasks;
 		}
-		else if( saveOperations.contains(mainOperation) ) {
+		else if( operations.saveOperations.contains(mainOperation) ) {
 			
 			commitToStorage();
 			packageTasks = new LinkedList<Task>();
-			Task saveTask = new Task(OperationsConstant.EMPTY_MESSAGE);
-			saveTask.editState(OperationsConstant.SAVE_OPERATION);
+			Task saveTask = new Task(Operations.EMPTY_MESSAGE);
+			saveTask.editState(Operations.SAVE_OPERATION);
 			packageTasks.add(saveTask);
 			return packageTasks;
 		}
@@ -123,7 +121,7 @@ public class LogicMain {
 	//@author A0111942N
 	//This method will pre-process the user's input and categories
 	//them into a list.
-	private static void preProcessInput(String input) {
+	private void preProcessInput(String input) {
 		
 		inputList = new LinkedList<LogicInputPair>();
 		
@@ -162,7 +160,7 @@ public class LogicMain {
 	
 	//@author A0111942N
 	//This method executes the "add" functionality of the program
-	private static Task executeAdd() {
+	private Task executeAdd() {
 		
 		String name = "";
 		String description = "";
@@ -171,7 +169,7 @@ public class LogicMain {
 			
 			String operation = inputList.get(i).getOperation();
 			
-			if( addOperations.contains(operation) ) {
+			if( operations.addOperations.contains(operation) ) {
 				
 				name = inputList.get(i).getContent();
 				
@@ -179,7 +177,7 @@ public class LogicMain {
 					return null;
 				}
 			}
-			else if( descriptionOperations.contains(operation) ) {
+			else if( operations.descriptionOperations.contains(operation) ) {
 				
 				description = inputList.get(i).getContent();
 			}
@@ -207,15 +205,15 @@ public class LogicMain {
 			return deleteTask;
 		}
 		else {
-			Task deleteTask = new Task(OperationsConstant.EMPTY_MESSAGE);
-			deleteTask.editState(OperationsConstant.DELETE_OPERATION);
+			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
+			deleteTask.editState(Operations.DELETE_OPERATION);
 			return deleteTask;
 		}
 	}
 	
 	//@author A0111942N
 	//This method executes the "edit" functionality of the program
-	private static Task executeEdit() {
+	private Task executeEdit() {
 		
 		int editID = -1;
 		String name = "";
@@ -227,7 +225,7 @@ public class LogicMain {
 			
 			String operation = inputList.get(i).getOperation();
 			
-			if( editOperations.contains(operation) ) {
+			if( operations.editOperations.contains(operation) ) {
 				
 				String stringID = inputList.get(i).getContent();
 				
@@ -241,7 +239,7 @@ public class LogicMain {
 					return null;
 				}
 			}
-			else if( nameOperations.contains(operation) ) {
+			else if( operations.nameOperations.contains(operation) ) {
 				
 				name = inputList.get(i).getContent();
 				
@@ -251,7 +249,7 @@ public class LogicMain {
 				
 				nameEdited = true;
 			}
-			else if( descriptionOperations.contains(operation) ) {
+			else if( operations.descriptionOperations.contains(operation) ) {
 				
 				description = inputList.get(i).getContent();
 				descriptionEdited = true;
@@ -271,9 +269,9 @@ public class LogicMain {
 	
 	//@author A0111942N
 	//This method checks if the input word is an operation.
-	private static boolean isOperation(String word) {
+	private boolean isOperation(String word) {
 		
-		if(word.startsWith("@!")) {
+		if(word.startsWith(Operations.OPERATION)) {
 			return true;
 		}
 		else {
@@ -284,7 +282,7 @@ public class LogicMain {
 	//@author A0111942N
 	//This method will contact StorageMain to export the bufferList
 	//into a text file.
-	private static boolean commitToStorage() {
+	private boolean commitToStorage() {
 		
 		storageMain.storeObject(bufferList);
 		return true;
@@ -292,12 +290,12 @@ public class LogicMain {
 	
 	//@author A0111942N
 	//API: This method returns the list of all the tasks.
-	public static LinkedList<Task> getAllTasks() {
+	public LinkedList<Task> getAllTasks() {
 		return bufferList;
 	}
 	
 	//Mainly for testing purposes only
-	public static void printBufferList() {
+	public void printBufferList() {
 		System.out.println(LogicMain.bufferList.toString());
 	}
 	
@@ -311,8 +309,10 @@ public class LogicMain {
 			
 			String testInput = scanner.nextLine();
 			
-			System.out.println(LogicMain.processInput(testInput));
-			System.out.println(LogicMain.getAllTasks());
+			LogicMain logic = new LogicMain();
+			
+			System.out.println(logic.processInput(testInput));
+			System.out.println(logic.getAllTasks());
 		}
 		
 		scanner.close();
