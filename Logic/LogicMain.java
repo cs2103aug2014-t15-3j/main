@@ -2,6 +2,8 @@
 
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
@@ -32,14 +34,6 @@ import java.util.Scanner;
 //		packageTasks.add(returnTask);
 //		
 //		return packageTasks;
-//
-// 3. Do check code structure for if/else,
-//
-//	  Example of correct implementation:
-//		
-//		if(){                  if(){
-//		}else if(){     or     }else{ 
-//		}                      }
 //	
 // @Sam - LogicMain.java
 /*********************************************************************/
@@ -48,30 +42,36 @@ import java.util.Scanner;
 
 public class LogicMain {
 	
+	//Constant
+	private final static String LOG_NAME = "LogicMain";
+	
 	//Use to check if the program has initialized.
 	private static boolean isInitialize = false;
 	
-	Operations operations;
+	//Operation Object
+	private Operations operations;
 	
 	//Use to connect with StorageMain
-	private static StorageMain storageMain;
+	private StorageMain storageMain;
 	
 	//Data structures
-	private static LinkedList<LogicInputPair> inputList;
+	private LinkedList<LogicInputPair> inputList;
 	private static LinkedList<Task> bufferList = new LinkedList<Task>();
-	private static String[] inputArray;
+	private String[] inputArray;
+	
+	//Logger: Use to troubleshoot problems
+	private Logger logger = Logger.getLogger(LOG_NAME);
 	
 	public LogicMain() {
 		
 		operations = new Operations();
+		initialize();
 	}
 	
 	//@author A0111942N
 	//API: This method will process the user's input and perform either
 	//add, edit, view, delete or save based on the input.
 	public LinkedList<Task> processInput(String input) {
-		
-		initialize();
 		
 		input = cleanUpInput(input);
 		preProcessInput(input);
@@ -81,24 +81,19 @@ public class LogicMain {
 		if( operations.addOperations.contains(mainOperation) ) {
 			
 			return postAdd();
-		}
-		else if( operations.editOperations.contains(mainOperation) ) {
+		} else if( operations.editOperations.contains(mainOperation) ) {
 			
 			return postEdit();
-		}
-		else if( operations.viewOperations.contains(mainOperation) ) {
+		} else if( operations.viewOperations.contains(mainOperation) ) {
 			
 			return postView();
-		}
-		else if( operations.deleteOperations.contains(mainOperation) ) {
+		} else if( operations.deleteOperations.contains(mainOperation) ) {
 			
 			return postDelete();
-		}
-		else if( operations.saveOperations.contains(mainOperation) ) {
+		} else if( operations.saveOperations.contains(mainOperation) ) {
 			
 			return postSave();
-		}
-		else {
+		} else {
 			
 			return new LinkedList<Task>();
 		}
@@ -107,7 +102,7 @@ public class LogicMain {
 	//@author A0111942N
 	//This method checks if the component has been initialized.
 	//It will initialize the component if it is not. 
-	private static void initialize() {
+	private void initialize() {
 		
 		if(!isInitialize) {
 			storageMain = new StorageMain();
@@ -116,12 +111,16 @@ public class LogicMain {
 			
 			if( retrievedObject instanceof LinkedList<?> ) {
 				bufferList = (LinkedList<Task>) retrievedObject;
-			}
-			else {
+			} else {
 				bufferList = new LinkedList<Task>();
+				logger.log(Level.WARNING, "Unable to retrieve tasks from storage");
 			}
 			
 			isInitialize = true;
+			
+			logger.log(Level.INFO, "Initializing is complete");
+		} else {
+			logger.log(Level.INFO, "LogicMain has already been initiated");
 		}
 	}
 	
@@ -157,8 +156,7 @@ public class LogicMain {
 				}
 				operation = inputArray[i].toLowerCase();
 				content = "";
-			}
-			else {
+			} else {
 				
 				if(!content.isEmpty()) {
 					content += " ";
@@ -188,10 +186,11 @@ public class LogicMain {
 				name = inputList.get(i).getContent();
 				
 				if(name.isEmpty()) {
+
+					logger.log(Level.INFO, "Add operation: Name unidentified");
 					return null;
 				}
-			}
-			else if( operations.descriptionOperations.contains(operation) ) {
+			} else if( operations.descriptionOperations.contains(operation) ) {
 				
 				description = inputList.get(i).getContent();
 			}
@@ -199,12 +198,14 @@ public class LogicMain {
 		
 		Task newTask = new Task(name,description);
 		bufferList.add(newTask);
+
+		logger.log(Level.INFO, "New task added to bufferlist");
 		return newTask;
 	}
 	
 	//@author A0111942N
 	//This method executes the "delete" functionality of the program
-	private static Task executeDelete() {
+	private Task executeDelete() {
 		
 		int deleteID = 0;
 		String content = inputList.get(0).getContent();
@@ -216,11 +217,14 @@ public class LogicMain {
 		if(deleteID < bufferList.size()) {
 			Task deleteTask = bufferList.get(deleteID);
 			bufferList.remove(deleteID);
+			
+			logger.log(Level.INFO, "Task deleted");
 			return deleteTask;
-		}
-		else {
+		} else {
 			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
 			deleteTask.editState(Operations.DELETE_OPERATION);
+
+			logger.log(Level.INFO, "Invalid task to be deleted");
 			return deleteTask;
 		}
 	}
@@ -252,18 +256,18 @@ public class LogicMain {
 				if(editID >= bufferList.size()) {
 					return null;
 				}
-			}
-			else if( operations.nameOperations.contains(operation) ) {
+			} else if( operations.nameOperations.contains(operation) ) {
 				
 				name = inputList.get(i).getContent();
 				
 				if(name.isEmpty()) {
+
+					logger.log(Level.INFO, "Edit operation: Invalid name");
 					return null;
 				}
 				
 				nameEdited = true;
-			}
-			else if( operations.descriptionOperations.contains(operation) ) {
+			} else if( operations.descriptionOperations.contains(operation) ) {
 				
 				description = inputList.get(i).getContent();
 				descriptionEdited = true;
@@ -278,6 +282,9 @@ public class LogicMain {
 		if(descriptionEdited) {
 			editTask.editDescription(description);
 		}
+		
+
+		logger.log(Level.INFO, "Task edited");
 		return editTask;
 	}
 	
@@ -287,8 +294,7 @@ public class LogicMain {
 		
 		if(word.startsWith(Operations.OPERATION)) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -319,6 +325,8 @@ public class LogicMain {
 			returnTask.editState(Operations.ADD_OPERATION);
 			packageTasks.add(returnTask);
 		}
+
+		logger.log(Level.INFO, "Add operation completed");
 		
 		return packageTasks;
 	}
@@ -329,6 +337,8 @@ public class LogicMain {
 		Task returnTask = new Task( executeEdit() );
 		returnTask.editState(Operations.EDIT_OPERATION);
 		packageTasks.add(returnTask);
+		
+		logger.log(Level.INFO, "Edit operation completed");
 		
 		return packageTasks;
 	}
@@ -344,13 +354,13 @@ public class LogicMain {
 			returnTask = new Task( packageTasks.get(0) );
 			returnTask.editState(Operations.VIEW_OPERATION);
 			packageTasks.set(0, returnTask);
-		}
-		else
-		{
+		} else {
 			returnTask = new Task(Operations.EMPTY_MESSAGE);
 			returnTask.editState(Operations.VIEW_OPERATION);
 			packageTasks.add(returnTask);
 		}
+		
+		logger.log(Level.INFO, "View operation completed");
 		
 		return packageTasks;
 	}
@@ -359,6 +369,8 @@ public class LogicMain {
 
 		LinkedList<Task> packageTasks = new LinkedList<Task>();
 		packageTasks.add(executeDelete());
+		
+		logger.log(Level.INFO, "Delete operation completed");
 		
 		return packageTasks;
 	}
@@ -372,12 +384,14 @@ public class LogicMain {
 		saveTask.editState(Operations.SAVE_OPERATION);
 		packageTasks.add(saveTask);
 		
+		logger.log(Level.INFO, "Save operation completed");
+		
 		return packageTasks;
 	}
 	
 	//Mainly for testing purposes only
 	public void printBufferList() {
-		System.out.println(LogicMain.bufferList.toString());
+		System.out.println(bufferList.toString());
 	}
 	
 	//Mainly for testing purposes only
