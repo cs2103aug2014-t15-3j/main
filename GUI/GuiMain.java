@@ -7,17 +7,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import java.awt.BorderLayout;
-
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import java.awt.FlowLayout;
-import java.awt.Point;
 
 import javax.swing.JTextArea;
 
@@ -25,11 +21,12 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Font;
-
-import javax.swing.ScrollPaneConstants;
-
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTabbedPane;
 
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
@@ -54,9 +51,13 @@ public class GuiMain {
 	static JTextArea mainDisplay;
 	private static JTextField inputField;
 	private JScrollPane scrollPane;
+	static JTextArea feedback;
+	private JScrollPane scrollPane_1;
 
 	private Operations operations;
 	private LogicMain logic;
+	private JTabbedPane tabbedPane;
+	private JTable table_1;
 
 	/**
 	 * Launch the application.
@@ -85,10 +86,10 @@ public class GuiMain {
 
 
 						//this prints the input text on the display
-						mainDisplay.setText(displayStr + inputStr + "\n");
+						mainDisplay.setText(displayStr + "\n");
 						//this clears the input field
 						inputField.setText("");
-
+						
 						if (inputStr.equalsIgnoreCase("help")){
 							GuiDisplay.displayHelp();
 						}else {
@@ -114,9 +115,16 @@ public class GuiMain {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("serial")
 	private void initialize() {
 		frameRemembra = new JFrame("Remembra");
+		frameRemembra.setBackground(new Color(192, 192, 192));
 		frameRemembra.setTitle("Remembra V0.1");
+		try {
+			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		frameRemembra.addWindowListener(new WindowAdapter() {
 			@Override
 			//this pops-up a confirmation dialog box when the user tries to exit the program
@@ -134,43 +142,87 @@ public class GuiMain {
 
 		});
 		frameRemembra.setResizable(false);
-		frameRemembra.getContentPane().setBackground(new Color(0, 0, 0));
-		frameRemembra.setBounds(100, 100, 587, 398);
+		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
+		frameRemembra.setBounds(100, 100, 653, 467);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
 
+		JPanel displayPanel = new JPanel();
+		displayPanel.setBackground(new Color(192, 192, 192));
+		displayPanel.setBounds(0, 0, 654, 324);
+		frameRemembra.getContentPane().add(displayPanel);
+		displayPanel.setLayout(new FlowLayout());
+
+		tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.setBorder(null);
+		tabbedPane.setFont(new Font("Levenim MT", Font.PLAIN, 13));
+		displayPanel.add(tabbedPane);
+
+		table_1 = new JTable();
+		table_1.setModel(new DefaultTableModel(
+				new Object[][] {
+						{"SampleTask1", "16/11/14"},
+						{"SampleTask2", "18/11/14"},
+				},
+				new String[] {
+						"Task", "Deadline"
+				}
+				) {
+			boolean[] columnEditables = new boolean[] {
+					true, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		table_1.getColumnModel().getColumn(0).setPreferredWidth(421);
+
+		scrollPane = new JScrollPane();
+		tabbedPane.addTab("Display", null, scrollPane, null);
+
+		mainDisplay = new JTextArea();
+		scrollPane.setViewportView(mainDisplay);
+		mainDisplay.setColumns(80);
+		mainDisplay.setRows(20);
+		mainDisplay.setForeground(Color.DARK_GRAY);
+		mainDisplay.setFont(new Font("Consolas", Font.PLAIN, 12));
+		mainDisplay.setBackground(Color.WHITE);
+		mainDisplay.setEditable(false);
+		mainDisplay.setText("Welcome to Remembra!\nFor a quick guide, type help and press enter.");
+		mainDisplay.setBounds(14, 22, 323, 120);
+		tabbedPane.addTab("Table", null, table_1, null);
+
 		JPanel inputPanel = new JPanel();
-		inputPanel.setBounds(0, 325, 581, 34);
-		inputPanel.setBackground(new Color(178, 34, 34));
+		inputPanel.setBounds(0, 324, 648, 35);
 		frameRemembra.getContentPane().add(inputPanel);
+		inputPanel.setBackground(new Color(128, 128, 128));
 		inputPanel.setLayout(new FlowLayout());
 
 		inputField = new JTextField();
 		inputField.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		inputField.setForeground(new Color(165, 42, 42));
-		inputField.setBackground(new Color(230, 230, 250));
+		inputField.setBackground(new Color(255, 255, 255));
 		inputPanel.add("SOUTH", inputField);
-		inputField.setColumns(43);
+		inputField.setColumns(52);
 
-		JPanel displayPanel = new JPanel();
-		displayPanel.setBackground(new Color(107, 142, 35));
-		displayPanel.setBounds(10, 11, 561, 303);
-		frameRemembra.getContentPane().add(displayPanel);
-		displayPanel.setLayout(new FlowLayout());
+		JPanel feedbackpanel = new JPanel();
+		feedbackpanel.setBackground(new Color(192, 192, 192));
+		feedbackpanel.setBounds(0, 359, 648, 84);
+		frameRemembra.getContentPane().add(feedbackpanel);
+		feedbackpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		scrollPane = new JScrollPane();
-		displayPanel.add(scrollPane);
+		scrollPane_1 = new JScrollPane();
+		feedbackpanel.add(scrollPane_1);
 
-		mainDisplay = new JTextArea();
-		scrollPane.setViewportView(mainDisplay);
-		mainDisplay.setColumns(78);
-		mainDisplay.setRows(19);
-		mainDisplay.setForeground(new Color(65, 105, 225));
-		mainDisplay.setFont(new Font("Consolas", Font.PLAIN, 12));
-		mainDisplay.setBackground(new Color(230, 230, 250));
-		mainDisplay.setEditable(false);
-		mainDisplay.setText("Welcome to Remembra!\nFor a quick guide, type help and press enter.");
-		mainDisplay.setBounds(14, 22, 323, 120);
-		frameRemembra.setLocationRelativeTo(null);
+		feedback = new JTextArea();
+		feedback.setTabSize(10);
+		scrollPane_1.setViewportView(feedback);
+		feedback.setWrapStyleWord(true);
+		feedback.setColumns(57);
+		feedback.setForeground(new Color(85, 107, 47));
+		feedback.setBackground(new Color(255, 255, 255));
+		feedback.setRows(4);
+		feedback.setFont(new Font("Arial", Font.PLAIN, 12));
+		feedback.setEditable(false);
 	}
 }
