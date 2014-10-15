@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 //@author Samuel Lim Yi Jie
 
 /*********************************************************************/
@@ -98,6 +101,11 @@ public class Task implements java.io.Serializable {
 		return state;
 	}
 	
+	public long editDeadline(long deadline) {
+		this.deadline = deadline;
+		return deadline;
+	}
+	
 	@Override
 	public boolean equals(Object object) {
 
@@ -113,6 +121,10 @@ public class Task implements java.io.Serializable {
 	@Override
 	public String toString() {
 		
-		return "Task: "+name+"\nDescription: "+description+"\n\n";
+		Date date = new Date(deadline);
+		SimpleDateFormat format = new SimpleDateFormat(Operations.DATE_OUTPUT_FORMAT);
+		String dateOutput = format.format(date);
+		
+		return "Task: "+name+"\nDescription: "+description+"\nDeadline: "+dateOutput+"\n\n";
 	}
 }

@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
 //;author A0111942N
@@ -15,33 +16,44 @@ import java.util.LinkedList;
 
 public class Operations {
 	
-	protected static String OPERATION = ";";
-	protected static String ADD_OPERATION = "add";
-	protected static String EDIT_OPERATION = "edit";
-	protected static String VIEW_OPERATION = "view";
-	protected static String DELETE_OPERATION = "delete";
-	protected static String SAVE_OPERATION = "save";
-	protected static String EMPTY_MESSAGE = "<empty>";
+	protected final static String OPERATION = ";";
+	protected final static String ADD_OPERATION = "add";
+	protected final static String EDIT_OPERATION = "edit";
+	protected final static String VIEW_OPERATION = "view";
+	protected final static String DELETE_OPERATION = "delete";
+	protected final static String SAVE_OPERATION = "save";
+	protected final static String EMPTY_MESSAGE = "<empty>";
+	protected final static String DATE_INPUT_FORMAT = "d/M/yyyy h:m a";
+	protected final static String DATE_OUTPUT_FORMAT = "d/M/yyyy h:mm a";
+		
+	protected static LinkedList<String> addOperations;
+	protected static LinkedList<String> editOperations;
+	protected static LinkedList<String> viewOperations;
+	protected static LinkedList<String> deleteOperations;
+	protected static LinkedList<String> saveOperations;
+	protected static LinkedList<String> nameOperations;
+	protected static LinkedList<String> descriptionOperations;
+	protected static LinkedList<String> deadlineOperations;
 	
-	protected LinkedList<String> addOperations;
-	protected LinkedList<String> editOperations;
-	protected LinkedList<String> viewOperations;
-	protected LinkedList<String> deleteOperations;
-	protected LinkedList<String> saveOperations;
-	protected LinkedList<String> nameOperations;
-	protected LinkedList<String> descriptionOperations;
+	protected static boolean isInitialize = false;
 	
 	public Operations() {
-		addOperations = populateAdd();
-		editOperations = populateEdit();
-		viewOperations = populateView();
-		deleteOperations = populateDelete();
-		saveOperations = populateSave();
-		nameOperations = populateName();
-		descriptionOperations = populateDescription();
+		
+		if(!isInitialize) {
+			addOperations = populateAdd();
+			editOperations = populateEdit();
+			viewOperations = populateView();
+			deleteOperations = populateDelete();
+			saveOperations = populateSave();
+			nameOperations = populateName();
+			descriptionOperations = populateDescription();
+			deadlineOperations = populateDeadline();
+						
+			isInitialize = true;
+		}
 	}
 	
-	public static LinkedList<String> populateAdd() {
+	private LinkedList<String> populateAdd() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";add");
@@ -51,7 +63,7 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateName() {
+	private LinkedList<String> populateName() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";name");
@@ -60,7 +72,7 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateDescription() {
+	private LinkedList<String> populateDescription() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";description");
@@ -71,7 +83,7 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateEdit() {
+	private LinkedList<String> populateEdit() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";edit");
@@ -80,7 +92,7 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateView() {
+	private LinkedList<String> populateView() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";view");
@@ -89,7 +101,7 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateDelete() {
+	private LinkedList<String> populateDelete() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";delete");
@@ -99,10 +111,20 @@ public class Operations {
 		return operations;
 	}
 	
-	public static LinkedList<String> populateSave() {
+	private LinkedList<String> populateSave() {
 		
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";save");	
+		
+		return operations;
+	}
+	
+	private LinkedList<String> populateDeadline() {
+		
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";by");
+		operations.add(";on");
+		operations.add(";when");
 		
 		return operations;
 	}

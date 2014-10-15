@@ -63,6 +63,7 @@ public class Main {
 		//Task Stubs for Storage
 		LinkedList<Task> taskList = new LinkedList<Task>();
 		LinkedList<Task> taskListStored = new LinkedList<Task>();
+		/*
 		Task task1 = new Task("task1","to love Remembra 1","lala",211014);
 		Task task2 = new Task("task2","to love Remembra 2","lala",211014);
 		Task task3 = new Task("task4","to love Remembra 1","lala",231014);
@@ -72,12 +73,13 @@ public class Main {
 		taskList.add(task2);
 		taskList.add(task3);
 		taskList.add(task4);
+		*/
 		
 		//Storage Creation (Only need to create once)
 		StorageMain storage = new StorageMain();
 		
 		//Storage Call
-		storage.storeObject(taskList);
+		//storage.storeObject(taskList);
 		//storage.retrieveObject(taskListStored);	
 		
 		
