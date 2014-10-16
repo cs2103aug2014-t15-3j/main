@@ -24,14 +24,8 @@ public class StorageTask extends StorageBase{
 	@Override
 	void storeObject(Object obj){
 		
-		try {
-			
-			this.serializeObject(STORAGE_TASK_FILENAME, obj);
+		this.serializeObject(STORAGE_TASK_FILENAME, obj);
 		
-		} catch (ClassNotFoundException | IOException e) {
-		
-			e.printStackTrace();
-		}
 		
 	}
 	

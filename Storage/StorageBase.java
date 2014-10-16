@@ -50,8 +50,12 @@ public abstract class StorageBase{
 				// TODO Auto-generated catch block
 				//e.printStackTrace(); // not sure if should have
 				
-				//
-				System.out.println("File not found!");
+				//MUST INTERACT WITH USER - RETURN STRING
+				System.out.println("File not found! from serializeObject()"); 
+				// user can create file is file not found 
+				//can offer to create a file with the name 
+				// change behaiviour for user, expect certain bahaivour from user
+				
 			}
 			
 			//throws IOException, ClassNotFoundException
