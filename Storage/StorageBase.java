@@ -4,6 +4,7 @@
  */
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,14 +39,37 @@ public abstract class StorageBase{
 		
 	}
 	
-	void serializeObject (String filename, Object obj)throws IOException, ClassNotFoundException {
+	void serializeObject (String filename, Object obj) {
 		
-		fileOut = new FileOutputStream(filename+".ser");
-		objectOut = new ObjectOutputStream(fileOut);
+			try {
+				
+				fileOut = new FileOutputStream(filename+".ser");
+				
+			} catch (FileNotFoundException e) {
+				
+				// TODO Auto-generated catch block
+				//e.printStackTrace(); // not sure if should have
+				
+				//
+				System.out.println("File not found!");
+			}
+			
+			//throws IOException, ClassNotFoundException
 		
-		objectOut.writeObject(obj);
-		objectOut.close();
-		fileOut.close();		
+		try {
+			
+			objectOut = new ObjectOutputStream(fileOut);
+			objectOut.writeObject(obj);
+			objectOut.close();
+			fileOut.close();
+			
+		} catch (IOException e) {
+			
+			//e.printStackTrace(); // not sure if should have
+			System.out.println("Something wrong with IO in serializeObject()");
+		}
+		
+				
 	}
 	
 	Object deSerializeObject (String filename, Object obj)throws IOException, ClassNotFoundException {
