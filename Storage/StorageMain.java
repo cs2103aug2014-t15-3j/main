@@ -43,6 +43,13 @@ public class StorageMain {
 		labelStorage = new StorageLabel();
 	}
 	
+	public static enum OBJ_TYPES {
+		
+		TYPE_TASK,
+		TYPE_LABEL
+		
+	}
+	
 	String storeObject(Object obj){
 		
 		//Still looking into generic classes instance compares
@@ -60,18 +67,21 @@ public class StorageMain {
 		
 	}
 	
-	Object retrieveObject(Object obj){
+	Object retrieveObject(OBJ_TYPES objType){
 		
-		//Still looking into generic classes instance compares
-		if(obj instanceof LinkedList<?>){
-			
-			return taskStorage.retrieveStoredTasks();		
+		switch (objType) {
 		
-		}else{
-			
-			System.out.print(FORMAT_NOT_SUPPORTED);
-			
-			return FORMAT_NOT_SUPPORTED;
+			case TYPE_TASK:
+				
+				return taskStorage.retrieveStoredTasks();	
+				
+			case TYPE_LABEL:
+				
+				return labelStorage.retrieveStoredLabels();
+				
+			default:
+				
+				return null;
 		}
 		
 	}

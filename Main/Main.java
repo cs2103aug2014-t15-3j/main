@@ -49,6 +49,8 @@ public class Main {
 	static StorageMain storage;
 	static GuiMain gui;
 	
+	@SuppressWarnings("unchecked") // To suppress the object type cast from LinkedList<?> to LinkedList<OBJTYPE>
+	
 	public static void main(String[] args) {
 		
 		System.out.println("Starting Remembra...");
@@ -60,6 +62,10 @@ public class Main {
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
 		/******************************* STORAGE TEST **********************************************/	
 		
+		//Storage Creation (Only need to create once)
+		StorageMain storage = new StorageMain();
+		
+		/*
 		//Task Stubs for Storage
 		LinkedList<Task> taskList = new LinkedList<Task>();
 		LinkedList<Task> taskListStored = new LinkedList<Task>();
@@ -75,8 +81,7 @@ public class Main {
 		taskList.add(task4);
 		
 		
-		//Storage Creation (Only need to create once)
-		StorageMain storage = new StorageMain();
+
 		
 		//Storage Call
 		storage.storeObject(taskList);
@@ -102,12 +107,13 @@ public class Main {
 			System.out.println(t.getName());
 		}
 		
+		*/
 		
 		//Test for Label Storage
 		LinkedList<Label> labels = new LinkedList<Label>();
 		
 		Label label1 = new Label("label1");
-		Label label2 = new Label("label2");
+		Label label2 = new Label("label5");
 		Label label3 = new Label("label3");
 		
 		labels.add(label1);
@@ -118,7 +124,7 @@ public class Main {
 		
 		LinkedList<Label> rtvLabel = new LinkedList<Label>();
 		
-		rtvLabel = storage.labelStorage.retrieveStoredLabels();
+		rtvLabel = (LinkedList<Label>) storage.retrieveObject(StorageMain.OBJ_TYPES.TYPE_LABEL);
 		
 		System.out.println("I came here");
 		
