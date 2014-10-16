@@ -25,8 +25,7 @@ public class StorageTask extends StorageBase{
 	void storeObject(Object obj){
 		
 		this.serializeObject(STORAGE_TASK_FILENAME, obj);
-		
-		
+	
 	}
 	
 	
@@ -64,7 +63,7 @@ public class StorageTask extends StorageBase{
 		return retrieveObject();
 	}
 	
-public LinkedList<Task> retrieveStoredTasks(long queryDate){
+	public LinkedList<Task> retrieveStoredTasks(long queryDate){
 		
 		LinkedList<Task> storedTasks = retrieveObject();
 		LinkedList<Task> queryTasks = new LinkedList<Task>();

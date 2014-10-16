@@ -13,12 +13,15 @@
 /*********************************************************************/
 /*********************************************************************/
 
-public class Label {
+public class Label implements java.io.Serializable {
+	
+
 	
 	//Class variables
 	private String name;
 	private String color;
 	private long timeStamp;
+	//private static final long serialVersionUID = 7286818833738055728L; //Have to re-generate one after everything settled so i comment out first
 	
 	//Constructor (When specified with label's name only)
 	public Label(String name) {

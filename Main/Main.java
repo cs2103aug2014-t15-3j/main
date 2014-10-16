@@ -53,8 +53,8 @@ public class Main {
 		
 		System.out.println("Starting Remembra...");
 		
-		gui = new GuiMain();
-		gui.launch();
+		//gui = new GuiMain();
+		//gui.launch();
 		
 				
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
@@ -63,7 +63,7 @@ public class Main {
 		//Task Stubs for Storage
 		LinkedList<Task> taskList = new LinkedList<Task>();
 		LinkedList<Task> taskListStored = new LinkedList<Task>();
-		/*
+		
 		Task task1 = new Task("task1","to love Remembra 1","lala",211014);
 		Task task2 = new Task("task2","to love Remembra 2","lala",211014);
 		Task task3 = new Task("task4","to love Remembra 1","lala",231014);
@@ -73,13 +73,13 @@ public class Main {
 		taskList.add(task2);
 		taskList.add(task3);
 		taskList.add(task4);
-		*/
+		
 		
 		//Storage Creation (Only need to create once)
 		StorageMain storage = new StorageMain();
 		
 		//Storage Call
-		//storage.storeObject(taskList);
+		storage.storeObject(taskList);
 		//storage.retrieveObject(taskListStored);	
 		
 		
@@ -102,6 +102,31 @@ public class Main {
 			System.out.println(t.getName());
 		}
 		
+		
+		//Test for Label Storage
+		LinkedList<Label> labels = new LinkedList<Label>();
+		
+		Label label1 = new Label("label1");
+		Label label2 = new Label("label2");
+		Label label3 = new Label("label3");
+		
+		labels.add(label1);
+		labels.add(label2);
+		labels.add(label3);
+		
+		storage.labelStorage.storeObject(labels);
+		
+		LinkedList<Label> rtvLabel = new LinkedList<Label>();
+		
+		rtvLabel = storage.labelStorage.retrieveStoredLabels();
+		
+		System.out.println("I came here");
+		
+		for(Label ll: rtvLabel){
+			System.out.println(ll.getName());
+		}
+		
+		System.out.println("I came here");
 		
 		/******************************* STORAGE TEST **********************************************/
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/

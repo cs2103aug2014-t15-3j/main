@@ -33,11 +33,14 @@ public class StorageMain {
 	private static final String OBJECT_STORED = "Object Stored";
 	private static final String OBJECT_RETRIEVED = "Object Retrieved";
 	
+	
 	StorageTask taskStorage;
+	StorageLabel labelStorage;
 	
 	StorageMain(){
 		
 		taskStorage = new StorageTask();
+		labelStorage = new StorageLabel();
 	}
 	
 	String storeObject(Object obj){
@@ -47,8 +50,8 @@ public class StorageMain {
 			
 			taskStorage.storeObject(obj);
 			return OBJECT_STORED;		
-		}
-		else{
+		
+		}else{
 			
 			System.out.print(FORMAT_NOT_SUPPORTED);
 			

@@ -20,7 +20,11 @@ import java.util.Date;
 
 public class Task implements java.io.Serializable {
 	
+
+	
+
 	private final static String TO_DO_LABEL = "To-Do";
+	//private static final long serialVersionUID = 9034394309833086586L; //Generated for object serializing, generate one after the whole thing is finalized
 	
 	private String name;
 	private String description;
