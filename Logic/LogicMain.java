@@ -26,6 +26,7 @@ public class LogicMain {
 
 	// Data structures
 	private static LinkedList<Task> bufferList = new LinkedList<Task>();
+	private static LinkedList<Task> tempList = new LinkedList<Task>();
 	private LinkedList<LogicInputPair> inputList;
 	private String[] inputArray;
 
@@ -56,7 +57,8 @@ public class LogicMain {
 
 			return postView();
 		} else if (Operations.findOperations.contains(mainOperation)) {
-
+			
+			tempList = new LinkedList<Task>( postFind() );
 			return postFind();
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
 
@@ -277,8 +279,16 @@ public class LogicMain {
 		}
 
 		if (deleteID < bufferList.size()) {
-			Task deleteTask = bufferList.get(deleteID);
-			bufferList.remove(deleteID);
+			Task deleteTask;
+			
+			if (!tempList.isEmpty()) {
+				deleteTask = tempList.get(deleteID);
+				tempList = new LinkedList<Task>();
+			} else {
+				deleteTask = bufferList.get(deleteID);
+			}
+			
+			bufferList.remove(deleteTask);
 
 			logger.log(Level.INFO, "Task deleted");
 			return deleteTask;
@@ -355,7 +365,13 @@ public class LogicMain {
 			}
 		}
 
-		Task editTask = bufferList.get(editID);
+		Task editTask;
+		if (!tempList.isEmpty()) {
+			editTask = tempList.get(editID);
+			tempList = new LinkedList<Task>();
+		} else {
+			editTask = bufferList.get(editID);
+		}
 
 		if (nameEdited) {
 			editTask.editName(name);
