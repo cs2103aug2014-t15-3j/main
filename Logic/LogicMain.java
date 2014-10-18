@@ -55,6 +55,9 @@ public class LogicMain {
 		} else if (Operations.viewOperations.contains(mainOperation)) {
 
 			return postView();
+		} else if (Operations.findOperations.contains(mainOperation)) {
+
+			return postFind();
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
 
 			return postDelete();
@@ -496,6 +499,41 @@ public class LogicMain {
 		returningTasks.set(0, returnTask);
 		
 		return returningTasks;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Process post-view operation to return to GUI
+	 * 
+	 * @return	List containing all the tasks
+	 * 			(First task will have the "view" state)
+	 */
+	private LinkedList<Task> postFind() {
+		
+		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		String keyword = inputList.get(0).getContent();
+		keyword = keyword.toLowerCase();
+		
+		Task returnTask;
+
+		for (int i = 0; i < bufferList.size(); i++) {
+
+			Task tempTask = bufferList.get(i);
+			if (tempTask.contains(keyword)) {
+				tempTask.editState(Operations.FIND_OPERATION);
+				returningTasks.add(tempTask);
+			}
+		}
+
+		if (returningTasks.isEmpty()) {
+
+			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returnTask.editState(Operations.FIND_OPERATION);
+			returningTasks.add(returnTask);
+		}
+		
+		return returningTasks;
+
 	}
 	
 	//@author A0111942N

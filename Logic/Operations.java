@@ -9,6 +9,7 @@ public class Operations {
 	protected final static String ADD_OPERATION = "add";
 	protected final static String EDIT_OPERATION = "edit";
 	protected final static String VIEW_OPERATION = "view";
+	protected final static String FIND_OPERATION = "find";
 	protected final static String DELETE_OPERATION = "delete";
 	protected final static String SAVE_OPERATION = "save";
 	protected final static String EMPTY_MESSAGE = "<empty>";
@@ -19,6 +20,7 @@ public class Operations {
 	protected static LinkedList<String> addOperations;
 	protected static LinkedList<String> editOperations;
 	protected static LinkedList<String> viewOperations;
+	protected static LinkedList<String> findOperations;
 	protected static LinkedList<String> deleteOperations;
 	protected static LinkedList<String> saveOperations;
 	protected static LinkedList<String> nameOperations;
@@ -39,6 +41,7 @@ public class Operations {
 			addOperations = populateAdd();
 			editOperations = populateEdit();
 			viewOperations = populateView();
+			findOperations = populateFind();
 			deleteOperations = populateDelete();
 			saveOperations = populateSave();
 			nameOperations = populateName();
@@ -127,6 +130,22 @@ public class Operations {
 		operations.add(";v");
 		operations.add(";display");
 		operations.add(";");	
+
+		return operations;
+	}
+
+	//@author A0111942N
+	/**
+	 * Populate find list with its keywords
+	 *
+	 * @return List of find keywords
+	 */
+	private LinkedList<String> populateFind() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";find");
+		operations.add(";search");
+		operations.add(";look");	
 
 		return operations;
 	}
