@@ -112,7 +112,7 @@ public class Main {
 		//Test for Label Storage
 		LinkedList<Label> labels = new LinkedList<Label>();
 		
-		Label label1 = new Label("label1");
+		Label label1 = new Label("label2");
 		Label label2 = new Label("label5");
 		Label label3 = new Label("label3");
 		
@@ -120,7 +120,7 @@ public class Main {
 		labels.add(label2);
 		labels.add(label3);
 		
-		storage.labelStorage.storeObject(labels);
+		storage.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL, labels);
 		
 		LinkedList<Label> rtvLabel = new LinkedList<Label>();
 		

@@ -110,7 +110,7 @@ public class LogicMain {
 			operations = new Operations();
 			storageMain = new StorageMain();
 
-			Object retrievedObject = storageMain.retrieveObject(bufferList);
+			Object retrievedObject = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK); //candiie:changes
 
 			if( retrievedObject instanceof LinkedList<?> ) {
 				bufferList = (LinkedList<Task>) retrievedObject;
@@ -348,7 +348,7 @@ public class LogicMain {
 	//into a text file.
 	private boolean commitToStorage() {
 
-		storageMain.storeObject(bufferList);
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferList); //candiie:changes
 		return true;
 	}
 
