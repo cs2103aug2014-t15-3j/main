@@ -1,12 +1,9 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 //@author A0111942N
 
 public class Task implements java.io.Serializable, Comparable<Task> {
-
 
 	private final static String TO_DO_LABEL = "To-Do";
 
@@ -156,6 +153,17 @@ public class Task implements java.io.Serializable, Comparable<Task> {
 			return 1;
 		} else {
 			return -1;
+		}
+	}
+	
+	public boolean contains(String keyword) {
+		
+		if ( name.toLowerCase().contains(keyword) ) {
+			return true;
+		} else if ( description.toLowerCase().contains(keyword) ) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
