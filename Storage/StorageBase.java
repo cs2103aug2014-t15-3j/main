@@ -100,12 +100,12 @@ public abstract class StorageBase{
 	 * @param filename - name of the file to be created i.e testfile.ser
 	 * 
 	 */
-	Object deSerializeObject (String filename, Object obj)throws IOException, ClassNotFoundException {
+	Object deSerializeObject (String filename)throws IOException, ClassNotFoundException {
 		
 		fileIn = new FileInputStream(filename+".ser");
 		objectIn = new ObjectInputStream(fileIn);
 		
-		obj = (Object) objectIn.readObject();
+		Object obj = (Object) objectIn.readObject();
 		
 		objectIn.close();
 		fileIn.close();

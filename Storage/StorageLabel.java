@@ -60,7 +60,7 @@ public class StorageLabel extends StorageBase{
 	
 		try {
 			
-			storedLabels = (LinkedList<Label>) deSerializeObject(STORAGE_LABEL_FILENAME, storedLabels);
+			storedLabels = (LinkedList<Label>) deSerializeObject(STORAGE_LABEL_FILENAME);
 		
 		} catch (ClassNotFoundException e) {
 		
