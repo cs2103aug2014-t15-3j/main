@@ -94,7 +94,7 @@ public class LogicMain {
 	 * Retrieve tasks from Storage
 	 */
 	private void retrieveTasks() {
-		Object retrievedObject = storageMain.retrieveObject(bufferList);
+		Object retrievedObject = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 
 		if (retrievedObject instanceof LinkedList<?>) {
 			bufferList = (LinkedList<Task>) retrievedObject;
@@ -386,7 +386,7 @@ public class LogicMain {
 	 */
 	private void commitToStorage() {
 
-		storageMain.storeObject(bufferList);
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferList);
 	}
 	
 	

@@ -1,6 +1,6 @@
 //@author A0111942N
 
-public class Label {
+public class Label implements java.io.Serializable{
 
 	// Class variables
 	private String name;

@@ -1,5 +1,7 @@
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 
 
@@ -26,6 +28,13 @@ public class StorageLabel extends StorageBase{
 	
 	@Override
 	void storeObject(Object obj){
+
+		//List<Label> storedLabels = new LinkedList<Label>();
+		
+		//storedLabels = (LinkedList<Label>) obj;
+		//Collections.sort(storedLabels);
+		
+		
 		this.serializeObject(STORAGE_LABEL_FILENAME,obj);
 	}
 	
