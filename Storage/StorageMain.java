@@ -1,8 +1,4 @@
-/**
- * @author Bay Chuan Wei Candiie
- *
- */
-
+//@author A0112898U
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,21 +25,24 @@ import java.util.List;
 
 public class StorageMain {
 	
+	//Constants
 	public static final String FORMAT_NOT_SUPPORTED = "format currently not supported :D please wait for the next version";
 	public static final String TASKS_STORED = "Tasks Stored";
 	public static final String LABELS_STORED = "Labels Stored";
 	public static final String OBJECT_RETRIEVED = "Object Retrieved";
 	
 	
+	
+	//Storage Objects
 	StorageTask taskStorage;
 	StorageLabel labelStorage;
 	
-	StorageMain(){
-		
-		taskStorage = new StorageTask();
-		labelStorage = new StorageLabel();
-	}
-	
+
+	//@author A0112898U
+	/**
+	 * Enum for retrival and storing methods 
+	 * 
+	 */
 	public static enum OBJ_TYPES {
 		
 		TYPE_TASK,
@@ -51,6 +50,29 @@ public class StorageMain {
 		
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * StorageMain's constructor, initiates storage object types
+	 * 
+	 */
+	StorageMain(){
+		
+		taskStorage = new StorageTask();
+		labelStorage = new StorageLabel();
+	}
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * methodCall - storeObject() for storing object into the storage
+	 * 
+	 * @param objType - the type of object that is to be stored 
+	 * @param obj - object to be stored into the storage
+	 * 
+	 */
 	String storeObject(OBJ_TYPES objType, Object obj){
 		
 		switch (objType) {
@@ -76,6 +98,15 @@ public class StorageMain {
 		}
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * methodCall - retrieveObject() for stored object from the storage
+	 * 
+	 * @param objType - the type of object that is to be retrieved 
+	 *  
+	 */
 	Object retrieveObject(OBJ_TYPES objType){
 		
 		switch (objType) {
@@ -96,6 +127,19 @@ public class StorageMain {
 	}
 	
 	
+	
+	//@author A0112898U
+	/**
+	 * methodCall - searchTask() for searching task by Date or by Label
+	 * 
+	 * @param byDate - indicate true if is retrieving task via dates 
+	 * @param byLabel - indicate true if is retrieving task via labels
+	 * @param queryParams - the date or label queried
+	 * 
+	 * @return the list of task/label with accordance to the query parameter
+	 * 		   i.e. if queried for "test" labeled task, a linkedlist of task
+	 * 		   that is labeled under "test" will be included in the linkedlist
+	 */
 	LinkedList<Task> searchTask(boolean byDate, boolean byLabel, String... queryParams){
 		
 		if(byDate){

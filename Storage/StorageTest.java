@@ -1,7 +1,6 @@
-/**
- * @author Bay Chuan Wei Candiie
- *
- */
+
+//@author A0112898
+
 import java.io.IOException;
 
 import java.util.List;

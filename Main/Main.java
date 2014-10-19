@@ -24,7 +24,7 @@ import java.util.LinkedList;
 	   every few seconds thus, it is best to commit when 'for example' there's a major change 
 	   to your code where it will affect the other person's code etc.
 	
-	4. When you really need to edit someone else's code, whether it is minor or
+	4. When you really need to edit someone else's code, whether it is minor o
 	   not, do inform them first (as explained in the tutorial).
 	   Also if you change a certain code i.e. code name and it has been called by the other person, make
 	   sure to change the error for them don't leave the errors hanging! As mention in 1. NO ERRORS when

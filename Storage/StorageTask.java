@@ -1,3 +1,5 @@
+//@author A0112898U
+
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -18,9 +20,19 @@ import java.util.LinkedList;
 
 public class StorageTask extends StorageBase{
 	
+	//Constants
 	private static final String STORAGE_TASK_FILENAME = "StorageTask";
 	
 	
+	
+	//@author A0112898U
+	/**
+	 * overrides base class storeObject() to implement
+	 * calls a must method from the super class - serializeObject for the object store
+	 * 
+	 * @param obj - object to be stored into the storage
+	 * 
+	 */
 	@Override
 	void storeObject(Object obj){
 		
@@ -29,6 +41,15 @@ public class StorageTask extends StorageBase{
 	}
 	
 	
+	
+	//@author A0112898U
+	/**
+	 * overrides base class protected method retrieveObject() to implement
+	 * calls a method from the super class - deSerializeObject for the object retrieval
+	 * 
+	 * @return LinkedList with all the Stored Task from the storage
+	 * 
+	 */
 	@Override
 	protected LinkedList<Task> retrieveObject(){
 		
@@ -58,11 +79,35 @@ public class StorageTask extends StorageBase{
 		return storedTasks;
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * public method retrieveStoredTasks() 
+	 * for outside call to retrieve 'ALL' Stored Task from the storage
+	 * 
+	 * @return LinkedList with all the Stored Task from the storage
+	 * 
+	 */
 	public LinkedList<Task> retrieveStoredTasks(){
 		
 		return retrieveObject();
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * public overloaded method retrieveStoredTasks() 
+	 * for outside call to retrieve Stored Task specified by the 
+	 * queried date input from the storage
+	 * 
+	 * @param queryDate 'retrieval date' of tasks to be queried
+	 * 
+	 * @return queryTasks returns a LinkedList with all task categorized with the 
+	 * same date as the queried date
+	 * 
+	 */
 	public LinkedList<Task> retrieveStoredTasks(long queryDate){
 		
 		LinkedList<Task> storedTasks = retrieveObject();
@@ -78,6 +123,21 @@ public class StorageTask extends StorageBase{
 		return queryTasks;
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * public overloaded method retrieveStoredTasks() 
+	 * for outside call to retrieve Stored Task specified by the 
+	 * queried Label input from the storage
+	 * 
+	 * @param queryLabel specifies the 'query label' that the tasks 
+	 * are labeled under that user want to retrieve by
+	 * 
+	 * @return queryTasks returns a LinkedList with all task categorized under the 
+	 * same label
+	 * 
+	 */
 	public LinkedList<Task> retrieveStoredTasks(String queryLabel){
 		
 		LinkedList<Task> storedTasks = retrieveObject();
