@@ -29,46 +29,68 @@ import java.util.List;
 
 public class StorageMain {
 	
-	private static final String FORMAT_NOT_SUPPORTED = "format currently not supported :D please wait for the next version";
-	private static final String OBJECT_STORED = "Object Stored";
-	private static final String OBJECT_RETRIEVED = "Object Retrieved";
+	public static final String FORMAT_NOT_SUPPORTED = "format currently not supported :D please wait for the next version";
+	public static final String TASKS_STORED = "Tasks Stored";
+	public static final String LABELS_STORED = "Labels Stored";
+	public static final String OBJECT_RETRIEVED = "Object Retrieved";
+	
 	
 	StorageTask taskStorage;
+	StorageLabel labelStorage;
 	
 	StorageMain(){
 		
 		taskStorage = new StorageTask();
+		labelStorage = new StorageLabel();
 	}
 	
-	String storeObject(Object obj){
+	public static enum OBJ_TYPES {
 		
-		//Still looking into generic classes instance compares
-		if(obj instanceof LinkedList<?>){
-			
-			taskStorage.storeObject(obj);
-			return OBJECT_STORED;		
-		}
-		else{
-			
-			System.out.print(FORMAT_NOT_SUPPORTED);
-			
-			return FORMAT_NOT_SUPPORTED;
-		}
+		TYPE_TASK,
+		TYPE_LABEL
 		
 	}
 	
-	Object retrieveObject(Object obj){
+	String storeObject(OBJ_TYPES objType, Object obj){
 		
-		//Still looking into generic classes instance compares
-		if(obj instanceof LinkedList<?>){
-			
-			return taskStorage.retrieveStoredTasks();		
+		switch (objType) {
 		
-		}else{
-			
-			System.out.print(FORMAT_NOT_SUPPORTED);
-			
-			return FORMAT_NOT_SUPPORTED;
+			case TYPE_TASK:
+				
+				taskStorage.storeObject(obj);
+				
+				return TASKS_STORED;	
+				
+			case TYPE_LABEL:
+				
+				labelStorage.storeObject(obj);
+				
+				return LABELS_STORED;
+				
+			default:
+				
+				System.out.print(FORMAT_NOT_SUPPORTED);
+	
+				return FORMAT_NOT_SUPPORTED;
+		
+		}
+	}
+	
+	Object retrieveObject(OBJ_TYPES objType){
+		
+		switch (objType) {
+		
+			case TYPE_TASK:
+				
+				return taskStorage.retrieveStoredTasks();	
+				
+			case TYPE_LABEL:
+				
+				return labelStorage.retrieveStoredLabels();
+				
+			default:
+				
+				return null;
 		}
 		
 	}

@@ -52,6 +52,7 @@ public class GuiDisplay {
 				break;
 
 			case Operations.VIEW_OPERATION:
+			case Operations.FIND_OPERATION:
 				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 					for(int i=0; i<tasks.size(); i++) {
 						Task tempTask = tasks.get(i);

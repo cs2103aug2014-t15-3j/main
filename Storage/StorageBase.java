@@ -1,5 +1,5 @@
 /**
- * @author Bay Chuan Wei Candiie
+ * //@author A0112898U
  *
  */
 
@@ -34,6 +34,8 @@ public abstract class StorageBase{
 	ObjectOutputStream objectOut;
 	ObjectInputStream objectIn;
 
+	abstract void storeObject(Object obj);
+	abstract protected Object retrieveObject();
 	
 	void destructStorageBase(){
 		
@@ -88,7 +90,4 @@ public abstract class StorageBase{
 		
 		return obj;
 	}
-	
-	abstract void storeObject(Object obj);
-	abstract protected Object retrieveObject();
 }
