@@ -55,8 +55,8 @@ public class Main {
 		
 		System.out.println("Starting Remembra...");
 		
-		//gui = new GuiMain();
-		//gui.launch();
+		gui = new GuiMain();
+		gui.launch();
 		
 				
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
