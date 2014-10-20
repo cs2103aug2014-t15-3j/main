@@ -28,12 +28,12 @@ public class GuiDisplay {
 
 	static void display(String inputStr) {
 		LogicMain logic = new LogicMain();
-		LinkedList<Task> tasks = logic.processInput(inputStr);
+		LinkedList<Item> tasks = logic.processInput(inputStr);
 		
 		assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
 		if(!tasks.isEmpty()) {
 
-			Task firstTask = tasks.get(0);
+			Item firstTask = tasks.get(0);
 			String state = firstTask.getState();
 
 			switch (state){
@@ -55,7 +55,7 @@ public class GuiDisplay {
 			case Operations.FIND_OPERATION:
 				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 					for(int i=0; i<tasks.size(); i++) {
-						Task tempTask = tasks.get(i);
+						Item tempTask = tasks.get(i);
 						GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
 								i + ".\n" + tempTask);
 					}

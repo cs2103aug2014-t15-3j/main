@@ -5,14 +5,25 @@ import java.util.LinkedList;
 public class Operations {
 
 	// Constant Variables
+	protected final static String EMPTY_MESSAGE = "<empty>";
 	protected final static String OPERATION = ";";
+	
+	// Constant Variables for Task related operations
 	protected final static String ADD_OPERATION = "add";
 	protected final static String EDIT_OPERATION = "edit";
 	protected final static String VIEW_OPERATION = "view";
 	protected final static String FIND_OPERATION = "find";
 	protected final static String DELETE_OPERATION = "delete";
 	protected final static String SAVE_OPERATION = "save";
-	protected final static String EMPTY_MESSAGE = "<empty>";
+	
+	// Constant Variables for Label related operations
+	protected final static String LABEL_OPERATION = ";label";
+	protected final static String ADD_LABEL_OPERATION = "add_label";
+	protected final static String EDIT_LABEL_OPERATION = "edit_label";
+	protected final static String VIEW_LABEL_OPERATION = "view_label";
+	protected final static String DELETE_LABEL_OPERATION = "delete_label";
+	
+	// Constant variable for date formating
 	protected final static String DATE_INPUT_FORMAT = "d/M/yyyy h:m a";
 	protected final static String DATE_OUTPUT_FORMAT = "d MMMM yyyy h:mm a";
 

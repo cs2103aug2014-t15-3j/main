@@ -26,7 +26,7 @@ public class LogicMain {
 
 	// Data structures
 	private static LinkedList<Task> bufferList = new LinkedList<Task>();
-	private static LinkedList<Task> tempList = new LinkedList<Task>();
+	private static LinkedList<Item> tempList = new LinkedList<Item>();
 	private LinkedList<LogicInputPair> inputList;
 	private String[] inputArray;
 
@@ -40,7 +40,7 @@ public class LogicMain {
 	//@author A0111942N
 	// API: This method will process the user's input and perform either
 	// add, edit, view, delete or save based on the input.
-	public LinkedList<Task> processInput(String input) {
+	public LinkedList<Item> processInput(String input) {
 
 		input = cleanUpInput(input);
 		preProcessInput(input);
@@ -58,7 +58,7 @@ public class LogicMain {
 			return postView();
 		} else if (Operations.findOperations.contains(mainOperation)) {
 			
-			tempList = new LinkedList<Task>( postFind() );
+			tempList = new LinkedList<Item>( postFind() );
 			return postFind();
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
 
@@ -68,7 +68,7 @@ public class LogicMain {
 			return postSave();
 		} else {
 
-			return new LinkedList<Task>();
+			return new LinkedList<Item>();
 		}
 	}
 	
@@ -282,8 +282,8 @@ public class LogicMain {
 			Task deleteTask;
 			
 			if (!tempList.isEmpty()) {
-				deleteTask = tempList.get(deleteID);
-				tempList = new LinkedList<Task>();
+				deleteTask = (Task) tempList.get(deleteID);
+				tempList = new LinkedList<Item>();
 			} else {
 				deleteTask = bufferList.get(deleteID);
 			}
@@ -367,8 +367,8 @@ public class LogicMain {
 
 		Task editTask;
 		if (!tempList.isEmpty()) {
-			editTask = tempList.get(editID);
-			tempList = new LinkedList<Task>();
+			editTask = (Task) tempList.get(editID);
+			tempList = new LinkedList<Item>();
 		} else {
 			editTask = bufferList.get(editID);
 		}
@@ -424,9 +424,9 @@ public class LogicMain {
 	 * @return	List containing the added task
 	 * 			with the "add" state
 	 */
-	private LinkedList<Task> postAdd() {
+	private LinkedList<Item> postAdd() {
 
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
 
 		Task addTask = executeAdd();
 
@@ -448,9 +448,10 @@ public class LogicMain {
 	 * @return	List containing the edited task
 	 * 			with the "edit" state
 	 */
-	private LinkedList<Task> postEdit() {
+	private LinkedList<Item> postEdit() {
 
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		
 		Task returnTask = new Task(executeEdit());
 		returnTask.editState(Operations.EDIT_OPERATION);
 		returningTasks.add(returnTask);
@@ -467,9 +468,9 @@ public class LogicMain {
 	 * @return	List containing all the tasks
 	 * 			(First task will have the "view" state)
 	 */
-	private LinkedList<Task> postView() {
+	private LinkedList<Item> postView() {
 		
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		Task returnTask;
 		
 		LogicInputPair viewOperation = inputList.get(0);
@@ -477,7 +478,7 @@ public class LogicMain {
 		if (bufferList.size() != 0 && viewOperation.getContent() == "") {
 
 			Collections.sort(bufferList);
-			returningTasks = new LinkedList<Task>(bufferList);
+			returningTasks = new LinkedList<Item>(bufferList);
 
 		} else if (bufferList.size() != 0) {
 			
@@ -510,7 +511,7 @@ public class LogicMain {
 			
 		}
 		
-		returnTask = new Task(returningTasks.get(0));
+		returnTask = new Task( (Task) returningTasks.get(0));
 		returnTask.editState(Operations.VIEW_OPERATION);
 		returningTasks.set(0, returnTask);
 		
@@ -524,9 +525,9 @@ public class LogicMain {
 	 * @return	List containing all the tasks
 	 * 			(First task will have the "view" state)
 	 */
-	private LinkedList<Task> postFind() {
+	private LinkedList<Item> postFind() {
 		
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		String keyword = inputList.get(0).getContent();
 		keyword = keyword.toLowerCase();
 		
@@ -559,9 +560,9 @@ public class LogicMain {
 	 * @return	List containing the deleted task with
 	 * 			the "delete" state
 	 */
-	private LinkedList<Task> postDelete() {
+	private LinkedList<Item> postDelete() {
 
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		returningTasks.add(executeDelete());
 
 		logger.log(Level.INFO, "Delete operation completed");
@@ -576,11 +577,11 @@ public class LogicMain {
 	 * @return	List containing an empty task
 	 * 			with the "save" state
 	 */
-	private LinkedList<Task> postSave() {
+	private LinkedList<Item> postSave() {
 
-		LinkedList<Task> returningTasks = new LinkedList<Task>();
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		commitToStorage();
-		returningTasks = new LinkedList<Task>();
+		returningTasks = new LinkedList<Item>();
 		Task saveTask = new Task(Operations.EMPTY_MESSAGE);
 		saveTask.editState(Operations.SAVE_OPERATION);
 		returningTasks.add(saveTask);
