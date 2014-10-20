@@ -120,35 +120,4 @@ public class StorageMain {
 				return null;
 		}
 	}
-	
-	
-	//@author A0112898U
-	/**
-	 * methodCall - searchTask() for searching task by Date or by Label
-	 * 
-	 * @param byDate - indicate true if is retrieving task via dates 
-	 * @param byLabel - indicate true if is retrieving task via labels
-	 * @param queryParams - the date or label queried
-	 * 
-	 * @return the list of task/label with accordance to the query parameter
-	 * 		   i.e. if queried for "test" labeled task, a linkedlist of task
-	 * 		   that is labeled under "test" will be included in the linkedlist
-	 */
-	/*
-	LinkedList<Task> searchTask(boolean byDate, boolean byLabel, String... queryParams){
-		
-		if(byDate){
-			
-			return taskStorage.retrieveStoredTasks(Long.parseLong(queryParams[0]));			
-		
-		}else if(byLabel){
-		
-			return taskStorage.retrieveStoredTasks(queryParams[0]);
-		
-		}
-		
-		return null;
-
-	}
-	*/
 }
