@@ -24,6 +24,9 @@ public class StorageTask extends StorageBase{
 	private static final String STORAGE_TASK_FILENAME = "StorageTask";
 	
 	
+	StorageTask(){
+		createNewFile(STORAGE_TASK_FILENAME);
+	}
 	
 	//@author A0112898U
 	/**

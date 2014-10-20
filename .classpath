@@ -7,6 +7,6 @@
 	<classpathentry kind="src" path="Objects"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="C:/Users/SLYJ91/Desktop/eclipse/CS2103/main/seaglasslookandfeel-0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xelisk/Documents/GitHub/main/seaglasslookandfeel-0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

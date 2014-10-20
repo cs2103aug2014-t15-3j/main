@@ -1,5 +1,6 @@
 //@author A0112898U
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -102,32 +103,93 @@ public abstract class StorageBase{
 	 */
 	Object deSerializeObject (String filename){
 		
-		Object obj = null;
+		Object obj = null;	
+		
+		//returns a null immediately if file is empty
+		if(isEmptyFile(filename)){
+			
+			return null;
+			
+		}
 		
 		try {
 			
-			fileIn = new FileInputStream(filename+".ser");
+			fileIn = new FileInputStream(filename+".ser");			
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
 			fileIn.close();
 			
-		} catch (FileNotFoundException e) {
+		}catch (FileNotFoundException e) {
 			
-			// TODO Auto-generated catch block
+			System.out.println("File not Found ...");
 			e.printStackTrace();
-		
+			
 		}catch (IOException e) {
-		
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
-		
+			
 		}catch (ClassNotFoundException e) {
 			
-			// TODO Auto-generated catch block
+			System.out.println("Class not found!");
 			e.printStackTrace();
 		}
 		
 		return obj;
+	}
+
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * Checks for empty file
+	 * 
+	 * @param filename - name of the file to be Checked
+	 * 
+	 * @return true if file is empty else false is returned
+	 * 
+	 */
+	private boolean isEmptyFile(String filename){
+		
+		File storageFile = new File(filename+".ser");
+				
+		if(storageFile.length() <= 0){
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * Creates a new file for storage purpose if file doesn't exist
+	 * 
+	 * @param filename - name of the file to be created i.e testfile.ser
+	 * 
+	 */
+	protected void createNewFile(String filename){
+		
+		File storageFile = new File(filename+".ser");
+		
+		if(!storageFile.exists()){
+		
+			try {
+				
+				System.out.println("File not Found ... Creating one now");
+				storageFile.createNewFile();
+				
+			} catch (IOException e) {
+				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Can't create file");
+				
+			}
+			
+		}
 	}
 }

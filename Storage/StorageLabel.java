@@ -30,6 +30,13 @@ public class StorageLabel extends StorageBase{
 
 	
 	
+	StorageLabel(){
+		createNewFile(STORAGE_LABEL_FILENAME);
+	}
+	
+	
+	
+	
 	//@author A0112898U
 	/**
 	 * overrides base class storeObject() to implement

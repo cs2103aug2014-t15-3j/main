@@ -110,6 +110,7 @@ public class Main {
 		*/
 		
 		//Test for Label Storage
+		/*
 		LinkedList<Label> labels = new LinkedList<Label>();
 		
 		Label label1 = new Label("label2");
@@ -133,6 +134,11 @@ public class Main {
 		}
 		
 		System.out.println("I came here");
+		*/
+		
+		//LinkedList<Label> rtvLabel = new LinkedList<Label>();
+		
+		//rtvLabel = (LinkedList<Label>) storage.retrieveObject(StorageMain.OBJ_TYPES.TYPE_LABEL);
 		
 		/******************************* STORAGE TEST **********************************************/
 		/******************** Chuan Wei's Test Cases DO NOT REMOVE :D ******************************/
