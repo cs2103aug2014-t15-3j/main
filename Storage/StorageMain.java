@@ -134,6 +134,7 @@ public class StorageMain {
 	 * 		   i.e. if queried for "test" labeled task, a linkedlist of task
 	 * 		   that is labeled under "test" will be included in the linkedlist
 	 */
+	/*
 	LinkedList<Task> searchTask(boolean byDate, boolean byLabel, String... queryParams){
 		
 		if(byDate){
@@ -149,4 +150,5 @@ public class StorageMain {
 		return null;
 
 	}
+	*/
 }
