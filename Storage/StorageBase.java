@@ -100,15 +100,33 @@ public abstract class StorageBase{
 	 * @param filename - name of the file to be created i.e testfile.ser
 	 * 
 	 */
-	Object deSerializeObject (String filename)throws IOException, ClassNotFoundException {
+	Object deSerializeObject (String filename){
 		
-		fileIn = new FileInputStream(filename+".ser");
-		objectIn = new ObjectInputStream(fileIn);
+		Object obj = null;
 		
-		Object obj = (Object) objectIn.readObject();
+		try {
+			
+			fileIn = new FileInputStream(filename+".ser");
+			objectIn = new ObjectInputStream(fileIn);
+			obj = (Object) objectIn.readObject();
+			objectIn.close();
+			fileIn.close();
+			
+		} catch (FileNotFoundException e) {
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		
-		objectIn.close();
-		fileIn.close();
+		}catch (IOException e) {
+		
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		
+		}catch (ClassNotFoundException e) {
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return obj;
 	}

@@ -65,16 +65,6 @@ public class StorageTask extends StorageBase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		/* FOR TESTING OBJECTS STORED*/
-		/*
-		for(Task task:storedTasks){
-			
-			System.out.println(task.getName());			
-			System.out.println(task.getDescription());	
-		}
-		*/
 
 		return storedTasks;
 	}

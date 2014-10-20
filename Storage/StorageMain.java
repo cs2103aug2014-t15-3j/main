@@ -32,7 +32,6 @@ public class StorageMain {
 	public static final String OBJECT_RETRIEVED = "Object Retrieved";
 	
 	
-	
 	//Storage Objects
 	StorageTask taskStorage;
 	StorageLabel labelStorage;
@@ -51,7 +50,6 @@ public class StorageMain {
 	}
 	
 	
-	
 	//@author A0112898U
 	/**
 	 * StorageMain's constructor, initiates storage object types
@@ -62,7 +60,6 @@ public class StorageMain {
 		taskStorage = new StorageTask();
 		labelStorage = new StorageLabel();
 	}
-	
 	
 	
 	//@author A0112898U
@@ -99,7 +96,6 @@ public class StorageMain {
 	}
 	
 	
-	
 	//@author A0112898U
 	/**
 	 * methodCall - retrieveObject() for stored object from the storage
@@ -109,7 +105,7 @@ public class StorageMain {
 	 */
 	Object retrieveObject(OBJ_TYPES objType){
 		
-		switch (objType) {
+		switch (objType){
 		
 			case TYPE_TASK:
 				
@@ -123,9 +119,7 @@ public class StorageMain {
 				
 				return null;
 		}
-		
 	}
-	
 	
 	
 	//@author A0112898U
