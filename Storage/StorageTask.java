@@ -56,15 +56,7 @@ public class StorageTask extends StorageBase{
 		LinkedList<Task> storedTasks = new LinkedList<Task>();
 		
 		
-		try {
-			
-			storedTasks = (LinkedList<Task>) deSerializeObject(STORAGE_TASK_FILENAME);
-		
-		} catch (ClassNotFoundException | IOException e) {
-		
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		storedTasks = (LinkedList<Task>) deSerializeObject(STORAGE_TASK_FILENAME);
 
 		return storedTasks;
 	}

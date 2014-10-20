@@ -58,24 +58,7 @@ public class StorageLabel extends StorageBase{
 		
 		LinkedList<Label> storedLabels = new LinkedList<Label>();
 	
-		try {
-			
-			storedLabels = (LinkedList<Label>) deSerializeObject(STORAGE_LABEL_FILENAME);
-		
-		} catch (ClassNotFoundException e) {
-		
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-			System.out.println("File doesn't exist");
-		
-		} catch (IOException e) {
-		
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-			System.out.println("File doesn't exist");
-		}
+		storedLabels = (LinkedList<Label>) deSerializeObject(STORAGE_LABEL_FILENAME);
 	
 		return storedLabels;
 	}
