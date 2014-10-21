@@ -6,6 +6,7 @@ public class Operations {
 
 	// Constant Variables
 	protected final static String EMPTY_MESSAGE = "<empty>";
+	protected final static String NOT_EMPTY_MESSAGE = "<occupied>";
 	protected final static String OPERATION = ";";
 	
 	// Constant Variables for Task related operations
@@ -13,6 +14,7 @@ public class Operations {
 	protected final static String EDIT_OPERATION = "edit";
 	protected final static String VIEW_OPERATION = "view";
 	protected final static String FIND_OPERATION = "find";
+	protected final static String UNDO_OPERATION = "undo";
 	protected final static String DELETE_OPERATION = "delete";
 	protected final static String SAVE_OPERATION = "save";
 	
@@ -32,6 +34,7 @@ public class Operations {
 	protected static LinkedList<String> editOperations;
 	protected static LinkedList<String> viewOperations;
 	protected static LinkedList<String> findOperations;
+	protected static LinkedList<String> undoOperations;
 	protected static LinkedList<String> deleteOperations;
 	protected static LinkedList<String> saveOperations;
 	protected static LinkedList<String> nameOperations;
@@ -53,6 +56,7 @@ public class Operations {
 			editOperations = populateEdit();
 			viewOperations = populateView();
 			findOperations = populateFind();
+			undoOperations = populateUndo();
 			deleteOperations = populateDelete();
 			saveOperations = populateSave();
 			nameOperations = populateName();
@@ -157,6 +161,21 @@ public class Operations {
 		operations.add(";find");
 		operations.add(";search");
 		operations.add(";look");	
+
+		return operations;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Populate undo list with its keywords
+	 *
+	 * @return List of undo keywords
+	 */
+	private LinkedList<String> populateUndo() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";undo");
+		operations.add(";back");
 
 		return operations;
 	}

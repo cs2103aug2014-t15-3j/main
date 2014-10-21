@@ -40,7 +40,8 @@ public class LogicMain {
 	private Operations operations;
 
 	// Data structures
-	private static LinkedList<Task> bufferList = new LinkedList<Task>();
+	private static LinkedList<Task> bufferTasksList = new LinkedList<Task>();
+	private static LinkedList<Task> undoTasks = new LinkedList<Task>();
 	private static LinkedList<Item> tempList = new LinkedList<Item>();
 	private LinkedList<LogicInputPair> inputList;
 	private String[] inputArray;
@@ -57,34 +58,40 @@ public class LogicMain {
 	// add, edit, view, delete or save based on the input.
 	public LinkedList<Item> processInput(String input) {
 
+		LinkedList<Item> returnTasks = new LinkedList<Item>();
+		
 		input = cleanUpInput(input);
 		preProcessInput(input);
 
 		String mainOperation = inputList.get(0).getOperation();
 
 		if (Operations.addOperations.contains(mainOperation)) {
-
-			return postAdd();
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = postAdd();
 		} else if (Operations.editOperations.contains(mainOperation)) {
-
-			return postEdit();
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = postEdit();
 		} else if (Operations.viewOperations.contains(mainOperation)) {
 
-			return postView();
+			returnTasks = postView();
 		} else if (Operations.findOperations.contains(mainOperation)) {
-			
-			tempList = new LinkedList<Item>( postFind() );
-			return postFind();
+
+			returnTasks = postFind();
+		} else if (Operations.undoOperations.contains(mainOperation)) {
+
+			returnTasks = postUndo();
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
-
-			return postDelete();
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = postDelete();
 		} else if (Operations.saveOperations.contains(mainOperation)) {
-
-			return postSave();
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = postSave();
 		} else {
 
-			return new LinkedList<Item>();
+			returnTasks = new LinkedList<Item>();
 		}
+		
+		return returnTasks;
 	}
 	
 	
@@ -100,6 +107,8 @@ public class LogicMain {
 			storageMain = new StorageMain();
 
 			retrieveTasks();
+			
+			undoTasks = new LinkedList<Task>(bufferTasksList);
 
 			isInitialize = true;
 
@@ -117,9 +126,9 @@ public class LogicMain {
 		Object retrievedObject = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 
 		if (retrievedObject instanceof LinkedList<?>) {
-			bufferList = (LinkedList<Task>) retrievedObject;
+			bufferTasksList = (LinkedList<Task>) retrievedObject;
 		} else {
-			bufferList = new LinkedList<Task>();
+			bufferTasksList = new LinkedList<Task>();
 			logger.log(Level.WARNING,
 					"Unable to retrieve tasks from storage");
 		}
@@ -231,7 +240,7 @@ public class LogicMain {
 
 		Task newTask = new Task(name, description);
 
-		bufferList.add(newTask);
+		bufferTasksList.add(newTask);
 		
 		if(deadline == -1) {
 			deadline = getEndOfToday();
@@ -239,7 +248,7 @@ public class LogicMain {
 		
 		newTask.editDeadline(deadline);
 
-		logger.log(Level.INFO, "New task added to bufferlist");
+		logger.log(Level.INFO, "New task added to bufferTasksList");
 		return newTask;
 	}
 	
@@ -293,17 +302,17 @@ public class LogicMain {
 			deleteID = Integer.parseInt(inputList.get(0).getContent());
 		}
 
-		if (deleteID < bufferList.size()) {
+		if (deleteID < bufferTasksList.size()) {
 			Task deleteTask;
 			
 			if (!tempList.isEmpty()) {
 				deleteTask = (Task) tempList.get(deleteID);
 				tempList = new LinkedList<Item>();
 			} else {
-				deleteTask = bufferList.get(deleteID);
+				deleteTask = bufferTasksList.get(deleteID);
 			}
 			
-			bufferList.remove(deleteTask);
+			bufferTasksList.remove(deleteTask);
 
 			logger.log(Level.INFO, "Task deleted");
 			return deleteTask;
@@ -349,7 +358,7 @@ public class LogicMain {
 
 				editID = Integer.parseInt(stringID);
 
-				if (editID >= bufferList.size()) {
+				if (editID >= bufferTasksList.size()) {
 					return null;
 				}
 			} else if (Operations.nameOperations.contains(operation)) {
@@ -385,7 +394,7 @@ public class LogicMain {
 			editTask = (Task) tempList.get(editID);
 			tempList = new LinkedList<Item>();
 		} else {
-			editTask = bufferList.get(editID);
+			editTask = bufferTasksList.get(editID);
 		}
 
 		if (nameEdited) {
@@ -415,12 +424,12 @@ public class LogicMain {
 	
 	//@author A0111942N
 	/**
-	 * This method will contact StorageMain to export the bufferList
+	 * This method will contact StorageMain to export the bufferTasksList
 	 * into a text file.
 	 */
 	private void commitToStorage() {
 
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferList);
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferTasksList);
 	}
 	
 	
@@ -429,7 +438,7 @@ public class LogicMain {
 	 * This method returns the list of all the tasks.
 	 */
 	public LinkedList<Task> getAllTasks() {
-		return bufferList;
+		return bufferTasksList;
 	}
 	
 	//@author A0111942N
@@ -490,23 +499,23 @@ public class LogicMain {
 		
 		LogicInputPair viewOperation = inputList.get(0);
 				
-		if (bufferList.size() != 0 && viewOperation.getContent() == "") {
+		if (bufferTasksList.size() != 0 && viewOperation.getContent() == "") {
 
-			Collections.sort(bufferList);
-			returningTasks = new LinkedList<Item>(bufferList);
+			Collections.sort(bufferTasksList);
+			returningTasks = new LinkedList<Item>(bufferTasksList);
 
-		} else if (bufferList.size() != 0) {
+		} else if (bufferTasksList.size() != 0) {
 			
 			try {
 				
 				int amountDisplayTasks = Integer.parseInt(viewOperation
 						.getContent());
 				
-				amountDisplayTasks = Math.min(bufferList.size(),
+				amountDisplayTasks = Math.min(bufferTasksList.size(),
 												amountDisplayTasks);
 
 				for (int i = 0; i < amountDisplayTasks; i++) {
-					Task tempTask = bufferList.get(i);
+					Task tempTask = bufferTasksList.get(i);
 					returningTasks.add(tempTask);
 				}
 				
@@ -548,9 +557,9 @@ public class LogicMain {
 		
 		Task returnTask;
 
-		for (int i = 0; i < bufferList.size(); i++) {
+		for (int i = 0; i < bufferTasksList.size(); i++) {
 
-			Task tempTask = bufferList.get(i);
+			Task tempTask = bufferTasksList.get(i);
 			if (tempTask.contains(keyword)) {
 				tempTask.editState(Operations.FIND_OPERATION);
 				returningTasks.add(tempTask);
@@ -566,6 +575,30 @@ public class LogicMain {
 		
 		return returningTasks;
 
+	}
+	
+	//@author A0111942N
+	/**
+	 * Process post-undo operation to return to GUI
+	 * 
+	 * @return	List containing the deleted task with
+	 * 			the "undo" state
+	 */
+	private LinkedList<Item> postUndo() {
+		
+		LinkedList<Task> tempTasks = new LinkedList<Task>(bufferTasksList);
+		bufferTasksList = undoTasks;
+		undoTasks = tempTasks;
+		
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		Task tempTask = new Task(Operations.NOT_EMPTY_MESSAGE);
+		tempTask.editState(Operations.UNDO_OPERATION);
+		
+		returningTasks.add(tempTask);
+
+		logger.log(Level.INFO, "Undo operation completed ");
+
+		return returningTasks;
 	}
 	
 	//@author A0111942N
@@ -620,7 +653,7 @@ public class LogicMain {
 	 */
 	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, long queryParam){
 		
-		LinkedList<Task> storedTasks = bufferList;
+		LinkedList<Task> storedTasks = bufferTasksList;
 		LinkedList<Task> queryTasks = new LinkedList<Task>();
 		
 		switch(searchType){
@@ -672,7 +705,7 @@ public class LogicMain {
 	 */
 	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, String queryParam){
 		
-		LinkedList<Task> storedTasks = bufferList;
+		LinkedList<Task> storedTasks = bufferTasksList;
 		LinkedList<Task> queryTasks = new LinkedList<Task>();
 		
 		switch(searchType){
@@ -724,8 +757,8 @@ public class LogicMain {
 	 * 
 	 * @return	All the tasks
 	 */
-	public void printBufferList() {
-		System.out.println(bufferList.toString());
+	public void printbufferTasksList() {
+		System.out.println(bufferTasksList.toString());
 	}
 
 	//@author A0111942N
