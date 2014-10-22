@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.swing.JDialog;
 
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
@@ -6,9 +11,6 @@ import java.util.LinkedList;
 // @Sankalp - GuiDisplay.java
 //
 // 1. could you add in some comments into the code?
-// 2. perhaps you can consider using switch cases for the checks in
-//    the display() function *tick*
-// 3. for lines > 80 char do indent them to the next line i.e. line 20 *tick*
 //
 // @Sankalp - GuiDisplay.java
 /*********************************************************************/
@@ -16,20 +18,43 @@ import java.util.LinkedList;
 
 
 public class GuiDisplay {
-	//Some very basic Help text for now.
-	private static final String HELP_TEXT = "Commands:\n\n;add - Add Tasks\t\t;view - "
-			+ "View Tasks\n;delete - Delete Tasks\t;edit - Edit Tasks";
 
-	static void displayHelp(){
-		//Ultimately the method will read an in-depth help text from a file stored. 
-		//HELP_TEXT string is temporarily created. 
-		GuiMain.feedback.setText(HELP_TEXT);
+	static void displayHelp(String input) throws IOException {
+		String helpFunction = input.substring(4).trim();
+		GuiMain.feedback.setText(helpFunction);
+		String fileContent;
+		switch (helpFunction){
+		case "":
+			fileContent = readFile("HelpText.txt");
+			GuiMain.feedback.setText(fileContent);
+			//Something I am experimenting with for better GUI (for later)
+			//			Dialog dialog = new Dialog(GuiMain.frameRemembra);
+			//			DialogFX.fadeIn(dialog);
+			break;
+		case Operations.ADD_OPERATION:
+			fileContent = readFile("HelpAdd.txt");
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.EDIT_OPERATION:
+			fileContent = readFile("HelpEdit.txt");
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.DELETE_OPERATION:
+			fileContent = readFile("HelpDelete.txt");
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.VIEW_OPERATION:
+			fileContent = readFile("HelpView.txt");
+			GuiMain.feedback.setText(fileContent);
+			break;
+		}
 	}
 
 	static void display(String inputStr) {
 		LogicMain logic = new LogicMain();
 		LinkedList<Item> tasks = logic.processInput(inputStr);
-		
+
+
 		assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
 		if(!tasks.isEmpty()) {
 
@@ -91,5 +116,21 @@ public class GuiDisplay {
 					"Remembra doesn't understand your input!\n\n");
 		}
 
+	}
+	static String readFile(String fileName) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			return sb.toString();
+		} finally {
+			br.close();
+		}
 	}
 }

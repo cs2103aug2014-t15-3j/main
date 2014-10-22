@@ -34,6 +34,7 @@ import java.awt.event.WindowStateListener;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -60,22 +61,22 @@ import com.sun.awt.AWTUtilities;
 
 public class GuiMain {
 
-    // Field descriptor #52 I
-    public static final int NORMAL = 0;
-    // Field descriptor #52 I
-    public static final int ICONIFIED = 1;
-    // Field descriptor #52 I
-    public static final int MAXIMIZED_HORIZ = 2;
-    // Field descriptor #52 I
-    public static final int MAXIMIZED_VERT = 4;
-    // Field descriptor #52 I
-    public static final int MAXIMIZED_BOTH = 6;
-    
+	// Field descriptor #52 I
+	public static final int NORMAL = 0;
+	// Field descriptor #52 I
+	public static final int ICONIFIED = 1;
+	// Field descriptor #52 I
+	public static final int MAXIMIZED_HORIZ = 2;
+	// Field descriptor #52 I
+	public static final int MAXIMIZED_VERT = 4;
+	// Field descriptor #52 I
+	public static final int MAXIMIZED_BOTH = 6;
+
 	//For System Tray
 	TrayIcon trayIcon;
-    SystemTray tray;
-    
-	private JFrame frameRemembra;
+	SystemTray tray;
+
+	static JFrame frameRemembra;
 	static JTextArea mainDisplay;
 	private static JTextField inputField;
 	private JScrollPane scrollPane;
@@ -122,9 +123,13 @@ public class GuiMain {
 						mainDisplay.setText(displayStr + "\n");
 						//this clears the input field
 						inputField.setText("");
-						
-						if (inputStr.equalsIgnoreCase("help")){
-							GuiDisplay.displayHelp();
+
+						if (inputStr.startsWith("help")){
+							try {
+								GuiDisplay.displayHelp(inputStr);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}else {
 							GuiDisplay.display(inputStr);
 						}
@@ -156,9 +161,10 @@ public class GuiMain {
 		frameRemembra.setForeground(new Color(0, 0, 0));
 		frameRemembra.setBackground(new Color(255, 255, 255));
 		frameRemembra.setTitle("Remembra V0.2");
-		
+
 		try
 		{
+			frameRemembra.setUndecorated(true);
 			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,0,0,20));
 			UIManager.put("RootPane.setupButtonVisible", false);		
@@ -185,22 +191,22 @@ public class GuiMain {
 			}
 
 		});
-		
+
 		frameRemembra.setResizable(false);
 		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
-		frameRemembra.setBounds(100, 100, 769, 576);
+		frameRemembra.setBounds(100, 100, 768, 608);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
 
 		JPanel feedbackpanel = new JPanel();
-		feedbackpanel.setBounds(37, 375, 639, 89);
+		feedbackpanel.setBounds(37, 375, 639, 116);
 		frameRemembra.getContentPane().add(feedbackpanel);
 		feedbackpanel.setBackground(Color.WHITE);
 		feedbackpanel.setLayout(null);
 
 		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBorder(null);
-		scrollPane_1.setBounds(12, 12, 615, 77);
+		scrollPane_1.setBounds(12, 0, 615, 116);
 		feedbackpanel.add(scrollPane_1);
 		scrollPane_1.setBackground(new Color(220, 220, 220));
 
@@ -287,9 +293,9 @@ public class GuiMain {
 
 		colorPanel2 = new JPanel();
 		colorPanel2.setBackground(new Color(0, 153, 102));
-		colorPanel2.setBounds(0, 444, 715, 52);
+		colorPanel2.setBounds(0, 444, 715, 85);
 		frameRemembra.getContentPane().add(colorPanel2);
-		
+
 		JPanel panel = new JPanel();
 		panel.setBounds(37, 25, 639, 246);
 		frameRemembra.getContentPane().add(panel);
@@ -304,53 +310,53 @@ public class GuiMain {
 		colorPanel4.setBackground(new Color(220, 220, 220));
 		colorPanel4.setBounds(-1, 0, 715, 418);
 		frameRemembra.getContentPane().add(colorPanel4);
-		
+
 		//Sets the Frame's display icon
 		setFrameIcon();
-		
+
 		//Check for system tray support before initializing system tray
 		if(checkSystemTraySupport()){
 			initSystemTray();
 		}
-		
+
 		//Activate Jfram windowstate listener for hiding programe into system tray
 		activateWindowStateListener();
-		
+
 	}
-	
-	
+
+
 	//@author A0112898U
 	/**
 	 * Sets the JFrame's top left programme displayIcon
 	 * 
 	 */
 	void setFrameIcon(){
-		
+
 		frameRemembra.setIconImage(Toolkit.getDefaultToolkit().getImage("media/logo.png"));	
 	}
-	
-	
-	
+
+
+
 	//@author A0112898U
 	/**
 	 * Checks if the system supports system tray
 	 * 
 	 */
 	boolean checkSystemTraySupport(){
-		
+
 		if(SystemTray.isSupported()){
-			
+
 			System.out.println("system tray supported");
-	        tray = SystemTray.getSystemTray();
+			tray = SystemTray.getSystemTray();
 			return true;
 		}
-		
+
 		System.out.println("system tray not supported, check taskbar when minimized");
 		return false;
 	}
-	
-	
-	
+
+
+
 	//@author A0112898U
 	/**
 	 * Inits the system tray outlook, display name when hovering over and adding options 
@@ -361,54 +367,54 @@ public class GuiMain {
 	 * 
 	 */
 	void initSystemTray(){
-		
-        //Set image when program is in system tray
-        Image image = Toolkit.getDefaultToolkit().getImage("media/logo.png");
-        
-        //Action Listener to exit the programme ONLY when in system tray
-        ActionListener exitListener = new ActionListener() {
-        	
-        	//If clicked on the exit option
-        	public void actionPerformed(ActionEvent e) {
-        		
-                System.out.println("Exiting Remembra....");
-                System.exit(0);
-                
-            }
-        };
-        
-        //Action Listener to open the programme frame ONLY when in system tray
-        ActionListener openListener = new ActionListener() {
-        
-        	public void actionPerformed(ActionEvent e) {
-                
-        		frameRemembra.setVisible(true);
-        		frameRemembra.setExtendedState(JFrame.NORMAL);
-        	}
-        
-        };
-        
-        /* Popup Menu @ system tray */
-        PopupMenu popup = new PopupMenu();
-        MenuItem defaultItem;
-        
-        //Added a 'Exit' option to the menu when right clicked
-        defaultItem = new MenuItem("Exit");
-        defaultItem.addActionListener(exitListener);
-        popup.add(defaultItem);
-        
-        //Added a 'Option' option to the menu when right clicked
-        defaultItem = new MenuItem("Open");
-        defaultItem.addActionListener(openListener);
-        popup.add(defaultItem);
-        
-        trayIcon = new TrayIcon(image, "Remembra", popup);
-        trayIcon.setImageAutoSize(true);
-        
+
+		//Set image when program is in system tray
+		Image image = Toolkit.getDefaultToolkit().getImage("media/logo.png");
+
+		//Action Listener to exit the programme ONLY when in system tray
+		ActionListener exitListener = new ActionListener() {
+
+			//If clicked on the exit option
+			public void actionPerformed(ActionEvent e) {
+
+				System.out.println("Exiting Remembra....");
+				System.exit(0);
+
+			}
+		};
+
+		//Action Listener to open the programme frame ONLY when in system tray
+		ActionListener openListener = new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				frameRemembra.setVisible(true);
+				frameRemembra.setExtendedState(JFrame.NORMAL);
+			}
+
+		};
+
+		/* Popup Menu @ system tray */
+		PopupMenu popup = new PopupMenu();
+		MenuItem defaultItem;
+
+		//Added a 'Exit' option to the menu when right clicked
+		defaultItem = new MenuItem("Exit");
+		defaultItem.addActionListener(exitListener);
+		popup.add(defaultItem);
+
+		//Added a 'Option' option to the menu when right clicked
+		defaultItem = new MenuItem("Open");
+		defaultItem.addActionListener(openListener);
+		popup.add(defaultItem);
+
+		trayIcon = new TrayIcon(image, "Remembra", popup);
+		trayIcon.setImageAutoSize(true);
+
 	}
-	
-	
-	
+
+
+
 	//@author A0112898U
 	/**
 	 * activate Window State Listener for the JFrame, this is for the implementation to
@@ -416,38 +422,38 @@ public class GuiMain {
 	 * 
 	 */
 	void activateWindowStateListener(){
-		
+
 		frameRemembra.addWindowStateListener(new WindowStateListener() {
-	        
-	    	public void windowStateChanged(WindowEvent e) {
-	        
-	    		//If click on the minimize icon on the window, this function will 
-	    		//detect the window new "ICONFIED" state and activate system tray
-	    		if(e.getNewState() == ICONIFIED){
-	            
-	    			try {
-	    				
-	    				tray.add(trayIcon);
-	    				frameRemembra.setVisible(false);
-	    				
-	                    System.out.println("added to SystemTray");
-	                
-	    			} catch (AWTException ex) {
-	                
-	    				System.out.println("unable to add to tray");
-	    			}
-	            }
-	    		
-	    		//If click on the 'open' open option to re-open the program,
-	    		//this call will reinstate the JFrame's visibility and remove trayicon
-	    		if(e.getNewState() == MAXIMIZED_BOTH || e.getNewState() == NORMAL){
-	
-	    			tray.remove(trayIcon);
-	    			frameRemembra.setVisible(true);
-	                System.out.println("Tray icon removed");
-	            
-	    		}
-	    	}
-        });
+
+			public void windowStateChanged(WindowEvent e) {
+
+				//If click on the minimize icon on the window, this function will 
+				//detect the window new "ICONFIED" state and activate system tray
+				if(e.getNewState() == ICONIFIED){
+
+					try {
+
+						tray.add(trayIcon);
+						frameRemembra.setVisible(false);
+
+						System.out.println("added to SystemTray");
+
+					} catch (AWTException ex) {
+
+						System.out.println("unable to add to tray");
+					}
+				}
+
+				//If click on the 'open' open option to re-open the program,
+				//this call will reinstate the JFrame's visibility and remove trayicon
+				if(e.getNewState() == MAXIMIZED_BOTH || e.getNewState() == NORMAL){
+
+					tray.remove(trayIcon);
+					frameRemembra.setVisible(true);
+					System.out.println("Tray icon removed");
+
+				}
+			}
+		});
 	}
 }

@@ -1,0 +1,6 @@
+Tasks can be viewed in numerous ways. Following are the command options available to view tasks.
+
+;view		e.g. ;view
+;v
+;display
+;

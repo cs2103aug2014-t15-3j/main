@@ -1,0 +1,14 @@
+A task can be edited in numerous ways. Following are the commands options available to edit tasks.
+
+;edit		e.g. ;edit X ;name NewName ;i NewDescription	
+;update
+;change
+;~
+where X is the task number associated with that task (visible in view)
+
+You can change individual detail/property. e.g. 
+;~ ;name NewName
+;~ ;i NewDescription
+;~ ;label NewLabel
+
+*This is the end. Scroll up to the top*
