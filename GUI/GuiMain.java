@@ -3,11 +3,11 @@
  * 
  * 
  */
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -15,6 +15,7 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -37,6 +38,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTabbedPane;
+
+import com.sun.awt.AWTUtilities;
 
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
@@ -83,7 +86,10 @@ public class GuiMain {
 	private LogicMain logic;
 	private JTabbedPane tabbedPane;
 	private JTable table_1;
-	
+	private JPanel colorPanel1;
+	private JPanel colorPanel2;
+	private JPanel colorPanel3;
+	private JPanel colorPanel4;
 
 
 	/**
@@ -145,13 +151,24 @@ public class GuiMain {
 	@SuppressWarnings("serial")
 	private void initialize() {
 		frameRemembra = new JFrame("Remembra");
-		frameRemembra.setBackground(new Color(192, 192, 192));
-		frameRemembra.setTitle("Remembra V0.1");
-		try {
-			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-		} catch (Exception e) {
+		frameRemembra.setResizable(false);
+		frameRemembra.setFont(new Font("Accord Light SF", Font.PLAIN, 12));
+		frameRemembra.setForeground(new Color(0, 0, 0));
+		frameRemembra.setBackground(new Color(255, 255, 255));
+		frameRemembra.setTitle("Remembra V0.2");
+		
+		try
+		{
+			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,0,0,20));
+			UIManager.put("RootPane.setupButtonVisible", false);		
+			AWTUtilities.setWindowOpaque(frameRemembra, false);
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
 		}
+
 		frameRemembra.addWindowListener(new WindowAdapter() {
 			@Override
 			//this pops-up a confirmation dialog box when the user tries to exit the program
@@ -171,17 +188,59 @@ public class GuiMain {
 		
 		frameRemembra.setResizable(false);
 		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
-		frameRemembra.setBounds(100, 100, 653, 467);
+		frameRemembra.setBounds(100, 100, 769, 576);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
 
-		JPanel displayPanel = new JPanel();
-		displayPanel.setBackground(new Color(192, 192, 192));
-		displayPanel.setBounds(0, 0, 654, 324);
-		frameRemembra.getContentPane().add(displayPanel);
-		displayPanel.setLayout(new FlowLayout());
+		JPanel feedbackpanel = new JPanel();
+		feedbackpanel.setBounds(37, 375, 639, 89);
+		frameRemembra.getContentPane().add(feedbackpanel);
+		feedbackpanel.setBackground(Color.WHITE);
+		feedbackpanel.setLayout(null);
 
-		tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBorder(null);
+		scrollPane_1.setBounds(12, 12, 615, 77);
+		feedbackpanel.add(scrollPane_1);
+		scrollPane_1.setBackground(new Color(220, 220, 220));
+
+		feedback = new JTextArea();
+		feedback.setTabSize(10);
+		scrollPane_1.setViewportView(feedback);
+		feedback.setWrapStyleWord(true);
+		feedback.setColumns(52);
+		feedback.setForeground(Color.DARK_GRAY);
+		feedback.setBackground(Color.WHITE);
+		feedback.setRows(4);
+		feedback.setFont(new Font("Arial", Font.BOLD, 12));
+		feedback.setEditable(false);
+
+		JPanel inputPanel = new JPanel();
+		inputPanel.setBounds(51, 319, 625, 44);
+		frameRemembra.getContentPane().add(inputPanel);
+		inputPanel.setBackground(new Color(255, 255, 255));
+
+		inputField =  new JTextField();
+		inputField.setBounds(12, 0, 601, 44);
+		inputField.setMargin(new Insets(0, 0, 0, 0));
+		inputField.setCaretColor(new Color(0, 0, 0));
+		inputField.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		inputField.putClientProperty("JTextField.variant", "search");
+		inputPanel.setLayout(null);
+		inputField.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		inputField.setForeground(new Color(165, 42, 42));
+		inputField.setBackground(new Color(255, 255, 255));
+		inputPanel.add(inputField);
+		inputField.setColumns(49);
+
+		JLayeredPane displayPanel = new JLayeredPane();
+		displayPanel.setBackground(new Color(220, 220, 220));
+		displayPanel.setBounds(38, 25, 639, 282);
+		frameRemembra.getContentPane().add(displayPanel);
+		displayPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+		tabbedPane.setBackground(new Color(245, 245, 245));
 		tabbedPane.setBorder(null);
 		tabbedPane.setFont(new Font("Levenim MT", Font.PLAIN, 13));
 		displayPanel.add(tabbedPane);
@@ -206,12 +265,13 @@ public class GuiMain {
 		table_1.getColumnModel().getColumn(0).setPreferredWidth(421);
 
 		scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
 		tabbedPane.addTab("Display", null, scrollPane, null);
 
 		mainDisplay = new JTextArea();
+		mainDisplay.setColumns(87);
 		scrollPane.setViewportView(mainDisplay);
-		mainDisplay.setColumns(80);
-		mainDisplay.setRows(20);
+		mainDisplay.setRows(15);
 		mainDisplay.setForeground(Color.DARK_GRAY);
 		mainDisplay.setFont(new Font("Consolas", Font.PLAIN, 12));
 		mainDisplay.setBackground(Color.WHITE);
@@ -220,38 +280,30 @@ public class GuiMain {
 		mainDisplay.setBounds(14, 22, 323, 120);
 		tabbedPane.addTab("Table", null, table_1, null);
 
-		JPanel inputPanel = new JPanel();
-		inputPanel.setBounds(0, 324, 648, 35);
-		frameRemembra.getContentPane().add(inputPanel);
-		inputPanel.setBackground(new Color(128, 128, 128));
-		inputPanel.setLayout(new FlowLayout());
+		colorPanel1 = new JPanel();
+		colorPanel1.setBackground(new Color(205, 92, 92));
+		colorPanel1.setBounds(37, 319, 19, 44);
+		frameRemembra.getContentPane().add(colorPanel1);
 
-		inputField = new JTextField();
-		inputField.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		inputField.setForeground(new Color(165, 42, 42));
-		inputField.setBackground(new Color(255, 255, 255));
-		inputPanel.add("SOUTH", inputField);
-		inputField.setColumns(52);
+		colorPanel2 = new JPanel();
+		colorPanel2.setBackground(new Color(0, 153, 102));
+		colorPanel2.setBounds(0, 444, 715, 52);
+		frameRemembra.getContentPane().add(colorPanel2);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(37, 25, 639, 246);
+		frameRemembra.getContentPane().add(panel);
+		panel.setBackground(Color.WHITE);
 
-		JPanel feedbackpanel = new JPanel();
-		feedbackpanel.setBackground(new Color(192, 192, 192));
-		feedbackpanel.setBounds(0, 359, 648, 84);
-		frameRemembra.getContentPane().add(feedbackpanel);
-		feedbackpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		colorPanel3 = new JPanel();
+		colorPanel3.setBounds(0, 0, 715, 445);
+		frameRemembra.getContentPane().add(colorPanel3);
+		colorPanel3.setBackground(new Color(204, 204, 255));
 
-		scrollPane_1 = new JScrollPane();
-		feedbackpanel.add(scrollPane_1);
-
-		feedback = new JTextArea();
-		feedback.setTabSize(10);
-		scrollPane_1.setViewportView(feedback);
-		feedback.setWrapStyleWord(true);
-		feedback.setColumns(57);
-		feedback.setForeground(new Color(85, 107, 47));
-		feedback.setBackground(new Color(255, 255, 255));
-		feedback.setRows(4);
-		feedback.setFont(new Font("Arial", Font.PLAIN, 12));
-		feedback.setEditable(false);
+		colorPanel4 = new JPanel();
+		colorPanel4.setBackground(new Color(220, 220, 220));
+		colorPanel4.setBounds(-1, 0, 715, 418);
+		frameRemembra.getContentPane().add(colorPanel4);
 		
 		//Sets the Frame's display icon
 		setFrameIcon();

@@ -19,7 +19,6 @@ public class Operations {
 	protected final static String SAVE_OPERATION = "save";
 	
 	// Constant Variables for Label related operations
-	protected final static String LABEL_OPERATION = ";label";
 	protected final static String ADD_LABEL_OPERATION = "add_label";
 	protected final static String EDIT_LABEL_OPERATION = "edit_label";
 	protected final static String VIEW_LABEL_OPERATION = "view_label";
@@ -30,6 +29,7 @@ public class Operations {
 	protected final static String DATE_OUTPUT_FORMAT = "d MMMM yyyy h:mm a";
 
 	// Lists to contain its respective keywords
+	protected static LinkedList<String> labelOperations;
 	protected static LinkedList<String> addOperations;
 	protected static LinkedList<String> editOperations;
 	protected static LinkedList<String> viewOperations;
@@ -38,6 +38,7 @@ public class Operations {
 	protected static LinkedList<String> deleteOperations;
 	protected static LinkedList<String> saveOperations;
 	protected static LinkedList<String> nameOperations;
+	protected static LinkedList<String> colorOperations;
 	protected static LinkedList<String> descriptionOperations;
 	protected static LinkedList<String> deadlineOperations;
 	
@@ -52,6 +53,7 @@ public class Operations {
 	public Operations() {
 
 		if(!isInitialize) {
+			labelOperations = populateLabel();
 			addOperations = populateAdd();
 			editOperations = populateEdit();
 			viewOperations = populateView();
@@ -60,11 +62,27 @@ public class Operations {
 			deleteOperations = populateDelete();
 			saveOperations = populateSave();
 			nameOperations = populateName();
+			colorOperations = populateColor();
 			descriptionOperations = populateDescription();
 			deadlineOperations = populateDeadline();
 
 			isInitialize = true;
 		}
+	}
+	
+	//@author A0111942N
+	/**
+	 * Populate label list with its keywords
+	 *
+	 * @return List of label keywords
+	 */
+	private LinkedList<String> populateLabel() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";label");
+		operations.add(";lb");
+
+		return operations;
 	}
 	
 	//@author A0111942N
@@ -94,6 +112,20 @@ public class Operations {
 		LinkedList<String> operations = new LinkedList<>();
 		operations.add(";name");
 		operations.add(";title");
+
+		return operations;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Populate color list with its keywords
+	 *
+	 * @return List of color keywords
+	 */
+	private LinkedList<String> populateColor() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";color");
 
 		return operations;
 	}

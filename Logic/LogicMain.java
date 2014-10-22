@@ -40,6 +40,7 @@ public class LogicMain {
 
 	// Data structures
 	private static LinkedList<Task> bufferTasksList = new LinkedList<Task>();
+	private static LinkedList<Label> bufferLabelsList = new LinkedList<Label>();
 	private static LinkedList<Task> undoTasks = new LinkedList<Task>();
 	private static LinkedList<Item> tempList = new LinkedList<Item>();
 	private LinkedList<LogicInputPair> inputList;
@@ -47,6 +48,9 @@ public class LogicMain {
 
 	// Logger: Use to troubleshoot problems
 	private Logger logger = Logger.getLogger(LOG_NAME);
+	
+	// Flag to check if the current operation is a logic operation
+	private boolean isLabel;
 
 	public LogicMain() {
 		initialize();
@@ -63,7 +67,7 @@ public class LogicMain {
 			operations = new Operations();
 			storageMain = new StorageMain();
 
-			retrieveTasks();
+			retrieveFromStorage();
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 
@@ -79,15 +83,26 @@ public class LogicMain {
 	/**
 	 * Retrieve tasks from Storage
 	 */
-	private void retrieveTasks() {
-		Object retrievedObject = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
+	private void retrieveFromStorage() {
+		
+		Object retrievedTasks = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 
-		if (retrievedObject instanceof LinkedList<?>) {
-			bufferTasksList = (LinkedList<Task>) retrievedObject;
+		if (retrievedTasks instanceof LinkedList<?>) {
+			bufferTasksList = (LinkedList<Task>) retrievedTasks;
 		} else {
 			bufferTasksList = new LinkedList<Task>();
 			logger.log(Level.WARNING,
 					"Unable to retrieve tasks from storage");
+		}
+		
+		Object retrievedLabels = storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_LABEL);
+
+		if (retrievedLabels instanceof LinkedList<?>) {
+			bufferLabelsList = (LinkedList<Label>) retrievedLabels;
+		} else {
+			bufferLabelsList = new LinkedList<Label>();
+			logger.log(Level.WARNING,
+					"Unable to retrieve labels from storage");
 		}
 	}
 
@@ -101,11 +116,19 @@ public class LogicMain {
 	public LinkedList<Item> processInput(String input) {
 
 		LinkedList<Item> returnTasks = new LinkedList<Item>();
-
+		
+		isLabel = false;
 		input = cleanUpInput(input);
 		preProcessInput(input);
 
 		String mainOperation = inputList.get(0).getOperation();
+		
+		if (Operations.labelOperations.contains(mainOperation)
+			&& inputList.size() > 1) {
+
+			mainOperation = inputList.get(1).getOperation();
+			isLabel = true;
+		}
 
 		if (Operations.addOperations.contains(mainOperation)) {
 			undoTasks = new LinkedList<Task>(bufferTasksList);
@@ -132,6 +155,8 @@ public class LogicMain {
 
 			returnTasks = new LinkedList<Item>();
 		}
+		
+		System.out.println(bufferLabelsList.size()+"");
 
 		return returnTasks;
 	}
@@ -206,19 +231,28 @@ public class LogicMain {
 	 */
 	private LinkedList<Item> postAdd() {
 
-		LinkedList<Item> returningTasks = new LinkedList<Item>();
-
-		Task addTask = executeAdd();
+		LinkedList<Item> returningItem = new LinkedList<Item>();
+		
+		Item addTask = executeAdd();
 
 		if (addTask != null) {
-			Task returnTask = new Task(addTask);
-			returnTask.editState(Operations.ADD_OPERATION);
-			returningTasks.add(returnTask);
+			
+			Item returnItem;
+			
+			if(!isLabel) {
+				returnItem = new Task( (Task) addTask );
+				returnItem.editState(Operations.ADD_OPERATION);
+			} else {
+				returnItem = new Label( (Label) addTask );
+				returnItem.editState(Operations.ADD_OPERATION);
+			}
+			
+			returningItem.add(returnItem);
 		}
 
 		logger.log(Level.INFO, "Add operation completed");
 
-		return returningTasks;
+		return returningItem;
 	}
 
 	//@author A0111942N
@@ -232,7 +266,7 @@ public class LogicMain {
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 
-		Task returnTask = new Task(executeEdit());
+		Item returnTask = executeEdit();
 		returnTask.editState(Operations.EDIT_OPERATION);
 		returningTasks.add(returnTask);
 
@@ -250,52 +284,77 @@ public class LogicMain {
 	 */
 	private LinkedList<Item> postView() {
 
-		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		LinkedList<Item> returningItems = new LinkedList<Item>();
 		Task returnTask;
 
 		LogicInputPair viewOperation = inputList.get(0);
 
-		if (bufferTasksList.size() != 0 && viewOperation.getContent() == "") {
+		if (!isLabel) {
 
-			Collections.sort(bufferTasksList);
-			returningTasks = new LinkedList<Item>(bufferTasksList);
+			if (bufferTasksList.size() != 0 && viewOperation.getContent() == "") {
 
-		} else if (bufferTasksList.size() != 0) {
+				Collections.sort(bufferTasksList);
+				returningItems = new LinkedList<Item>(bufferTasksList);
 
-			try {
+			} else if (bufferTasksList.size() != 0) {
 
-				int amountDisplayTasks = Integer.parseInt(viewOperation
-						.getContent());
+				try {
 
-				amountDisplayTasks = Math.min(bufferTasksList.size(),
-						amountDisplayTasks);
+					int amountDisplayTasks = Integer.parseInt(viewOperation
+							.getContent());
 
-				for (int i = 0; i < amountDisplayTasks; i++) {
-					Task tempTask = bufferTasksList.get(i);
-					returningTasks.add(tempTask);
+					amountDisplayTasks = Math.min(bufferTasksList.size(),
+							amountDisplayTasks);
+
+					for (int i = 0; i < amountDisplayTasks; i++) {
+						Task tempTask = bufferTasksList.get(i);
+						returningItems.add(tempTask);
+					}
+
+				} catch (NumberFormatException e) {
+
+					// For label
+
 				}
 
-			} catch (NumberFormatException e) {
+			} else {
 
-				// For label
+				returnTask = new Task(Operations.EMPTY_MESSAGE);
+				returnTask.editState(Operations.VIEW_OPERATION);
+				returningItems.add(returnTask);
+
+				return returningItems;
 
 			}
 
-		} else {
-
-			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returnTask = new Task( (Task) returningItems.get(0));
 			returnTask.editState(Operations.VIEW_OPERATION);
-			returningTasks.add(returnTask);
+			returningItems.set(0, returnTask);
+			
+			tempList = new LinkedList<Item>();
+			
+		} else {
+			Label returnLabel;
+			
+			if (bufferLabelsList.size() > 0) {
+				
+				returningItems = new LinkedList<Item>(bufferLabelsList);
+				Label tempLabel = new Label( (Label) returningItems.get(0) );
+				tempLabel.editState(Operations.VIEW_OPERATION);
+				
+				returningItems.set(0, tempLabel);
+				
+			} else {
+				
+				returnLabel = new Label(Operations.EMPTY_MESSAGE);
+				returnLabel.editState(Operations.VIEW_OPERATION);
+				returningItems.add(returnLabel);
 
-			return returningTasks;
-
+				return returningItems;
+			}
 		}
-
-		returnTask = new Task( (Task) returningTasks.get(0));
-		returnTask.editState(Operations.VIEW_OPERATION);
-		returningTasks.set(0, returnTask);
-
-		return returningTasks;
+		
+		return returningItems;
 	}
 
 	//@author A0111942N
@@ -328,6 +387,8 @@ public class LogicMain {
 			returnTask.editState(Operations.FIND_OPERATION);
 			returningTasks.add(returnTask);
 		}
+		
+		tempList = new LinkedList<Item>(returningTasks);
 
 		return returningTasks;
 
@@ -404,12 +465,14 @@ public class LogicMain {
 	 * 
 	 * @return	Newly added task
 	 */
-	private Task executeAdd() {
+	private Item executeAdd() {
 
 		// Method variables
 		String name = "";
 		String description = "";
 		long deadline = -1;
+		String color = "";
+		long labelID = -1;
 
 		for (int i = 0; i < inputList.size(); i++) {
 
@@ -435,21 +498,67 @@ public class LogicMain {
 				} catch (ParseException e) {
 					logger.log(Level.WARNING, "Wrong date format!");
 				}
+			} else if (Operations.colorOperations.contains(operation)) {
+
+				color = inputList.get(i).getContent();
+			} else if (Operations.labelOperations.contains(operation) && i > 0) {
+
+				String label = inputList.get(i).getContent();
+				
+				labelID = getLabelId(label);
 			}
 		}
+		
+		Item newItem;
+				
+		if (!isLabel) {
 
-		Task newTask = new Task(name, description);
+			Task newTask = new Task(name, description);
+			newTask.editState(Operations.ADD_OPERATION);
+			bufferTasksList.add(newTask);
+			
+			if(deadline == -1) {
+				deadline = getEndOfToday();
+				newTask.editDeadline(deadline);
+			}
+			
+			if(labelID != -1) {
+				newTask.editLabel(labelID);
+			}
+			
+			newItem = newTask;
 
-		bufferTasksList.add(newTask);
+			logger.log(Level.INFO, "New task added to bufferTasksList");
+		} else {
+			
+			Label newLabel = new Label(name);
+			newLabel.editState(Operations.ADD_LABEL_OPERATION);
+			bufferLabelsList.add(newLabel);
+			
+			if (!color.isEmpty()) {
+				newLabel.editColor(color);
+			}
+			
+			newItem = newLabel;
 
-		if(deadline == -1) {
-			deadline = getEndOfToday();
+			logger.log(Level.INFO, "New label added to bufferTasksList");
 		}
+		return newItem;
+	}
 
-		newTask.editDeadline(deadline);
-
-		logger.log(Level.INFO, "New task added to bufferTasksList");
-		return newTask;
+	private long getLabelId(String label) {
+		
+		long labelID = -1;
+		
+		for(int j = 0; j < bufferLabelsList.size(); j++) {
+			
+			if(bufferLabelsList.get(j).isLabel(label)) {
+				Label tempLabel = bufferLabelsList.get(j);
+				labelID = tempLabel.getTimeStamp();
+			}
+		}
+		System.out.println(labelID);
+		return labelID;
 	}
 
 	//@author A0111942N
@@ -499,15 +608,17 @@ public class LogicMain {
 	 * 
 	 * @return	Edited task
 	 */
-	private Task executeEdit() {
+	private Item executeEdit() {
 
 		int editID = -1;
 		String name = "";
 		String description = "";
+		String color = "";
 		long deadline = -1;
 		boolean nameEdited = false;
 		boolean descriptionEdited = false;
 		boolean deadlineEdited = false;
+		boolean colorEdited = false;
 
 		for (int i = 0; i < inputList.size(); i++) {
 
@@ -551,29 +662,68 @@ public class LogicMain {
 				} catch (ParseException e) {
 					logger.log(Level.WARNING, "Wrong date format!");
 				}
+			} else if (Operations.colorOperations.contains(operation)) {
+
+				color = inputList.get(i).getContent();
+
+				if (color.isEmpty()) {
+
+					logger.log(Level.INFO, "Color operation: Invalid color");
+					return null;
+				}
+
+				colorEdited = true;
 			}
 		}
+		
+		Item editItem;
+		
+		if (!isLabel) {
+			
+			Task editTask;
+			if (!tempList.isEmpty()) {
+				editTask = (Task) tempList.get(editID);
+				tempList = new LinkedList<Item>();
+			} else {
+				editTask = bufferTasksList.get(editID);
+			}
 
-		Task editTask;
-		if (!tempList.isEmpty()) {
-			editTask = (Task) tempList.get(editID);
-			tempList = new LinkedList<Item>();
+			bufferTasksList.remove(editTask);
+			
+			Task newTask = new Task(editTask);
+
+			if (nameEdited) {
+				newTask.editName(name);
+			}
+			if (descriptionEdited) {
+				newTask.editDescription(description);
+			}
+			if (deadlineEdited) {
+				newTask.editDeadline(deadline);
+			}
+			
+			bufferTasksList.add(newTask);
+			
+			editItem = newTask;
+			
 		} else {
-			editTask = bufferTasksList.get(editID);
-		}
-
-		if (nameEdited) {
-			editTask.editName(name);
-		}
-		if (descriptionEdited) {
-			editTask.editDescription(description);
-		}
-		if (deadlineEdited) {
-			editTask.editDeadline(deadline);
+			
+			Label editLabel = bufferLabelsList.get(editID);
+			
+			if (nameEdited) {
+				editLabel.editName(name);
+			}
+			if (colorEdited) {
+				editLabel.editColor(color);
+			}
+			
+			editLabel.editState(Operations.EDIT_OPERATION);
+			
+			editItem = editLabel;
 		}
 
 		logger.log(Level.INFO, "Task edited");
-		return editTask;
+		return editItem;
 	}
 
 
@@ -625,12 +775,13 @@ public class LogicMain {
 
 	//@author A0111942N
 	/**
-	 * This method will contact StorageMain to export the bufferTasksList
+	 * This method will contact StorageMain to export bufferTasksList and bufferLabelsList
 	 * into a text file.
 	 */
 	private void commitToStorage() {
 
 		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferTasksList);
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,bufferLabelsList);
 	}
 
 	//@author A0111942N
@@ -726,8 +877,9 @@ public class LogicMain {
 		case TYPE_LABEL:
 
 			for(Task t:storedTasks){
-
-				if(t.getLabel() == queryParam){
+				
+				long labelID = getLabelId(queryParam);
+				if(t.getLabel() == labelID){
 					queryTasks.add(t);
 				}
 			}
@@ -751,6 +903,14 @@ public class LogicMain {
 		}
 
 		return queryTasks;
+	}
+	
+	//@author A0111942N
+	/**
+	 * @return	All the labels
+	 */
+	public static LinkedList<Label> getAllLabels() {
+		return bufferLabelsList;
 	}
 
 	//@author A0111942N
@@ -779,7 +939,7 @@ public class LogicMain {
 			LogicMain logic = new LogicMain();
 
 			logger.log(Level.INFO, logic.processInput(testInput).toString());
-			logger.log(Level.INFO, logic.getAllTasks().toString());
+			//logger.log(Level.INFO, logic.getAllTasks().toString());
 		}
 
 		scanner.close();

@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 //@author A0111942N
 
@@ -10,7 +11,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	// Class variable
 	private String name;
 	private String description;
-	private String label;
+	private long label;
 	private long timeStamp;
 	private long deadline;
 	private String state;
@@ -23,7 +24,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param name	Task's name
 	 */
 	public Task(String name) {
-		this(name, "", TO_DO_LABEL, -1);
+		this(name, "", -1, -1);
 	}
 
 	//@author A0111942N
@@ -35,7 +36,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param description	Task's description
 	 */
 	public Task(String name, String description) {
-		this(name, description, TO_DO_LABEL, -1);
+		this(name, description, -1, -1);
 	}
 
 	//@author A0111942N
@@ -64,7 +65,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param label			Task's label
 	 * @param deadline		Task's deadline
 	 */
-	public Task(String name, String description, String label, long deadline) {
+	public Task(String name, String description, long label, long deadline) {
 
 		this.name = name;
 		this.description = description;
@@ -83,7 +84,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return description;
 	}
 
-	public String getLabel() {
+	public long getLabel() {
 		return label;
 	}
 
@@ -113,12 +114,36 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.state = state;
 		return state;
 	}
+	
+	public long editLabel(long label) {
+		this.label = label;
+		return label;
+	}
 
 	public long editDeadline(long deadline) {
 		this.deadline = deadline;
 		return deadline;
 	}
+	
+	public long editTimestamp(String timestamp) {
+		this.timeStamp = timeStamp;
+		return timeStamp;
+	}
 
+	private String getLabelName(long _label) {
+		LinkedList<Label> bufferLabelsList = LogicMain.getAllLabels();
+		
+		for(int j = 0; j < bufferLabelsList.size(); j++) {
+
+			if(bufferLabelsList.get(j).getTimeStamp() == _label) {
+				Label tempLabel = bufferLabelsList.get(j);
+				return tempLabel.getName();
+			}
+		}
+		
+		return Operations.EMPTY_MESSAGE;
+	}
+	
 	@Override
 	public boolean equals(Object object) {
 
@@ -139,7 +164,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		String dateOutput = format.format(date);
 
 		return "Task: " + name + "\nDescription: " + description
-				+ "\nDeadline: " + dateOutput + "\n\n";
+				+ "\nDeadline: " + dateOutput 
+				+ "\nLabel: " + getLabelName(label) + "\n\n";
 	}
 
 	@Override
@@ -148,7 +174,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		long compareDeadline = compareTask.getDeadline();
 		
 		if (deadline == compareDeadline) {
-			return 0;
+			return (int) ( timeStamp - compareTask.getTimeStamp() );
 		} else if (deadline > compareDeadline) {
 			return 1;
 		} else {
