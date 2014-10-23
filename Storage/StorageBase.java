@@ -27,6 +27,9 @@ import java.util.LinkedList;
 
 public abstract class StorageBase{
 	
+	//Constants
+	protected static final String FILENAME_EXTENSION = ".ser";
+	
 	//Objects
 	FileOutputStream fileOut;
 	FileInputStream fileIn;

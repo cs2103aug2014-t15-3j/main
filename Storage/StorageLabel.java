@@ -54,7 +54,7 @@ public class StorageLabel extends StorageBase{
 	@Override
 	public String getFileName(){
 		
-		return STORAGE_LABEL_FILENAME;
+		return STORAGE_LABEL_FILENAME + FILENAME_EXTENSION;
 	}
 	
 	

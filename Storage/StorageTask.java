@@ -39,7 +39,7 @@ public class StorageTask extends StorageBase{
 	@Override
 	public String getFileName(){
 		
-		return STORAGE_TASK_FILENAME;
+		return STORAGE_TASK_FILENAME + FILENAME_EXTENSION;
 	}
 	
 	
