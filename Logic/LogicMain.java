@@ -614,6 +614,7 @@ public class LogicMain {
 		String name = "";
 		String description = "";
 		String color = "";
+		long labelId = -1;
 		long deadline = -1;
 		boolean nameEdited = false;
 		boolean descriptionEdited = false;
@@ -673,6 +674,18 @@ public class LogicMain {
 				}
 
 				colorEdited = true;
+			} else if (Operations.labelOperations.contains(operation) && i > 0) {
+				
+				String label = inputList.get(i).getContent();
+				labelId = getLabelId(label);
+
+				if (color.isEmpty()) {
+
+					logger.log(Level.INFO, "Color operation: Invalid color");
+					return null;
+				}
+
+				colorEdited = true;
 			}
 		}
 		
@@ -700,6 +713,9 @@ public class LogicMain {
 			}
 			if (deadlineEdited) {
 				newTask.editDeadline(deadline);
+			}
+			if (labelId != -1) {
+				newTask.editLabel(labelId);
 			}
 			
 			bufferTasksList.add(newTask);
@@ -782,14 +798,6 @@ public class LogicMain {
 
 		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferTasksList);
 		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,bufferLabelsList);
-	}
-
-	//@author A0111942N
-	/**
-	 * This method returns the list of all the tasks.
-	 */
-	public LinkedList<Task> getAllTasks() {
-		return bufferTasksList;
 	}
 
 	//@author A0112898U
@@ -907,17 +915,27 @@ public class LogicMain {
 	
 	//@author A0111942N
 	/**
-	 * @return	All the labels
+	 * @return	All the labels in LinkedList
 	 */
 	public static LinkedList<Label> getAllLabels() {
 		return bufferLabelsList;
+	}
+	
+	//@author A0111942N
+	/**
+	 * This method returns the list of all the tasks.
+	 * 
+	 * @return All tasks in LinkedList
+	 */
+	public static LinkedList<Task> getAllTasks() {
+		return bufferTasksList;
 	}
 
 	//@author A0111942N
 	/**
 	 * Mainly for testing purpose.
 	 * 
-	 * @return	All the tasks
+	 * @return	All the tasks in string format
 	 */
 	public void printbufferTasksList() {
 		System.out.println(bufferTasksList.toString());
