@@ -63,7 +63,7 @@ public abstract class StorageBase{
 		
 			try {
 				
-				fileOut = new FileOutputStream(filename+".ser");
+				fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
 				
 			} catch (FileNotFoundException e) {
 				
@@ -118,7 +118,7 @@ public abstract class StorageBase{
 		
 		try {
 			
-			fileIn = new FileInputStream(filename+".ser");			
+			fileIn = new FileInputStream(filename + FILENAME_EXTENSION);			
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
@@ -156,7 +156,7 @@ public abstract class StorageBase{
 	 */
 	private boolean isEmptyFile(String filename){
 		
-		File storageFile = new File(filename+".ser");
+		File storageFile = new File(filename + FILENAME_EXTENSION);
 				
 		if(storageFile.length() <= 0){
 			
@@ -177,7 +177,7 @@ public abstract class StorageBase{
 	 */
 	protected void createNewFile(String filename){
 		
-		File storageFile = new File(filename+".ser");
+		File storageFile = new File(filename + FILENAME_EXTENSION);
 		
 		if(!storageFile.exists()){
 		
