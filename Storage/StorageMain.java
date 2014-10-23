@@ -33,8 +33,8 @@ public class StorageMain {
 	
 	
 	//Storage Objects
-	StorageTask taskStorage;
-	StorageLabel labelStorage;
+	StorageTask taskStorage; // should be set to private and have getInstances after doing singleton
+	StorageLabel labelStorage; // should be set to private and have getInstances after doing singleton
 	
 
 	//@author A0112898U

@@ -28,6 +28,22 @@ public class StorageTask extends StorageBase{
 		createNewFile(STORAGE_TASK_FILENAME);
 	}
 	
+	
+	//@author A0112898U
+	/**
+	 * Returns the filename of the .ser file
+	 * 
+	 * @return the allocated filename of the .ser file
+	 * 
+	 */
+	@Override
+	public String getFileName(){
+		
+		return STORAGE_TASK_FILENAME;
+	}
+	
+	
+	
 	//@author A0112898U
 	/**
 	 * overrides base class storeObject() to implement
@@ -37,7 +53,7 @@ public class StorageTask extends StorageBase{
 	 * 
 	 */
 	@Override
-	void storeObject(Object obj){
+	public void storeObject(Object obj){
 		
 		this.serializeObject(STORAGE_TASK_FILENAME, obj);
 	

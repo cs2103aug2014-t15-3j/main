@@ -29,11 +29,33 @@ public class StorageLabel extends StorageBase{
 	private static final String STORAGE_LABEL_FILENAME = "StorageLabel";
 
 	
-	
+	//@author A0112898U
+	/**
+	 * Constructor Call for StorageLabel 
+	 * Also checks for the creation of the .ser storage file
+	 * 
+	 * @return the allocated filename of the .ser file
+	 * 
+	 */
 	StorageLabel(){
+		
 		createNewFile(STORAGE_LABEL_FILENAME);
 	}
 	
+	
+	
+	//@author A0112898U
+	/**
+	 * Returns the filename of the .ser file
+	 * 
+	 * @return the allocated filename of the .ser file
+	 * 
+	 */
+	@Override
+	public String getFileName(){
+		
+		return STORAGE_LABEL_FILENAME;
+	}
 	
 	
 	
@@ -46,7 +68,7 @@ public class StorageLabel extends StorageBase{
 	 * 
 	 */
 	@Override
-	void storeObject(Object obj){
+	public void storeObject(Object obj){
 
 		this.serializeObject(STORAGE_LABEL_FILENAME,obj); //if possible sort first!
 

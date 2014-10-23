@@ -35,7 +35,8 @@ public abstract class StorageBase{
 
 	
 	//asbtract functions to be implemented by inherited objects
-	abstract void storeObject(Object obj);
+	abstract public String getFileName();
+	abstract public void storeObject(Object obj);
 	abstract protected Object retrieveObject();
 	
 	
