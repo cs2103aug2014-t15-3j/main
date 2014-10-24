@@ -15,20 +15,6 @@ public class LogicMain {
 	// Constant variables
 	private final static String LOG_NAME = "LogicMain";
 
-	//@author A0112898U
-	/**
-	 * Enum for search methods 
-	 */
-	public static enum SEARCH_TYPES {
-
-		TYPE_NAME,
-		TYPE_LABEL,
-		TYPE_DESCRIPTION,
-		TYPE_TIME_ADDED,
-		TYPE_DEADLINE
-
-	}
-
 	// Flag to check if the program has initialized.
 	private static boolean isInitialize = false;
 
@@ -800,118 +786,6 @@ public class LogicMain {
 		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,bufferLabelsList);
 	}
 
-	//@author A0112898U
-	/**
-	 * public overloaded method searchTasks() for 'Long' datatype query
-	 * for outside call to retrieve Stored Task 
-	 * 
-	 * @param searchType - the type of query type i.e. TYPE_DEADLINE/TYPE_TIME_ADDED
-	 * @param queryParam - query of 'Long' datatype variable is to input 
-	 * 
-	 * @return queryTasks returns a LinkedList with all task categorized with the 
-	 * same 'searchType' & 'Long' datatype variable
-	 * 
-	 */
-	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, long queryParam){
-
-		LinkedList<Task> storedTasks = bufferTasksList;
-		LinkedList<Task> queryTasks = new LinkedList<Task>();
-
-		switch(searchType){
-
-		case TYPE_DEADLINE:
-
-			for(Task t:storedTasks){
-
-				if(t.getDeadline() == queryParam){
-					queryTasks.add(t);
-				}
-			}
-
-			break;
-
-
-		case TYPE_TIME_ADDED:
-
-			for(Task t:storedTasks){
-
-				if(t.getTimeStamp() == queryParam){
-					queryTasks.add(t);
-				}
-			}
-
-			break;
-
-		default:
-			System.out.println("Type not supported");
-			return null;
-		}
-
-
-
-		return queryTasks;
-	}
-
-	//@author A0112898U
-	/**
-	 * public overloaded method searchTasks() for 'String' datatype query
-	 * for outside call to retrieve Stored Task 
-	 * 
-	 * @param searchType - the type of query type i.e. TYPE_NAME/TYPE_LABEL/TYPE_DESCRIPTION
-	 * @param queryParam - query of 'String' datatype variable is to input 
-	 * 
-	 * @return queryTasks returns a LinkedList with all task categorized with the 
-	 * same 'searchType' & 'String' datatype variable
-	 * 
-	 */
-	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, String queryParam){
-
-		LinkedList<Task> storedTasks = bufferTasksList;
-		LinkedList<Task> queryTasks = new LinkedList<Task>();
-
-		switch(searchType){
-
-		case TYPE_NAME:
-
-			for(Task t:storedTasks){
-
-				if(t.getName() == queryParam){
-					queryTasks.add(t);
-				}
-			}
-
-			break;
-
-		case TYPE_LABEL:
-
-			for(Task t:storedTasks){
-				
-				long labelID = getLabelId(queryParam);
-				if(t.getLabel() == labelID){
-					queryTasks.add(t);
-				}
-			}
-
-			break;
-
-		case TYPE_DESCRIPTION:
-
-			for(Task t:storedTasks){
-
-				if(t.getDescription().contains(queryParam)){
-					queryTasks.add(t);
-				}
-			}
-
-			break;	
-
-		default:
-			System.out.println("Type not supported");
-			return null;
-		}
-
-		return queryTasks;
-	}
 	
 	//@author A0111942N
 	/**
