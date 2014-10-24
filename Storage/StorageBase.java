@@ -109,7 +109,7 @@ public abstract class StorageBase{
 		
 		Object obj = null;	
 		
-		//returns a null immediately if file is empty
+		//returns a null immediately if file is empty //Boundary case!
 		if(isEmptyFile(filename)){
 			
 			return null;
@@ -183,7 +183,7 @@ public abstract class StorageBase{
 		
 			try {
 				
-				System.out.println("File not Found ... Creating one now");
+				System.out.println("File not Found ... Creating one now"); // Should assert here
 				storageFile.createNewFile();
 				
 			} catch (IOException e) {

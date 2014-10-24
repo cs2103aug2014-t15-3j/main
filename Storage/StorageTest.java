@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 
 public class StorageTest {
 
+	
+	//@author A0112898U
 	/**
 	 * Test cases for Remembra's Storage
 	 */	
@@ -37,7 +39,7 @@ public class StorageTest {
 	}	
 	
 	
-	
+	//@author A0112898U
 	/**
 	 * Test for storage initialization to make sure the task and label storages are initialized
 	 * also to make sure that,upon initialization if the .ser files are not present, the initialization 
@@ -50,7 +52,7 @@ public class StorageTest {
 		
 		if(storageStub.taskStorage == null){
 			
-			assert(storageStub.taskStorage == null) : "taskStorage is not initialized";
+			assert(storageStub.taskStorage == null) : "taskStorage is not initialized"; // should i place assert here or in the code itself?
 		
 		}
 		
@@ -59,7 +61,6 @@ public class StorageTest {
 			assert(storageStub.labelStorage == null) : "labelStorage is not initialized";
 			
 		}
-		
 		
 		//If pass the above cases, test for file creation in directories
 		File testTaskStorageSer = new File(storageStub.taskStorage.getFileName());
@@ -83,6 +84,8 @@ public class StorageTest {
 		return true;
 	}
 	
+	
+	//@author A0112898U
 	/**
 	 * Test for storage add function, mainly to test for 
 	 * error checking when storing files
@@ -94,6 +97,8 @@ public class StorageTest {
 		return true;
 	}
 	
+	
+	//@author A0112898U
 	/**
 	 * Test for storage retrieve function, mainly to test for 
 	 * error checking when retrieving files
