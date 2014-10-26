@@ -50,7 +50,8 @@ public final class LogicSearch {
 	 * same 'searchType' & 'Long' datatype variable
 	 * 
 	 */
-	private LinkedList<Task> searchTasks(SEARCH_TYPES searchType, long queryParam,  LinkedList<Task> bufferedTaskList){
+	private LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
+				long queryParam, LinkedList<Task> bufferedTaskList){
 
 		LinkedList<Task> storedTasks = bufferedTaskList;
 		LinkedList<Task> tempCollatedList = new LinkedList();
@@ -85,11 +86,10 @@ public final class LogicSearch {
 			return null;
 		}
 
-
-
 		return tempCollatedList;
 	}
 
+	
 	//@author A0112898U
 	/**
 	 * public overloaded method searchTasks() for 'String' datatype query
@@ -103,7 +103,7 @@ public final class LogicSearch {
 	 * 
 	 */
 	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
-					String queryString, LinkedList<Task> bufferedTaskList){
+				String queryString, LinkedList<Task> bufferedTaskList){
 
 		LinkedList<Task> storedTasks = bufferedTaskList;
 		LinkedList<Task> tempCollatedList = new LinkedList();
@@ -136,8 +136,10 @@ public final class LogicSearch {
 					}
 				}
 	
-				break;
-	
+				if(searchType == SEARCH_TYPES.TYPE_NAME){
+					break;
+				}
+				
 			case TYPE_LABEL:
 				
 				//Search each query string through all the stored task via Label
@@ -241,7 +243,6 @@ public final class LogicSearch {
 				matchedTasks = startLetterSearch(matchedTasks, bufferedTaskList);
 				break;
 				
-			case SEARCH_SUBSTRING_CONTAINS:
 			case SEARCH_MATCH_WORD:
 			case SEARCH_POWER_SEARCH:
 				
