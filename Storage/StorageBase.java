@@ -14,8 +14,8 @@ import java.util.LinkedList;
 /*********************************************************************/
 // @ChuanWei - StorageBase.java
 //
-// 1. 
-//
+// 1. You should consider using Logger instead of System.out.print
+//    for debugging (line 192)
 //
 //
 //

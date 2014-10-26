@@ -8,10 +8,10 @@ import java.util.LinkedList;
 /*********************************************************************/
 // @ChuanWei - StorageTask.java
 //
-// 1. 
-//
-//
-//
+// 1. Positioning of {
+//    
+//    The correct way is to leave a space between function name and {
+//    Example: function() {
 //
 //
 // @ChuanWei - StorageTask.java
