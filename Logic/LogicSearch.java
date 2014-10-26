@@ -9,7 +9,7 @@ public final class LogicSearch {
 
 	//private Objects
 	private LinkedList<String> suggestInputs = new LinkedList<String>(); //but if static can't be changed! ><" resolve this asap!
-	private LinkedList<String> tokenizedInputs = new LinkedList<String>(); 
+	private static LinkedList<String> tokenizedInputs = new LinkedList<String>(); 
 	private LinkedList<Task> matchedTasks = new LinkedList<Task>();
 	
 	
@@ -191,7 +191,7 @@ public final class LogicSearch {
 
 	//@author A0112898U
 	/**
-	 * Tokenizes the search input by user
+	 * Tokenizes the param searchString
 	 * 
 	 * @param searchString - search string input by user
 	 * 
@@ -222,23 +222,34 @@ public final class LogicSearch {
 	 * @param bufferedTaskList - List of task that have been added by user
 	 * 
 	 */
-	public static void smartSearch(String searchLine, 
-				LinkedList<Task> listOfTasks, SEARCH_TYPES searchType){
+	public static LinkedList<Task> smartSearch(String searchLine, 
+				LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType){
 		
 		//Task that is collated through the searches.
 		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
 		
-		//Tokenized search inputs
-		
+		//Tokenize the search input
+		tokenizedInputs = tokenizeSearchInput(searchLine);
+
+		for(String s:tokenizedInputs){
+			System.out.println(s);
+		}
 		
 		switch(searchType){
 		
 			case SEARCH_START_LETTER:
+				matchedTasks = startLetterSearch(matchedTasks, bufferedTaskList);
+				break;
+				
 			case SEARCH_SUBSTRING_CONTAINS:
 			case SEARCH_MATCH_WORD:
 			case SEARCH_POWER_SEARCH:
+				
+				System.out.println("Type not supproted yet");
 				break;
 		}
+		
+		return matchedTasks;
 		
 	}
 	
@@ -250,17 +261,17 @@ public final class LogicSearch {
 	 * check the char with the 1st letter of every string if applies, 
 	 * matched tasks is then added to the list of return linkedlist string
 	 * 
-	 * @param collatedList - accepts a LinkedList<Task> type list that has been 
-	 * 						 previously initiated/accumulated 
+	 * @param collatedMatchedTaskList - accepts a LinkedList<Task> type list that has been 
+	 * 						            previously initiated/accumulated 
 	 * 
 	 * @param bufferedTaskList - List of task that have been added by user
 	 * 
 	 * @return returns the newly collated list
 	 */
-	private LinkedList<Task> startLetterSearch(LinkedList<Task> 
+	private static LinkedList<Task> startLetterSearch(LinkedList<Task> 
 				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
 		
-		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
+		LinkedList<Task> tempCollatedList = new LinkedList<Task>();//(collatedMatchedTaskList);
 		
 		for (String searchString:tokenizedInputs){
 			
@@ -276,18 +287,28 @@ public final class LogicSearch {
 					//Search through the first Letter of every word in the description
 					for (String desTok:desToks){
 					
+						
 						if (searchString.equals(Character.toString(desTok.charAt(0)))){
+						
+							System.out.println(desTok);
 							
-							if(!tempCollatedList.contains(t)){
+							//Task tt = new Task(t);
+							
+							//if(!tempCollatedList.contains(t)){  // why only t0 got added?
 								
 								tempCollatedList.add(t);
-							}
+								
+								break; //Break out of the current task
+							//}
 						}
 					}
 				}
 			}
 		}
 		
+		for(Task t:tempCollatedList){
+			System.out.println(t.getName());
+		}
 		return tempCollatedList;
 		
 	}
@@ -296,7 +317,7 @@ public final class LogicSearch {
 	//@author A0112898U
 	/**
 	 * Searches the user search inputs, with the list of tasks via description,
-	 * Compare word by word with the tokenized inputs
+	 * Simple substring search via .contains with the tokenized inputs
 	 * if applies, matched task is added to the list of return linkedlist string
 	 * 
 	 * @param collatedList - accepts a LinkedList<Task> type list that has been 
@@ -332,40 +353,6 @@ public final class LogicSearch {
 
 		
 		return tempCollatedList;
-	}
-	
-	
-	//@author A0112898U
-	/**
-	 * Searches the user search inputs, with the list of tasks via description,
-	 * Simple substring search via .contains with the tokenized inputs
-	 * if applies, matched task is added to the list of return linkedlist string
-	 * 
-	 * @param collatedMatchedTaskList - accepts a LinkedList<Task> type list that has been 
-	 * 						 previously initiated/accumulated 
-	 * 
-	 * @param bufferedTaskList - List of task that have been added by user
-	 * 
-	 * @return returns the newly collated list
-	 */
-	private static LinkedList<Task> subStringContainsSearch(LinkedList<Task> 
-				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){ 
-		
-		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
-		
-		//
-		//Breaks the task via tokenization method and search through
-		//
-		
-		
-		//
-		//If possible return suggestion like if user types ankalp but ankalp is contained in sankalp
-		//
-		
-		
-		
-		return tempCollatedList;
-		
 	}
 	
 	
