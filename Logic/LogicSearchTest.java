@@ -156,7 +156,7 @@ public class LogicSearchTest {
 		
 		//predicted test results
 		LinkedList<Task> predictedResult = testTasks;
-		testStartLetterSearch("t",testTasks,predictedResult); //keep as sample
+		testStartLetterSearch("1",testTasks,predictedResult); //keep as sample
 		
 		//System.out.println("hi");
 		

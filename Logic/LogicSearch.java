@@ -236,17 +236,30 @@ public final class LogicSearch {
 					
 					switch (searchType){
 						
+						case TYPE_ALL:
+						
 						case TYPE_DESCRIPTION:
 							chkToks.add(tokenizeSearchInput(t.getDescription()));
-							break;
+							
+							if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
+								break;
+							}
+							
 							
 						case TYPE_NAME:
 							chkToks.add(tokenizeSearchInput(t.getName()));
-							break;
+							
+							if (searchType == SEARCH_TYPES.TYPE_NAME){
+								break;
+							}
 							
 						case TYPE_LABEL:
 							//chkToks = tokenizeSearchInput(t.getLabel());
-							break;	
+							
+							if (searchType == SEARCH_TYPES.TYPE_LABEL){
+								break;
+							}
+							
 					}
 					
 					for (LinkedList<String> chkTok:chkToks){
