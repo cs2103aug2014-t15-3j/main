@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -43,9 +45,11 @@ public class LogicSearchTest {
 			testType1.add(new Task("t" + i , "task" + i + " lalala test"));
 		}
 		
+		//Convert to set to get the same format
+		Set<Task> testSet = new HashSet<Task>(testType1);
 		
 		//predicted test results for testType 1
-		LinkedList<Task> predictedResult_1_1 = testType1;
+		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testSet);
 		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
 
 		/********************************************************************************************/
@@ -124,20 +128,23 @@ public class LogicSearchTest {
 		
 		LinkedList<Task> collatedTask = new LinkedList<Task>();
 		
-		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
+		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL);
 		
 		if(collatedTask.equals(predictedResult)){
 			return true;
 		}
 		
+		//For debugging purposes
 		for(Task t : collatedTask){
 			System.out.println(t.getName());
 		}
 		
+		System.out.println("I came here");
+		
 		return false;
 	}
 	
-	/*
+	//Used for debuggin purpsoe
 	public static void main (String[] args){
 		
 		LinkedList<Task> testTasks = new LinkedList<Task>();
@@ -154,6 +161,6 @@ public class LogicSearchTest {
 		//System.out.println("hi");
 		
 	}
-	*/
+	
 	
 }

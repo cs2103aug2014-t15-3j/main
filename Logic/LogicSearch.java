@@ -1,7 +1,9 @@
 //@author A0112898U
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -27,6 +29,7 @@ public final class LogicSearch {
 		TYPE_DESCRIPTION,
 		TYPE_TIME_ADDED,
 		TYPE_DEADLINE,
+		TYPE_ALL,
 		
 		//Following constants are for the smart search
 		//Searches via name, description and labels ONLY
@@ -36,6 +39,28 @@ public final class LogicSearch {
 		SEARCH_POWER_SEARCH
 	};
 	
+	
+	//@author A0112898U
+	/**
+	 * Tokenizes the param searchString
+	 * 
+	 * @param searchString - search string input by user
+	 * 
+	 * @return a LinkedList of tokenized strings
+	 */
+	private static LinkedList<String> tokenizeSearchInput(String searchString){
+		
+		StringTokenizer strTokens = new StringTokenizer(searchString);
+		LinkedList<String> strToks = new LinkedList<String>();
+		
+		//Tokenizes the search String taken in
+		while (strTokens.hasMoreTokens()){
+			
+			strToks.add(strTokens.nextToken());
+		}
+		
+		return strToks;
+	}
 	
 	
 	//@author A0112898U
@@ -88,8 +113,8 @@ public final class LogicSearch {
 
 		return tempCollatedList;
 	}
-
 	
+
 	//@author A0112898U
 	/**
 	 * public overloaded method searchTasks() for 'String' datatype query
@@ -114,29 +139,30 @@ public final class LogicSearch {
 		
 		switch(searchType){
 
+			case TYPE_ALL:
+			
 			case TYPE_NAME:
+				
+	
+				if(searchType == SEARCH_TYPES.TYPE_NAME){
+					break;
+				}
+				
+			case TYPE_DESCRIPTION:
 				
 				//Search each query string through all the stored task via name
 				for (String searchString:tokenizedInputs){
 					
 					for(Task t:bufferedTaskList){ 
 						
-						if (t.getName().equals(searchString)){
+						if (t.getDescription().contains(searchString)){
 							
-							//If task not already added, add task to collated task
-							if(!tempCollatedList.contains(t)){
-								
-								//If task not already added, add task to collated task
-								if(!tempCollatedList.contains(t)){
-									
-									tempCollatedList.add(t);
-								}
-							}
+							tempCollatedList.add(t);
 						}
 					}
 				}
-	
-				if(searchType == SEARCH_TYPES.TYPE_NAME){
+				
+				if(searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
 					break;
 				}
 				
@@ -162,23 +188,7 @@ public final class LogicSearch {
 	
 				break;
 				
-			case TYPE_DESCRIPTION:
-				
-				//Search each query string through all the stored task via name
-				for (String searchString:tokenizedInputs){
-					
-					for(Task t:bufferedTaskList){ 
-						
-						if (t.getDescription().contains(searchString)){
-							
-							tempCollatedList.add(t);
-						}
-					}
-				}
-	
-				//Finally return the collated list of matched task
-	
-				break;
+			
 				
 			default:
 				
@@ -186,31 +196,173 @@ public final class LogicSearch {
 				return null;
 		}
 
+		//Finally return the collated list of matched task
+		return tempCollatedList;
+	}	
+	
+	
+	//@author A0112898U
+	/**
+	 * Searches the user search inputs,  with the list of tasks via name/label/description
+	 * ONLY Searches a char if present with the tokenized inputs, 
+	 * check the char with the 1st letter of every string if applies, 
+	 * matched tasks is then added to the list of return linkedlist string
+	 * 
+	 * @param collatedMatchedTaskList - accepts a LinkedList<Task> type list that has been 
+	 * 						            previously initiated/accumulated 
+	 * 
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * 
+	 * @return returns the newly collated list
+	 */
+	private static LinkedList<Task> startLetterSearch(String queryString, LinkedList<Task> 
+				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType){
+		
+		LinkedList<Task> tempCollatedList = new LinkedList<Task>();//(collatedMatchedTaskList);
+		
+		//Tokenize the search input
+		tokenizedInputs = tokenizeSearchInput(queryString);
+		
+		for (String searchString:tokenizedInputs){
+			
+			//if the token is a character
+			if (searchString.length() == 1){
+			
+				//Compare the token with the list of stored tasks
+				for (Task t:bufferedTaskList){ 
+					
+					//Tokenized the searchType string
+					LinkedList<LinkedList<String>> chkToks = new LinkedList<LinkedList<String>>();
+					
+					switch (searchType){
+						
+						case TYPE_DESCRIPTION:
+							chkToks.add(tokenizeSearchInput(t.getDescription()));
+							break;
+							
+						case TYPE_NAME:
+							chkToks.add(tokenizeSearchInput(t.getName()));
+							break;
+							
+						case TYPE_LABEL:
+							//chkToks = tokenizeSearchInput(t.getLabel());
+							break;	
+					}
+					
+					for (LinkedList<String> chkTok:chkToks){
+						
+						boolean isTaskAdded = false;
+						
+						for(String chkT:chkTok){
+								
+							//Search through the first Letter of every word in the description
+							if (searchString.equals(Character.toString(chkT.charAt(0)))){
+								
+								System.out.println(chkTok);
+								
+								//Task tt = new Task(t);
+								
+								//if(!tempCollatedList.contains(t)){  // why only t0 got added? // i really need this
+									
+									tempCollatedList.add(t);
+									isTaskAdded = true;
+									break; //Break out of the current task
+								//}
+							}
+						}	
+						
+						//if task is already added dont' need to check for the next type
+						if (isTaskAdded){
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		//Checking purposes
+		for(Task t:tempCollatedList){
+			System.out.println(t.getName());
+		}
+		
+		//collatedMatchedTaskList.addAll(tempCollatedList);
 		return tempCollatedList;
 	}
 	
 	
-
 	//@author A0112898U
 	/**
-	 * Tokenizes the param searchString
+	 * Searches the user search inputs, with the list of tasks via name/label/description,
+	 * Simple substring search via .contains with the tokenized inputs
+	 * if applies, matched task is added to the list of return linkedlist string
 	 * 
-	 * @param searchString - search string input by user
+	 * @param collatedList - accepts a LinkedList<Task> type list that has been 
+	 * 						 previously initiated/accumulated 
 	 * 
-	 * @return a LinkedList of tokenized strings
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * 
+	 * @return returns the newly collated list
 	 */
-	private static LinkedList<String> tokenizeSearchInput(String searchString){
+	private static LinkedList<Task> matchWordSearch(String queryString, LinkedList<Task> 
+				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType){
+	
+		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
 		
-		StringTokenizer strTokens = new StringTokenizer(searchString);
-		LinkedList<String> strToks = new LinkedList<String>();
+		//Tokenize the search input
+		tokenizedInputs = tokenizeSearchInput(queryString);
 		
-		//Tokenizes the search String taken in
-		while (strTokens.hasMoreTokens()){
+		//Search each query string through all the stored task via name
+		for (String searchString:tokenizedInputs){
 			
-			strToks.add(strTokens.nextToken());
+			for(Task t:bufferedTaskList){ 
+				
+				//Tokenized the searchType string
+				LinkedList<String> chkString = new LinkedList<String>();
+				
+				switch (searchType){
+					
+					case TYPE_ALL:
+						
+					case TYPE_DESCRIPTION:
+						chkString.add(t.getDescription());
+						
+						if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
+							break;
+						}
+						
+					case TYPE_NAME:
+						chkString.add(t.getName());
+						
+						if (searchType == SEARCH_TYPES.TYPE_NAME){
+							break;
+						}
+						
+					case TYPE_LABEL:
+						//chkString[2] = t.getLabel();
+						break;	
+				}
+					
+				
+				for (String chkStr:chkString){
+					
+					if (chkStr.contains(searchString)){
+						
+						System.out.println(chkString);
+						
+						//Task tt = new Task(t);
+						
+						//if(!tempCollatedList.contains(t)){  // why only t0 got added?
+							
+							tempCollatedList.add(t);
+							
+							break; //Break out of the current task if task is added
+						//}
+					}					
+				}
+			}
 		}
-		
-		return strToks;
+
+		return tempCollatedList;
 	}
 	
 	
@@ -231,131 +383,49 @@ public final class LogicSearch {
 		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
 		
 		//Tokenize the search input
-		tokenizedInputs = tokenizeSearchInput(searchLine);
-
+		//tokenizedInputs = tokenizeSearchInput(searchLine);
+		/*
 		for(String s:tokenizedInputs){
 			System.out.println(s);
 		}
+		*/
 		
+		matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+		//matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+		
+		/*
 		switch(searchType){
 		
 			case SEARCH_START_LETTER:
-				matchedTasks = startLetterSearch(matchedTasks, bufferedTaskList);
+				matchedTasks = startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
+				//startLetterSearch(matchedTasks, bufferedTaskList, SEARCH_TYPES.TYPE_NAME);
 				break;
 				
 			case SEARCH_MATCH_WORD:
+				matchedTasks = matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
+				break;
+				
 			case SEARCH_POWER_SEARCH:
 				
 				System.out.println("Type not supproted yet");
 				break;
 		}
-		
+		*/
 		return matchedTasks;
 		
 	}
 	
 	
-	//@author A0112898U
-	/**
-	 * Searches the user search inputs,  with the list of tasks
-	 * ONLY Searches a char if present with the tokenized inputs, 
-	 * check the char with the 1st letter of every string if applies, 
-	 * matched tasks is then added to the list of return linkedlist string
-	 * 
-	 * @param collatedMatchedTaskList - accepts a LinkedList<Task> type list that has been 
-	 * 						            previously initiated/accumulated 
-	 * 
-	 * @param bufferedTaskList - List of task that have been added by user
-	 * 
-	 * @return returns the newly collated list
-	 */
-	private static LinkedList<Task> startLetterSearch(LinkedList<Task> 
-				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
+	private LinkedList<Task> removeDuplicateTasks (LinkedList<Task> checkList){
 		
-		LinkedList<Task> tempCollatedList = new LinkedList<Task>();//(collatedMatchedTaskList);
+		LinkedList<Task> tempList = new LinkedList<Task>();
 		
-		for (String searchString:tokenizedInputs){
-			
-			//if the token is a character
-			if (searchString.length() == 1){
-			
-				//Compare the token with the list of stored tasks
-				for (Task t:bufferedTaskList){ 
-				
-					//Tokenized the description of the tasks
-					LinkedList<String> desToks = tokenizeSearchInput(t.getDescription());
-				
-					//Search through the first Letter of every word in the description
-					for (String desTok:desToks){
-					
-						
-						if (searchString.equals(Character.toString(desTok.charAt(0)))){
-						
-							System.out.println(desTok);
-							
-							//Task tt = new Task(t);
-							
-							//if(!tempCollatedList.contains(t)){  // why only t0 got added?
-								
-								tempCollatedList.add(t);
-								
-								break; //Break out of the current task
-							//}
-						}
-					}
-				}
-			}
-		}
+		Set<Task> newSet = new HashSet<Task>(checkList);
 		
-		for(Task t:tempCollatedList){
-			System.out.println(t.getName());
-		}
-		return tempCollatedList;
-		
+		tempList = new LinkedList<Task>(newSet);
+		 
+		return tempList;
 	}
-		
-	
-	//@author A0112898U
-	/**
-	 * Searches the user search inputs, with the list of tasks via description,
-	 * Simple substring search via .contains with the tokenized inputs
-	 * if applies, matched task is added to the list of return linkedlist string
-	 * 
-	 * @param collatedList - accepts a LinkedList<Task> type list that has been 
-	 * 						 previously initiated/accumulated 
-	 * 
-	 * @param bufferedTaskList - List of task that have been added by user
-	 * 
-	 * @return returns the newly collated list
-	 */
-	private LinkedList<Task> matchWordSearch(String queryString, LinkedList<Task> 
-				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
-	
-		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
-		
-		//Tokenize the search input
-		tokenizedInputs = tokenizeSearchInput(queryString);
-		
-		//Search each query string through all the stored task via name
-		for (String searchString:tokenizedInputs){
-			
-			for(Task t:bufferedTaskList){ 
-				
-				if (t.getDescription().contains(searchString)){
-					
-					//If task not already added, add task to collated task
-					if(!tempCollatedList.contains(t)){
-						
-						tempCollatedList.add(t);
-					}
-				}
-			}
-		}
-
-		
-		return tempCollatedList;
-	}
-	
 	
 	//Freaking expensive to search and tiring to implment 
 	/* - TBA - may or may not implement */
