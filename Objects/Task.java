@@ -157,15 +157,31 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 
 	@Override
 	public String toString() {
+		
+		String message = "";
+		
+		// Include name into message
+		message += "Task: " + name + "\n";
+		
+		// Include description into message
+		message += "Description: " + description + "\n";
 
+		// Include description into message
 		Date date = new Date(deadline);
 		SimpleDateFormat format = new SimpleDateFormat(
 				Operations.DATE_OUTPUT_FORMAT);
 		String dateOutput = format.format(date);
+		
+		message += "Deadline: " + dateOutput + "\n";
 
-		return "Task: " + name + "\nDescription: " + description
-				+ "\nDeadline: " + dateOutput 
-				+ "\nLabel: " + getLabelName(label) + "\n\n";
+		// Include label into message
+		String labelName = getLabelName(label);
+		
+		if(!labelName.equals(Operations.EMPTY_MESSAGE)) {
+			message += "Label: " + labelName + "\n";
+		}
+
+		return message + "\n";
 	}
 
 	@Override
