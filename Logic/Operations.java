@@ -38,6 +38,7 @@ public class Operations {
 	protected static LinkedList<String> deleteOperations;
 	protected static LinkedList<String> saveOperations;
 	protected static LinkedList<String> nameOperations;
+	protected static LinkedList<String> reminderOperations;
 	protected static LinkedList<String> colorOperations;
 	protected static LinkedList<String> descriptionOperations;
 	protected static LinkedList<String> deadlineOperations;
@@ -62,6 +63,7 @@ public class Operations {
 			deleteOperations = populateDelete();
 			saveOperations = populateSave();
 			nameOperations = populateName();
+			reminderOperations = populateReminder();
 			colorOperations = populateColor();
 			descriptionOperations = populateDescription();
 			deadlineOperations = populateDeadline();
@@ -113,6 +115,22 @@ public class Operations {
 		operations.add(";name");
 		operations.add(";title");
 
+		return operations;
+	}
+
+	//@author A0111942N
+	/**
+	 * Populate label list with its keywords
+	 *
+	 * @return List of label keywords
+	 */
+	private LinkedList<String> populateReminder() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";remind");
+		operations.add(";reminder");
+		operations.add(";notify");
+		
 		return operations;
 	}
 	

@@ -199,7 +199,7 @@ public class LogicMain {
 				if (!operation.isEmpty()) {
 
 					LogicInputPair previousOperation
-					= new LogicInputPair(operation, content);
+					= new LogicInputPair(operation, cleanUpInput(content) );
 
 					inputList.add(previousOperation);
 				}
@@ -212,6 +212,7 @@ public class LogicMain {
 
 					inputList.add(new LogicInputPair(operation, ""));
 				}
+				
 			} else {
 
 				if (!content.isEmpty()) {
@@ -220,7 +221,7 @@ public class LogicMain {
 				content += inputArray[i];
 
 				if (i == inputArray.length - 1) {
-					inputList.add(new LogicInputPair(operation, content));
+					inputList.add(new LogicInputPair(operation, cleanUpInput(content)));
 				}
 			}
 		}
@@ -285,6 +286,7 @@ public class LogicMain {
 		String name = "";
 		String description = "";
 		long deadline = -1;
+		long reminder = -1;
 		String color = "";
 		long labelID = -1;
 
@@ -311,7 +313,20 @@ public class LogicMain {
 				try {
 					
 					String dateInput = inputList.get(i).getContent();
-					deadline = getDeadline(dateInput);
+					deadline = convertDateString(dateInput);
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.reminderOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					reminder = convertDateString(dateInput);
 					
 				} catch (ParseException e) {
 					
@@ -341,12 +356,19 @@ public class LogicMain {
 			newTask.editState(Operations.ADD_OPERATION);
 			bufferTasksList.add(newTask);
 
-			if(deadline == -1) {
+			// Include deadline to new task
+			if (deadline == -1) {
 				deadline = getEndOfToday();
-				newTask.editDeadline(deadline);
+			}
+			newTask.editDeadline(deadline);
+
+			// Include reminder to new task
+			if (reminder != -1) {
+				newTask.editReminder(reminder);
 			}
 
-			if(labelID != -1) {
+			// Include label to new task
+			if (labelID != -1) {
 				newTask.editLabel(labelID);
 			}
 
@@ -429,9 +451,11 @@ public class LogicMain {
 		String color = "";
 		long labelId = -1;
 		long deadline = -1;
+		long reminder = -1;
 		boolean nameEdited = false;
 		boolean descriptionEdited = false;
 		boolean deadlineEdited = false;
+		boolean reminderEdited = false;
 		boolean colorEdited = false;
 
 		for (int i = 0; i < inputList.size(); i++) {
@@ -483,9 +507,24 @@ public class LogicMain {
 				try {
 					
 					String dateInput = inputList.get(i).getContent();
-					deadline = getDeadline(dateInput);
+					deadline = convertDateString(dateInput);
 
 					deadlineEdited = true;
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.reminderOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					reminder = convertDateString(dateInput);
+					
+					reminderEdited = true;
 					
 				} catch (ParseException e) {
 					
@@ -565,6 +604,13 @@ public class LogicMain {
 				
 			}
 			
+			// Check if deadline has been edited
+			if (reminderEdited) {
+
+				newTask.editReminder(reminder);
+
+			}
+			
 			// Check if label has been edited
 			if (labelId != -1) {
 				
@@ -627,7 +673,7 @@ public class LogicMain {
 
 		if (!isLabel) {
 
-			if (bufferTasksList.size() != 0 && viewOperation.getContent() == "") {
+			if (bufferTasksList.size() != 0 && !isNumeric(viewOperation.getContent() ) ) {
 
 				Collections.sort(bufferTasksList);
 				returningItems = new LinkedList<Item>(bufferTasksList);
@@ -649,11 +695,13 @@ public class LogicMain {
 
 				} catch (NumberFormatException e) {
 
-					// For label
+					logger.log(Level.WARNING, "Invalid number");
 
 				}
 
-			} else {
+			}
+			
+			if (returningItems.isEmpty()) {
 
 				returnTask = new Task(Operations.EMPTY_MESSAGE);
 				returnTask.editState(Operations.VIEW_OPERATION);
@@ -691,6 +739,11 @@ public class LogicMain {
 		}
 
 		return returningItems;
+	}
+	
+	
+	public static boolean isNumeric(String str) {
+		return str.matches("-?\\d+(\\.\\d+)?");
 	}
 	
 	
@@ -941,7 +994,7 @@ public class LogicMain {
 	 * 
 	 * @return	Date in milliseconds
 	 */
-	private long getDeadline(String dateInput) throws ParseException {
+	private long convertDateString(String dateInput) throws ParseException {
 
 		long deadline;
 		dateInput = dateInput.toUpperCase();

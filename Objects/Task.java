@@ -7,6 +7,7 @@ import java.util.LinkedList;
 public class Task implements Item, java.io.Serializable, Comparable<Task> {
 
 	private final static String TO_DO_LABEL = "To-Do";
+	private final static int NOT_VALID = -1;
 
 	// Class variable
 	private String name;
@@ -14,6 +15,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private long label;
 	private long timeStamp;
 	private long deadline;
+	private long reminder;
 	private String state;
 	
 	//@author A0111942N
@@ -24,7 +26,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param name	Task's name
 	 */
 	public Task(String name) {
-		this(name, "", -1, -1);
+		this(name, "", NOT_VALID, NOT_VALID, NOT_VALID);
 	}
 
 	//@author A0111942N
@@ -36,7 +38,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param description	Task's description
 	 */
 	public Task(String name, String description) {
-		this(name, description, -1, -1);
+		this(name, description, NOT_VALID, NOT_VALID, NOT_VALID);
 	}
 
 	//@author A0111942N
@@ -53,6 +55,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.label = oldTask.getLabel();
 		this.timeStamp = oldTask.getTimeStamp();
 		this.deadline = oldTask.getDeadline();
+		this.reminder = oldTask.getReminder();
 		this.state = "";
 	}
 
@@ -65,13 +68,14 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 * @param label			Task's label
 	 * @param deadline		Task's deadline
 	 */
-	public Task(String name, String description, long label, long deadline) {
+	public Task(String name, String description, long label, long deadline, long reminder) {
 
 		this.name = name;
 		this.description = description;
 		this.label = label;
 		this.timeStamp = System.currentTimeMillis();
 		this.deadline = deadline;
+		this.reminder = reminder;
 		this.state = "";
 	}
 
@@ -94,6 +98,10 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 
 	public long getDeadline() {
 		return deadline;
+	}
+
+	public long getReminder() {
+		return reminder;
 	}
 
 	public String getState() {
@@ -123,6 +131,11 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public long editDeadline(long deadline) {
 		this.deadline = deadline;
 		return deadline;
+	}
+	
+	public long editReminder(long reminder) {
+		this.reminder = reminder;
+		return reminder;
 	}
 	
 	public long editTimestamp(String timestamp) {
@@ -166,13 +179,21 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		// Include description into message
 		message += "Description: " + description + "\n";
 
-		// Include description into message
+		// Include deadline into message
 		Date date = new Date(deadline);
 		SimpleDateFormat format = new SimpleDateFormat(
 				Operations.DATE_OUTPUT_FORMAT);
 		String dateOutput = format.format(date);
 		
 		message += "Deadline: " + dateOutput + "\n";
+		
+		// Include reminder into message
+		if(reminder >= System.currentTimeMillis()) {
+			date.setTime(reminder);
+			dateOutput = format.format(date);
+			
+			message += "Remind at: " + dateOutput + "\n";
+		}
 
 		// Include label into message
 		String labelName = getLabelName(label);
@@ -194,7 +215,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		} else if (deadline > compareDeadline) {
 			return 1;
 		} else {
-			return -1;
+			return NOT_VALID;
 		}
 	}
 	
