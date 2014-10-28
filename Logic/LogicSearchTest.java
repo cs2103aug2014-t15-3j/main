@@ -28,7 +28,7 @@ public class LogicSearchTest {
 		//assertEquals("Test - 'Remembra Storage .init()'", true,testStorageInit(storageMain)); //keep as sample
 			
 		testCases_startLetterSearch();
-	
+		//testCases_matchWordSearch();
 	}	
 	
 
@@ -38,6 +38,8 @@ public class LogicSearchTest {
 	 */	
 	public void testCases_startLetterSearch(){
 	
+		LogicSearch.SEARCH_TYPES searchAlgoType = LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER;
+		
 		//Init Test Type 1 - all test cases are init with the same datas except their indexes
 		LinkedList<Task> testType1 = new LinkedList<Task>();
 		
@@ -45,11 +47,8 @@ public class LogicSearchTest {
 			testType1.add(new Task("t" + i , "task" + i + " lalala test"));
 		}
 		
-		//Convert to set to get the same format
-		Set<Task> testSet = new HashSet<Task>(testType1);
-		
 		//predicted test results for testType 1
-		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testSet);
+		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testType1);
 		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
 
 		/********************************************************************************************/
@@ -57,22 +56,22 @@ public class LogicSearchTest {
 		
 		//Test for all applicable cases in 1st and 2nd token of the description respectively
 		assertEquals("Test 1 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("t",testType1,predictedResult_1_1));
+				testSearchAlgo("t",testType1,predictedResult_1_1,searchAlgoType));
 		
 		assertEquals("Test 2 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("l",testType1,predictedResult_1_1));
+				testSearchAlgo("l",testType1,predictedResult_1_1,searchAlgoType));
 
 		//Test for any applicable cases with many input token - only chars input should be checked
 		assertEquals("Test 3 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("9 think l",testType1,predictedResult_1_1));
+				testSearchAlgo("9 think l",testType1,predictedResult_1_1,searchAlgoType));
 
 		//Test for all NOT - applicable cases
 		assertEquals("Test 4 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("0",testType1,predictedResult_1_2));
+				testSearchAlgo("0",testType1,predictedResult_1_2,searchAlgoType));
 		
 		/* Equivalence Partition Test - Test for boundary case - no 'single character' in the search String */
 		assertEquals("Test 5 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("test lalala",testType1,predictedResult_1_2));
+				testSearchAlgo("test lalala",testType1,predictedResult_1_2,searchAlgoType));
 		
 		/************************ END TEST TYPE 1 - TEST CASES **************************************/
 		/********************************************************************************************/
@@ -107,13 +106,13 @@ public class LogicSearchTest {
 		
 		//Test for all applicable cases in 1st and 2nd token of the description respectively
 		assertEquals("Test 6 - 'LogicSearch - startLetterSearch'", true, 
-					testStartLetterSearch("t",testType2,predictedResult_2_1));
+				testSearchAlgo("t",testType2,predictedResult_2_1,searchAlgoType));
 		
 		assertEquals("Test 7 - 'LogicSearch - startLetterSearch'", true, 
-				testStartLetterSearch("l",testType2,predictedResult_2_2));
+				testSearchAlgo("l",testType2,predictedResult_2_2,searchAlgoType));
 
 		assertEquals("Test 8 - 'LogicSearch - startLetterSearch'", true, 
-				testStartLetterSearch("b",testType2,predictedResult_2_3));
+				testSearchAlgo("b",testType2,predictedResult_2_3,searchAlgoType));
 		
 		/************************ END TEST TYPE 2 - TEST CASES **************************************/
 		/********************************************************************************************/
@@ -122,48 +121,76 @@ public class LogicSearchTest {
 	
 	//@author A0112898U
 	/**
-	 * Test for 'startLetterSearch' function
+	 * Test cases/senarios for 'matchWordSearch' function
 	 */	
-	public static boolean testStartLetterSearch(String searchLine, LinkedList<Task> storedTasks, LinkedList<Task> predictedResult) {
+	public void testCases_matchWordSearch(){
+	
+		LogicSearch.SEARCH_TYPES searchAlgoType = LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD;
 		
-		LinkedList<Task> collatedTask = new LinkedList<Task>();
+		//Init Test Type 1 - all test cases are init with the same datas except their indexes
+		LinkedList<Task> testType1 = new LinkedList<Task>();
 		
-		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
-		
-		if(collatedTask.equals(predictedResult)){
-			return true;
+		for (int i = 0; i < 4; i++){
+			
+			testType1.add(new Task("t" + i , "task" + i + " matchWord test"));
 		}
 		
-		//For debugging purposes
-		for(Task t : collatedTask){
-			System.out.println(t.getName());
-		}
+		//predicted test results for testType 1
+		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testType1);
+		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
+
+		/********************************************************************************************/
+		/********************** START TEST TYPE 1 - TEST CASES **************************************/
 		
-		return false;
+		/* Equivalence Partition Test - Test for boundary case - 'single character' in the search String */
+		//Test for 1 chacracter search input but match word doesn't search 1 char
+		//assume users uses 1 char as the heading of the word to be search
+		assertEquals("Test 1 - 'LogicSearch - testCases_matchWordSearch'", true, 
+				testSearchAlgo("t",testType1,predictedResult_1_2,searchAlgoType));
+		
+		//Test for 2 chacracter search input but task doesn't exist in the list
+		assertEquals("Test 2 - 'LogicSearch - testCases_matchWordSearch'", true, 
+				testSearchAlgo("tt",testType1,predictedResult_1_2,searchAlgoType));
+
+		//Test for any applicable cases with many input token - only chars input should be checked
+		assertEquals("Test 3 - 'LogicSearch - testCases_matchWordSearch'", true, 
+				testSearchAlgo("task",testType1,predictedResult_1_1,searchAlgoType));
+
+		//Test for any duplicate result
+		assertEquals("Test 4 - 'LogicSearch - testCases_matchWordSearch'", true, 
+				testSearchAlgo("task match",testType1,predictedResult_1_1,searchAlgoType));
+		
+		/************************ END TEST TYPE 1 - TEST CASES **************************************/
+		/********************************************************************************************/
 	}
 	
 	
 	//@author A0112898U
 	/**
-	 * Test for 'matchWordSearch' function
+	 * Test for 'startLetterSearch' function | 'matchWordSearch' function | all Type function combined
 	 */	
-	public static boolean matchWordSearch(String searchLine, LinkedList<Task> storedTasks, LinkedList<Task> predictedResult) {
+	public static boolean testSearchAlgo(String searchLine, LinkedList<Task> storedTasks, LinkedList<Task> predictedResult, LogicSearch.SEARCH_TYPES searchAlgoType) {
 		
 		LinkedList<Task> collatedTask = new LinkedList<Task>();
 		
-		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD);
+		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL, searchAlgoType);
 		
-		if(collatedTask.equals(predictedResult)){
-			return true;
-		}
 		
 		//For debugging purposes
 		for(Task t : collatedTask){
 			System.out.println(t.getName());
 		}
 		
+		System.out.println("hi");
+		
+		if(collatedTask.equals(predictedResult)){
+			return true;
+		}
+		
+
 		return false;
-	}	
+	}
+	
 	
 	//Used for debuggin purpsoe
 	public static void main (String[] args){
@@ -177,9 +204,11 @@ public class LogicSearchTest {
 		
 		//predicted test results
 		LinkedList<Task> predictedResult = testTasks;
-		testStartLetterSearch("t",testTasks,predictedResult); //keep as sample
+		//testSearchAlgo("t",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER); //keep as sample
+		testSearchAlgo("s t match task",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD); //keep as sample
 		
-		//System.out.println("hi");
+				
+		System.out.println("hi");
 		
 	}
 	
