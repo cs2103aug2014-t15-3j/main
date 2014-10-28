@@ -75,7 +75,7 @@ public final class LogicSearch {
 	 * same 'searchType' & 'Long' datatype variable
 	 * 
 	 */
-	private LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
+	public static LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
 				long queryParam, LinkedList<Task> bufferedTaskList){
 
 		LinkedList<Task> storedTasks = bufferedTaskList;
@@ -127,77 +127,21 @@ public final class LogicSearch {
 	 * same 'searchType' & 'String' datatype variable
 	 * 
 	 */
-	public LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
-				String queryString, LinkedList<Task> bufferedTaskList){
+	public static LinkedList<Task> searchTasks( String queryString, 
+			LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType ,SEARCH_TYPES... searchAlgoType){
 
 		LinkedList<Task> storedTasks = bufferedTaskList;
 		LinkedList<Task> tempCollatedList = new LinkedList();
 		
-		//Tokenize the search input
-		tokenizedInputs = tokenizeSearchInput(queryString);
-
+		if (searchAlgoType.length > 0){
+			
+			tempCollatedList = smartSearch(queryString, bufferedTaskList, searchType, searchAlgoType[0]);
 		
-		switch(searchType){
-
-			case TYPE_ALL:
-			
-				break;
+		}else {
+			tempCollatedList =  smartSearch(queryString, bufferedTaskList, searchType,SEARCH_TYPES.TYPE_ALL);
 				
-			case TYPE_NAME:
-				
-	
-				if(searchType == SEARCH_TYPES.TYPE_NAME){
-					break;
-				}
-				
-			case TYPE_DESCRIPTION:
-				
-				//Search each query string through all the stored task via name
-				for (String searchString:tokenizedInputs){
-					
-					for(Task t:bufferedTaskList){ 
-						
-						if (t.getDescription().contains(searchString)){
-							
-							tempCollatedList.add(t);
-						}
-					}
-				}
-				
-				if(searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
-					break;
-				}
-				
-			case TYPE_LABEL:
-				
-				//Search each query string through all the stored task via Label
-				for (String searchString:tokenizedInputs){
-					
-					for(Task t:bufferedTaskList){ 
-						
-						/* ask sam why label returns long
-						if (t.getLabel().equals(searchString)){
-						
-							//If task not already added, add task to collated task
-							if(!tempCollatedList.contains(t)){
-								
-								tempCollatedList.add(t);
-							}
-						}
-						*/
-					}
-				}
-	
-				break;
-				
-			
-				
-			default:
-				
-				System.out.println("Type not supported");
-				return null;
 		}
-
+		
 		//Finally return the collated list of matched task
 		return tempCollatedList;
 	}	
@@ -325,66 +269,75 @@ public final class LogicSearch {
 	 * @return returns the newly collated list
 	 */
 	private static LinkedList<Task> matchWordSearch(String queryString, LinkedList<Task> 
-				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType){
+				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList, 
+				SEARCH_TYPES searchType, boolean isPowerSearch){
 	
 		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
 		
 		//Tokenize the search input
 		tokenizedInputs = tokenizeSearchInput(queryString);
 		
+		
 		//Search each query string through all the stored task via name
 		for (String searchString:tokenizedInputs){
 			
 			//if the token is a word
-			if (searchString.length() > 1){
+			//if (searchString.length() > 1){
 			
-				for(Task t:bufferedTaskList){ 
+			//removes single character search if is not pwoer search, 
+			//this is to prevent a whole cluster of search as the single character 
+			//is already considered as only the start of each string
+			if(searchString.length() <= 1 && !isPowerSearch){
+				break;
+			}
+			
+			for(Task t:bufferedTaskList){ 
+				
+				//Tokenized the searchType string
+				LinkedList<String> chkString = new LinkedList<String>();
+				
+				switch (searchType){
 					
-					//Tokenized the searchType string
-					LinkedList<String> chkString = new LinkedList<String>();
+					case TYPE_ALL:
+						
+					case TYPE_DESCRIPTION:
+						chkString.add(t.getDescription());
+						
+						if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
+							break;
+						}
+						
+					case TYPE_NAME:
+						chkString.add(t.getName());
+						
+						if (searchType == SEARCH_TYPES.TYPE_NAME){
+							break;
+						}
+						
+					case TYPE_LABEL:
+						//chkString[2] = t.getLabel();
+						break;	
+				}
 					
-					switch (searchType){
-						
-						case TYPE_ALL:
-							
-						case TYPE_DESCRIPTION:
-							chkString.add(t.getDescription());
-							
-							if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
-								break;
-							}
-							
-						case TYPE_NAME:
-							chkString.add(t.getName());
-							
-							if (searchType == SEARCH_TYPES.TYPE_NAME){
-								break;
-							}
-							
-						case TYPE_LABEL:
-							//chkString[2] = t.getLabel();
-							break;	
-					}
-						
+				
+				for (String chkStr:chkString){
 					
-					for (String chkStr:chkString){
+					if (chkStr.contains(searchString)){
 						
-						if (chkStr.contains(searchString)){
+						System.out.println(chkString);
+						
+						//Task tt = new Task(t);
+						
+						if(!isTaskExist(tempCollatedList,t)){
 							
-							System.out.println(chkString);
+							tempCollatedList.add(t);
 							
-							//Task tt = new Task(t);
-							
-							if(!isTaskExist(tempCollatedList,t)){
-								
-								tempCollatedList.add(t);
-								
-								break; //Break out of the current task if task is added
-							}
-						}					
-					}
+							break; //Break out of the current task if task is added
+						}
+					}					
 				}
 			}
+			//}
 		}
 		
 
@@ -402,8 +355,8 @@ public final class LogicSearch {
 	 * @param bufferedTaskList - List of task that have been added by user
 	 * 
 	 */
-	public static LinkedList<Task> smartSearch(String searchLine, 
-				LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType, SEARCH_TYPES searchAlgoType){
+	public static LinkedList<Task> smartSearch(String searchLine, LinkedList<Task> 
+				bufferedTaskList, SEARCH_TYPES searchType, SEARCH_TYPES searchAlgoType){
 		
 		//Task that is collated through the searches.
 		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
@@ -412,6 +365,8 @@ public final class LogicSearch {
 		switch(searchAlgoType){
 		
 			case SEARCH_POWER_SEARCH:
+
+				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType,true));
 				
 				System.out.println("Type not supproted yet");
 				break;
@@ -428,7 +383,7 @@ public final class LogicSearch {
 				
 			case SEARCH_MATCH_WORD:
 
-				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType,false));
 				
 				if (searchAlgoType == SEARCH_TYPES.SEARCH_MATCH_WORD){
 					break;
@@ -505,7 +460,7 @@ public final class LogicSearch {
 	 * Checks if the task to be added is already in the collated list of matched task
 	 * 
 	 * Reason why not to use the '.contains' but to create and use this function is because the 
-	 * '.equals' in task was overrided by the original creator for other checking purpose 
+	 * '.equals' in task was override by the original creator for other important checking purpose 
 	 * thus the .contain doesn't work like the intended original purpose, which would work for my code
 	 *
 	 * @param currentCollatedTasks the added list of task to check with
@@ -534,7 +489,7 @@ public final class LogicSearch {
 	
 	//@author A0112898U
 	/**
-	 * Removes any duplicated tasks
+	 * Removes any duplicated tasks in the collated List
 	 *
 	 * @param currentCollatedTasks the added list of task to check with
 	 * 

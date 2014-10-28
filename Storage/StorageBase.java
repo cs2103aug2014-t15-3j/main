@@ -61,24 +61,24 @@ public abstract class StorageBase{
 	 */
 	void serializeObject (String filename, Object obj) {
 		
-			try {
-				
-				fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
-				
-			} catch (FileNotFoundException e) {
-				
-				// TODO Auto-generated catch block
-				//e.printStackTrace(); // not sure if should have
-				
-				//MUST INTERACT WITH USER - RETURN STRING
-				System.out.println("File not found! from serializeObject()"); 
-				// user can create file is file not found 
-				//can offer to create a file with the name 
-				// change behaiviour for user, expect certain bahaivour from user
-				
-			}
+		try {
 			
-			//throws IOException, ClassNotFoundException
+			fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
+			
+		} catch (FileNotFoundException e) {
+			
+			// TODO Auto-generated catch block
+			//e.printStackTrace(); // not sure if should have
+			
+			//MUST INTERACT WITH USER - RETURN STRING
+			System.out.println("File not found! from serializeObject()"); 
+			// user can create file is file not found 
+			//can offer to create a file with the name 
+			// change behaiviour for user, expect certain bahaivour from user
+			
+		}
+		
+		//throws IOException, ClassNotFoundException
 		
 		try {
 			
