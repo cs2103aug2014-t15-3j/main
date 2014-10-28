@@ -408,25 +408,18 @@ public final class LogicSearch {
 		//Task that is collated through the searches.
 		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
 		
-		//Tokenize the search input
-		//tokenizedInputs = tokenizeSearchInput(searchLine);
-		/*
-		for(String s:tokenizedInputs){
-			System.out.println(s);
-		}
-		*/
-		
-		//matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
-		//matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
-		
 		
 		switch(searchAlgoType){
 		
+			case SEARCH_POWER_SEARCH:
+				
+				System.out.println("Type not supproted yet");
+				break;
+			
 			case TYPE_ALL:
 			
 			case SEARCH_START_LETTER:
-				//matchedTasks = startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
-				//startLetterSearch(matchedTasks, bufferedTaskList, SEARCH_TYPES.TYPE_NAME);
+				
 				matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
 				
 				if (searchAlgoType == SEARCH_TYPES.SEARCH_START_LETTER){
@@ -434,17 +427,14 @@ public final class LogicSearch {
 				}
 				
 			case SEARCH_MATCH_WORD:
-				//matchedTasks = matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
+
 				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
 				
 				if (searchAlgoType == SEARCH_TYPES.SEARCH_MATCH_WORD){
 					break;
 				}
 				
-			case SEARCH_POWER_SEARCH:
-				
-				System.out.println("Type not supproted yet");
-				break;
+
 		}
 		
 		return removeDuplicate(matchedTasks);
