@@ -256,7 +256,7 @@ public class LogicSearchTest {
 		//predicted test results
 		LinkedList<Task> predictedResult = testTasks;
 		//testSearchAlgo("t",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER); //keep as sample
-		testSearchAlgo("s t match task",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD); //keep as sample
+		testSearchAlgo("s t match task",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.TYPE_ALL); //keep as sample
 		
 				
 		System.out.println("hi");

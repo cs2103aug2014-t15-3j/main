@@ -141,6 +141,8 @@ public final class LogicSearch {
 
 			case TYPE_ALL:
 			
+				break;
+				
 			case TYPE_NAME:
 				
 	
@@ -445,7 +447,7 @@ public final class LogicSearch {
 				break;
 		}
 		
-		return matchedTasks;
+		return removeDuplicate(matchedTasks);
 	}
 	
 
@@ -538,6 +540,25 @@ public final class LogicSearch {
 		
 		return false;
 	}
-
+	
+	
+	//@author A0112898U
+	/**
+	 * Removes any duplicated tasks
+	 *
+	 * @param currentCollatedTasks the added list of task to check with
+	 * 
+	 * @return returns a new linkedlist with any duplicated task removed 
+	 * 
+	 */
+	private static LinkedList<Task> removeDuplicate(LinkedList<Task> currentCollatedTasks){
+		
+		LinkedList<Task> tempList = new LinkedList<Task>(currentCollatedTasks);
+		
+		Set<Task> newSet = new HashSet(tempList);
+		LinkedList<Task> tempList2 =  new LinkedList<Task>(newSet);
+		
+		return tempList2;
+	}
 
 }
