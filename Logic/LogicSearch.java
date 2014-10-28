@@ -416,24 +416,153 @@ public final class LogicSearch {
 	 * 
 	 * @return returns the newly collated list
 	 */
-	public static LinkedList<Task> powerSearch(LinkedList<Task> 
+	public static LinkedList<LinkedList<?>> powerSearch(String queryString, LinkedList<Task> 
 				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
 		
 		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
 		
+		LinkedList<String> suggestedString = new LinkedList<String>();
 		//
 		//Breaks the task via tokenization method and search through
 		//
-		
-		
+		tokenizedInputs = tokenizeSearchInput(queryString);
+	
 		//
 		//If possible return suggestion like if user types ankalp but ankalp is contained in sankalp
 		//
+		//Implementing the 
 		
+		for (String tok:tokenizedInputs){
+			
+			for (Task t:bufferedTaskList){
+			
+				if (!isTaskExist(collatedMatchedTaskList,t)){
+					
+					//Check against names
+					if (chkStrSimilarity(tok,t.getName()) > 50){
+						if(chkStrSimilarity(tok,t.getName()) > 75){
+							
+							suggestedString.add(t.getName());
+						}
+						collatedMatchedTaskList.add(t);
+						break; //break out loop if task is added
+					}
+				}
+
+				//Double security to check if task has been added
+				if(!isTaskExist(collatedMatchedTaskList,t)){
+					
+					LinkedList<String> tokenizeDescription 
+							= tokenizeSearchInput(t.getDescription());
+					
+					//Check against each word in the Description
+					for (String desTok:tokenizeDescription){
+						
+						if (chkStrSimilarity(tok,desTok) > 50){
+						
+							if(chkStrSimilarity(tok,desTok) > 75){
+								
+								suggestedString.add(desTok);
+							}
+							collatedMatchedTaskList.add(t);
+							break; //break out loop if task is added
+						}
+					}
+					
+				}
+				
+				/*
+				
+				if(!isTaskExist(collatedMatchedTaskList,t)){
+					
+					//Check against label
+					
+				}
+			
+				*/
+				
+			}
+		}
 		
+		LinkedList<LinkedList<?>> returnList = new LinkedList<LinkedList<?>>();
 		
-		return tempCollatedList;
+		returnList.add(collatedMatchedTaskList);
+		returnList.add(suggestedString);
+		
+		return returnList;
 	}
+	
+	public static void main (String[] args){
+		
+		//System.out.println(computeEditDistance("Sakalp", "Sankalp")); //differ by 1 character
+		//System.out.println(chkStrSimilarity("Sakalp", "Sankalp")); //differ percentage
+		
+		LinkedList<Task> taskList = new LinkedList<Task>();
+		
+		Task task1 = new Task("task1","to love Remembra 1 Sankalp");
+		Task task2 = new Task("task2","to love Remembra 2 Samuel");
+		Task task3 = new Task("task3","to love Remembra 1 ChuanWei");
+		Task task4 = new Task("task4","to love Remembra 2 Candiie");
+		Task task5 = new Task("task5","to love Remembra 0 Enchanted");
+		
+		taskList.add(task1);
+		taskList.add(task2);
+		taskList.add(task3);
+		taskList.add(task4);
+		taskList.add(task5);
+		
+		String queryString = "Sakalp Samel candie";
+		
+		LinkedList<LinkedList<?>> returnList = powerSearch(queryString, new LinkedList<Task>() ,taskList);
+		
+		System.out.println(returnList.get(0) + "\n");
+		
+		System.out.println("You Searched : " + queryString);
+		
+		System.out.println("Did you mean : ");
+		System.out.print(returnList.get(1));
+		
+	}
+	
+    public static double chkStrSimilarity(String s1, String s2) {
+        if (s1.length() < s2.length()) { // s1 should always be bigger
+            String swap = s1; s1 = s2; s2 = swap;
+        }
+        int bigLen = s1.length();
+        if (bigLen == 0) { return 1.0; /* both strings are zero length */ }
+        return ((bigLen - computeEditDistance(s1, s2)) / (double) bigLen)*100;
+    }
+
+    public static int computeEditDistance(String s1, String s2) {
+    	
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+
+        int[] costs = new int[s2.length() + 1];
+        for (int i = 0; i <= s1.length(); i++) {
+            int lastValue = i;
+            for (int j = 0; j <= s2.length(); j++) {
+                if (i == 0){
+                    costs[j] = j;
+                }  else {
+                    if (j > 0) {
+                        int newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+                            newValue = Math.min(Math.min(newValue, lastValue),
+                                    costs[j]) + 1;
+                        }
+                        costs[j - 1] = lastValue;
+                        
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0)
+                costs[s2.length()] = lastValue;
+        }
+        return costs[s2.length()];
+    }
+
 	
 	//@author A0112898U
 	/**

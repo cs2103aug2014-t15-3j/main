@@ -66,7 +66,6 @@ public class Main {
 				
 		//Task Stubs for Logic Search
 		LinkedList<Task> taskList = new LinkedList<Task>();
-		LinkedList<Task> taskListStored = new LinkedList<Task>();
 		
 		Task task1 = new Task("task1","to love Remembra 1 uniqueKey1");
 		Task task2 = new Task("task2","to love Remembra 2 uniqueKey2");
