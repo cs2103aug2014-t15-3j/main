@@ -1,5 +1,6 @@
 //@author A0111942N
 
+import java.util.Calendar;
 import java.util.LinkedList;
 
 public class Operations {
@@ -17,6 +18,8 @@ public class Operations {
 	protected final static String UNDO_OPERATION = "undo";
 	protected final static String DELETE_OPERATION = "delete";
 	protected final static String SAVE_OPERATION = "save";
+	
+	protected final static String REMOVE_INPUT = "-";
 	
 	// Constant Variables for Label related operations
 	protected final static String ADD_LABEL_OPERATION = "add_label";
@@ -42,6 +45,19 @@ public class Operations {
 	protected static LinkedList<String> colorOperations;
 	protected static LinkedList<String> descriptionOperations;
 	protected static LinkedList<String> deadlineOperations;
+
+	protected static LinkedList<String> january;
+	protected static LinkedList<String> febuary;
+	protected static LinkedList<String> march;
+	protected static LinkedList<String> april;
+	protected static LinkedList<String> may;
+	protected static LinkedList<String> june;
+	protected static LinkedList<String> july;
+	protected static LinkedList<String> august;
+	protected static LinkedList<String> september;
+	protected static LinkedList<String> october;
+	protected static LinkedList<String> november;
+	protected static LinkedList<String> december;
 	
 	// Flag to check if it has been initialized
 	protected static boolean isInitialize = false;
@@ -67,11 +83,13 @@ public class Operations {
 			colorOperations = populateColor();
 			descriptionOperations = populateDescription();
 			deadlineOperations = populateDeadline();
-
+			
+			populateMonths();
+			
 			isInitialize = true;
 		}
 	}
-	
+
 	//@author A0111942N
 	/**
 	 * Populate label list with its keywords
@@ -277,5 +295,105 @@ public class Operations {
 		operations.add(";date");
 
 		return operations;
+	}
+	
+
+	
+	private void populateMonths() {
+
+		january = new LinkedList<String>();
+		febuary = new LinkedList<String>();
+		march = new LinkedList<String>();
+		april = new LinkedList<String>();
+		may = new LinkedList<String>();
+		june = new LinkedList<String>();
+		july = new LinkedList<String>();
+		august = new LinkedList<String>();
+		september = new LinkedList<String>();
+		october = new LinkedList<String>();
+		november = new LinkedList<String>();
+		december = new LinkedList<String>();
+		
+		january.add("january");
+		january.add("jan");
+		january.add("1");
+		
+		febuary.add("febuary");
+		febuary.add("feb");
+		febuary.add("2");
+		
+		march.add("march");
+		march.add("mar");
+		march.add("3");
+
+		april.add("april");
+		april.add("apr");
+		april.add("4");
+		
+		may.add("may");
+		may.add("5");
+		
+		june.add("june");
+		june.add("jun");
+		june.add("6");
+		
+		july.add("july");
+		july.add("jul");
+		july.add("7");
+		
+		august.add("august");
+		august.add("aug");
+		august.add("8");
+		
+		september.add("september");
+		september.add("sep");
+		september.add("9");
+		
+		october.add("october");
+		october.add("oct");
+		october.add("10");
+		
+		november.add("november");
+		november.add("nov");
+		november.add("11");
+		
+		december.add("december");
+		december.add("dec");
+		december.add("12");
+	}
+	
+	public static int returnMonth(String month) {
+		
+		month = month.trim().toLowerCase(); // clean up string
+		
+		if (january.contains(month)) {
+			return 1;
+		} else if (febuary.contains(month)) {
+			return 2;
+		} else if (march.contains(month)) {
+			return 3;
+		} else if (april.contains(month)) {
+			return 4;
+		} else if (may.contains(month)) {
+			return 5;
+		} else if (june.contains(month)) {
+			return 6;
+		} else if (july.contains(month)) {
+			return 7;
+		} else if (august.contains(month)) {
+			return 8;
+		} else if (september.contains(month)) {
+			return 9;
+		} else if (october.contains(month)) {
+			return 10;
+		} else if (november.contains(month)) {
+			return 11;
+		} else if (december.contains(month)) {
+			return 12;
+		} else {
+			Calendar tempCal = Calendar.getInstance();
+			return tempCal.get(Calendar.MONTH+1);
+		}
+		
 	}
 }

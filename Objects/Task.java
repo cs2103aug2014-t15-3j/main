@@ -8,6 +8,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 
 	private final static String TO_DO_LABEL = "To-Do";
 	private final static int NOT_VALID = -1;
+	private final static long DAY_MILLISECOND = 86400000;
 
 	// Class variable
 	private String name;
@@ -138,8 +139,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return reminder;
 	}
 	
-	public long editTimestamp(String timestamp) {
-		this.timeStamp = timeStamp;
+	public long editTimestamp(long timestamp) {
+		this.timeStamp = timestamp;
 		return timeStamp;
 	}
 
@@ -157,6 +158,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return Operations.EMPTY_MESSAGE;
 	}
 	
+	/*
 	@Override
 	public boolean equals(Object object) {
 
@@ -166,7 +168,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		} else {
 			return false;
 		}
-	}
+	}*/
 
 	@Override
 	public String toString() {
@@ -177,7 +179,9 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		message += "Task: " + name + "\n";
 		
 		// Include description into message
-		message += "Description: " + description + "\n";
+		if (!description.isEmpty()) {
+			message += "Description: " + description + "\n";
+		}
 
 		// Include deadline into message
 		Date date = new Date(deadline);
@@ -188,11 +192,25 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		message += "Deadline: " + dateOutput + "\n";
 		
 		// Include reminder into message
-		if(reminder >= System.currentTimeMillis()) {
+		if(reminder == NOT_VALID) {
+			
+		} else {
+			
 			date.setTime(reminder);
 			dateOutput = format.format(date);
+
+			message += "Remind at: " + dateOutput;
 			
-			message += "Remind at: " + dateOutput + "\n";
+			if(reminder >= System.currentTimeMillis()) {
+				message += "\n";
+			} else {
+				
+				long overdue = System.currentTimeMillis() - reminder;
+				int daysOverdue = (int) (overdue / DAY_MILLISECOND);
+				
+				message += " ["+daysOverdue+" day(s) overdue]\n";
+			}
+			
 		}
 
 		// Include label into message
