@@ -38,10 +38,12 @@ public class LogicMain {
 	// Flag to check if the current operation is a logic operation
 	private boolean isLabel;
 
+	
 	public LogicMain() {
 		initialize();
 	}
 
+	
 	//@author A0111942N
 	/**
 	 * Checks if the component has been initialized.
@@ -65,6 +67,7 @@ public class LogicMain {
 		}
 	}
 
+	
 	//@author A0111942N
 	/**
 	 * Retrieve tasks from Storage
@@ -92,6 +95,7 @@ public class LogicMain {
 		}
 	}
 
+	
 	//@author A0111942N
 	/**
 	 * This method will process the user's input and perform either
@@ -103,47 +107,61 @@ public class LogicMain {
 
 		LinkedList<Item> returnTasks = new LinkedList<Item>();
 		
-		isLabel = false;
 		input = cleanUpInput(input);
+		
 		preProcessInput(input);
 
 		String mainOperation = inputList.get(0).getOperation();
+		
+		// To determine whether it is a label operation
+		isLabel = false;
 		
 		if (Operations.labelOperations.contains(mainOperation)
 			&& inputList.size() > 1) {
 
 			mainOperation = inputList.get(1).getOperation();
 			isLabel = true;
+			
 		}
-
+		
 		if (Operations.addOperations.contains(mainOperation)) {
+			
 			undoTasks = new LinkedList<Task>(bufferTasksList);
-			returnTasks = postAdd();
+			returnTasks = processAdd();
+			
 		} else if (Operations.editOperations.contains(mainOperation)) {
+			
 			undoTasks = new LinkedList<Task>(bufferTasksList);
-			returnTasks = postEdit();
+			returnTasks = processEdit();
+			
 		} else if (Operations.viewOperations.contains(mainOperation)) {
 
-			returnTasks = postView();
+			returnTasks = processView();
+			
 		} else if (Operations.findOperations.contains(mainOperation)) {
 
-			returnTasks = postFind();
+			returnTasks = processFind();
+			
 		} else if (Operations.undoOperations.contains(mainOperation)) {
 
-			returnTasks = postUndo();
+			returnTasks = processUndo();
+			
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
+			
 			undoTasks = new LinkedList<Task>(bufferTasksList);
-			returnTasks = postDelete();
+			returnTasks = processDelete();
+			
 		} else if (Operations.saveOperations.contains(mainOperation)) {
+			
 			undoTasks = new LinkedList<Task>(bufferTasksList);
-			returnTasks = postSave();
+			returnTasks = processSave();
+			
 		} else {
 
 			returnTasks = new LinkedList<Item>();
+			
 		}
 		
-		System.out.println(bufferLabelsList.size()+"");
-
 		return returnTasks;
 	}
 
@@ -181,7 +199,7 @@ public class LogicMain {
 				if (!operation.isEmpty()) {
 
 					LogicInputPair previousOperation
-					= new LogicInputPair(operation, content);
+					= new LogicInputPair(operation, cleanUpInput(content) );
 
 					inputList.add(previousOperation);
 				}
@@ -194,6 +212,7 @@ public class LogicMain {
 
 					inputList.add(new LogicInputPair(operation, ""));
 				}
+				
 			} else {
 
 				if (!content.isEmpty()) {
@@ -202,12 +221,23 @@ public class LogicMain {
 				content += inputArray[i];
 
 				if (i == inputArray.length - 1) {
-					inputList.add(new LogicInputPair(operation, content));
+					inputList.add(new LogicInputPair(operation, cleanUpInput(content)));
 				}
 			}
 		}
 	}
 
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING ADD ========================================================
+	 * ================================================================================
+	 */
+	
+	
 	//@author A0111942N
 	/**
 	 * Process post-adding operation to return to GUI
@@ -215,7 +245,7 @@ public class LogicMain {
 	 * @return	List containing the added task
 	 * 			with the "add" state
 	 */
-	private LinkedList<Item> postAdd() {
+	private LinkedList<Item> processAdd() {
 
 		LinkedList<Item> returningItem = new LinkedList<Item>();
 		
@@ -243,16 +273,158 @@ public class LogicMain {
 
 	//@author A0111942N
 	/**
+	 * This method executes the "add" functionality of the program.
+	 * 
+	 * Return newly added task.
+	 * If the task's name is not provided, it will return null.
+	 * 
+	 * @return	Newly added task
+	 */
+	private Item executeAdd() {
+
+		// Method variables
+		String name = "";
+		String description = "";
+		long deadline = -1;
+		long reminder = -1;
+		String color = "";
+		long labelID = -1;
+
+		for (int i = 0; i < inputList.size(); i++) {
+
+			String operation = inputList.get(i).getOperation();
+
+			if (Operations.addOperations.contains(operation)) {
+
+				name = inputList.get(i).getContent();
+
+				if (name.isEmpty()) {
+
+					logger.log(Level.INFO, "Add operation: Name unidentified");
+					return null;
+				}
+				
+			} else if (Operations.descriptionOperations.contains(operation)) {
+
+				description = inputList.get(i).getContent();
+				
+			} else if (Operations.deadlineOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					deadline = convertDateString(dateInput);
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.reminderOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					reminder = convertDateString(dateInput);
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.colorOperations.contains(operation)) {
+
+				color = inputList.get(i).getContent();
+				
+			} else if (Operations.labelOperations.contains(operation) && i > 0) {
+
+				String label = inputList.get(i).getContent();
+
+				labelID = getLabelId(label);
+				
+			}
+			
+		}
+
+		Item newItem;
+
+		if (!isLabel) {
+
+			Task newTask = new Task(name, description);
+			newTask.editState(Operations.ADD_OPERATION);
+			bufferTasksList.add(newTask);
+
+			// Include deadline to new task
+			if (deadline == -1) {
+				deadline = getEndOfToday();
+			}
+			newTask.editDeadline(deadline);
+
+			// Include reminder to new task
+			if (reminder != -1) {
+				newTask.editReminder(reminder);
+			}
+
+			// Include label to new task
+			if (labelID != -1) {
+				newTask.editLabel(labelID);
+			}
+
+			newItem = newTask;
+
+			logger.log(Level.INFO, "New task added to bufferTasksList");
+			
+		} else {
+
+			Label newLabel = new Label(name);
+			newLabel.editState(Operations.ADD_LABEL_OPERATION);
+			bufferLabelsList.add(newLabel);
+
+			if (!color.isEmpty()) {
+				newLabel.editColor(color);
+			}
+
+			newItem = newLabel;
+
+			logger.log(Level.INFO, "New label added to bufferTasksList");
+			
+		}
+		
+		return newItem;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING EDIT =======================================================
+	 * ================================================================================
+	 */
+	
+	
+	//@author A0111942N
+	/**
 	 * Process post-editing operation to return to GUI
 	 * 
 	 * @return	List containing the edited task
 	 * 			with the "edit" state
 	 */
-	private LinkedList<Item> postEdit() {
+	private LinkedList<Item> processEdit() {
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 
 		Item returnTask = executeEdit();
+
+		if(returnTask == null) {
+
+			return returningTasks;
+
+		}
+
 		returnTask.editState(Operations.EDIT_OPERATION);
 		returningTasks.add(returnTask);
 
@@ -260,7 +432,231 @@ public class LogicMain {
 
 		return returningTasks;
 	}
+	
 
+	//@author A0111942N
+	/**
+	 * This method executes the "edit" functionality of the program.
+	 * 
+	 * Return edited task.
+	 * If the task's name or id is not provided, it will return null.
+	 * 
+	 * @return	Edited task
+	 */
+	private Item executeEdit() {
+
+		int editID = -1;
+		String name = "";
+		String description = "";
+		String color = "";
+		long labelId = -1;
+		long deadline = -1;
+		long reminder = -1;
+		boolean nameEdited = false;
+		boolean descriptionEdited = false;
+		boolean deadlineEdited = false;
+		boolean reminderEdited = false;
+		boolean colorEdited = false;
+
+		for (int i = 0; i < inputList.size(); i++) {
+
+			String operation = inputList.get(i).getOperation();
+
+			if (Operations.editOperations.contains(operation)) {
+
+				String stringID = inputList.get(i).getContent();
+
+				try {
+
+					editID = Integer.parseInt(stringID);
+
+				} catch (Exception e) {
+
+					logger.log(Level.INFO, "Invalid ID");
+					return null;
+
+				}
+
+
+
+				if (editID >= bufferTasksList.size()) {
+					
+					return null;
+					
+				}
+				
+			} else if (Operations.nameOperations.contains(operation)) {
+
+				name = inputList.get(i).getContent();
+
+				if (name.isEmpty()) {
+
+					logger.log(Level.INFO, "Edit operation: Invalid name");
+					return null;
+				}
+
+				nameEdited = true;
+				
+			} else if (Operations.descriptionOperations.contains(operation)) {
+
+				description = inputList.get(i).getContent();
+				descriptionEdited = true;
+				
+			} else if (Operations.deadlineOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					deadline = convertDateString(dateInput);
+
+					deadlineEdited = true;
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.reminderOperations.contains(operation)) {
+
+				try {
+					
+					String dateInput = inputList.get(i).getContent();
+					reminder = convertDateString(dateInput);
+					
+					reminderEdited = true;
+					
+				} catch (ParseException e) {
+					
+					logger.log(Level.WARNING, "Wrong date format!");
+					
+				}
+				
+			} else if (Operations.colorOperations.contains(operation)) {
+
+				color = inputList.get(i).getContent();
+
+				if (color.isEmpty()) {
+
+					logger.log(Level.INFO, "Color operation: Invalid color");
+					return null;
+					
+				}
+
+				colorEdited = true;
+				
+			} else if (Operations.labelOperations.contains(operation) && i > 0) {
+
+				String label = inputList.get(i).getContent();
+				labelId = getLabelId(label);
+
+				if (labelId == -1) {
+
+					logger.log(Level.INFO, "Edit label operation: Invalid label");
+					return null;
+				}
+
+				colorEdited = true;
+			}
+			
+		}
+
+		Item editItem;
+		
+		if (!isLabel) {
+			
+			// PROCESSING FOR TASK
+			
+			Task editTask;
+			if (!tempList.isEmpty()) {
+				
+				editTask = (Task) tempList.get(editID);
+				tempList = new LinkedList<Item>();
+				
+			} else {
+				
+				editTask = bufferTasksList.get(editID);
+				
+			}
+
+			bufferTasksList.remove(editTask);
+
+			Task newTask = new Task(editTask);
+			
+			// Check if name has been edited
+			if (nameEdited) {
+				
+				newTask.editName(name);
+				
+			}
+			
+			// Check if description has been edited
+			if (descriptionEdited) {
+				
+				newTask.editDescription(description);
+				
+			}
+			
+			// Check if deadline has been edited
+			if (deadlineEdited) {
+				
+				newTask.editDeadline(deadline);
+				
+			}
+			
+			// Check if deadline has been edited
+			if (reminderEdited) {
+
+				newTask.editReminder(reminder);
+
+			}
+			
+			// Check if label has been edited
+			if (labelId != -1) {
+				
+				newTask.editLabel(labelId);
+				
+			}
+
+			bufferTasksList.add(newTask);
+			editItem = newTask;
+
+		} else {
+			
+			// PROCESSING FOR LABEL
+			
+			Label editLabel = bufferLabelsList.get(editID);
+
+			if (nameEdited) {
+				
+				editLabel.editName(name);
+				
+			}
+			if (colorEdited) {
+				
+				editLabel.editColor(color);
+				
+			}
+
+			editLabel.editState(Operations.EDIT_OPERATION);
+			editItem = editLabel;
+		}
+
+		logger.log(Level.INFO, "Task edited");
+		return editItem;
+	}
+
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING VIEW =======================================================
+	 * ================================================================================
+	 */
+	
+	
 	//@author A0111942N
 	/**
 	 * Process post-view operation to return to GUI
@@ -268,7 +664,7 @@ public class LogicMain {
 	 * @return	List containing all the tasks
 	 * 			(First task will have the "view" state)
 	 */
-	private LinkedList<Item> postView() {
+	private LinkedList<Item> processView() {
 
 		LinkedList<Item> returningItems = new LinkedList<Item>();
 		Task returnTask;
@@ -277,7 +673,7 @@ public class LogicMain {
 
 		if (!isLabel) {
 
-			if (bufferTasksList.size() != 0 && viewOperation.getContent() == "") {
+			if (bufferTasksList.size() != 0 && !isNumeric(viewOperation.getContent() ) ) {
 
 				Collections.sort(bufferTasksList);
 				returningItems = new LinkedList<Item>(bufferTasksList);
@@ -299,11 +695,13 @@ public class LogicMain {
 
 				} catch (NumberFormatException e) {
 
-					// For label
+					logger.log(Level.WARNING, "Invalid number");
 
 				}
 
-			} else {
+			}
+			
+			if (returningItems.isEmpty()) {
 
 				returnTask = new Task(Operations.EMPTY_MESSAGE);
 				returnTask.editState(Operations.VIEW_OPERATION);
@@ -316,22 +714,22 @@ public class LogicMain {
 			returnTask = new Task( (Task) returningItems.get(0));
 			returnTask.editState(Operations.VIEW_OPERATION);
 			returningItems.set(0, returnTask);
-			
+
 			tempList = new LinkedList<Item>();
-			
+
 		} else {
 			Label returnLabel;
-			
+
 			if (bufferLabelsList.size() > 0) {
-				
+
 				returningItems = new LinkedList<Item>(bufferLabelsList);
 				Label tempLabel = new Label( (Label) returningItems.get(0) );
 				tempLabel.editState(Operations.VIEW_OPERATION);
-				
+
 				returningItems.set(0, tempLabel);
-				
+
 			} else {
-				
+
 				returnLabel = new Label(Operations.EMPTY_MESSAGE);
 				returnLabel.editState(Operations.VIEW_OPERATION);
 				returningItems.add(returnLabel);
@@ -339,71 +737,26 @@ public class LogicMain {
 				return returningItems;
 			}
 		}
-		
+
 		return returningItems;
 	}
-
-	//@author A0111942N
-	/**
-	 * Process post-view operation to return to GUI
-	 * 
-	 * @return	List containing all the tasks
-	 * 			(First task will have the "view" state)
-	 */
-	private LinkedList<Item> postFind() {
-
-		LinkedList<Item> returningTasks = new LinkedList<Item>();
-		String keyword = inputList.get(0).getContent();
-		keyword = keyword.toLowerCase();
-
-		Task returnTask;
-
-		for (int i = 0; i < bufferTasksList.size(); i++) {
-
-			Task tempTask = bufferTasksList.get(i);
-			if (tempTask.contains(keyword)) {
-				tempTask.editState(Operations.FIND_OPERATION);
-				returningTasks.add(tempTask);
-			}
-		}
-
-		if (returningTasks.isEmpty()) {
-
-			returnTask = new Task(Operations.EMPTY_MESSAGE);
-			returnTask.editState(Operations.FIND_OPERATION);
-			returningTasks.add(returnTask);
-		}
-		
-		tempList = new LinkedList<Item>(returningTasks);
-
-		return returningTasks;
-
+	
+	
+	public static boolean isNumeric(String str) {
+		return str.matches("-?\\d+(\\.\\d+)?");
 	}
-
-	//@author A0111942N
+	
+	
+	
+	
+	
 	/**
-	 * Process post-undo operation to return to GUI
-	 * 
-	 * @return	List containing the deleted task with
-	 * 			the "undo" state
+	 * ================================================================================
+	 * =======  PROCESSING DELETE =====================================================
+	 * ================================================================================
 	 */
-	private LinkedList<Item> postUndo() {
-
-		LinkedList<Task> tempTasks = new LinkedList<Task>(bufferTasksList);
-		bufferTasksList = undoTasks;
-		undoTasks = tempTasks;
-
-		LinkedList<Item> returningTasks = new LinkedList<Item>();
-		Task tempTask = new Task(Operations.NOT_EMPTY_MESSAGE);
-		tempTask.editState(Operations.UNDO_OPERATION);
-
-		returningTasks.add(tempTask);
-
-		logger.log(Level.INFO, "Undo operation completed ");
-
-		return returningTasks;
-	}
-
+	
+	
 	//@author A0111942N
 	/**
 	 * Process post-delete operation to return to GUI
@@ -411,7 +764,7 @@ public class LogicMain {
 	 * @return	List containing the deleted task with
 	 * 			the "delete" state
 	 */
-	private LinkedList<Item> postDelete() {
+	private LinkedList<Item> processDelete() {
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		returningTasks.add(executeDelete());
@@ -421,131 +774,6 @@ public class LogicMain {
 		return returningTasks;
 	}
 
-	//@author A0111942N
-	/**
-	 * Process post-saving operation to return to GUI
-	 * 
-	 * @return	List containing an empty task
-	 * 			with the "save" state
-	 */
-	private LinkedList<Item> postSave() {
-
-		LinkedList<Item> returningTasks = new LinkedList<Item>();
-		commitToStorage();
-		returningTasks = new LinkedList<Item>();
-		Task saveTask = new Task(Operations.EMPTY_MESSAGE);
-		saveTask.editState(Operations.SAVE_OPERATION);
-		returningTasks.add(saveTask);
-
-		logger.log(Level.INFO, "Save operation completed");
-
-		return returningTasks;
-	}
-
-	//@author A0111942N
-	/**
-	 * This method executes the "add" functionality of the program.
-	 * 
-	 * Return newly added task.
-	 * If the task's name is not provided, it will return null.
-	 * 
-	 * @return	Newly added task
-	 */
-	private Item executeAdd() {
-
-		// Method variables
-		String name = "";
-		String description = "";
-		long deadline = -1;
-		String color = "";
-		long labelID = -1;
-
-		for (int i = 0; i < inputList.size(); i++) {
-
-			String operation = inputList.get(i).getOperation();
-
-			if (Operations.addOperations.contains(operation)) {
-
-				name = inputList.get(i).getContent();
-
-				if (name.isEmpty()) {
-
-					logger.log(Level.INFO, "Add operation: Name unidentified");
-					return null;
-				}
-			} else if (Operations.descriptionOperations.contains(operation)) {
-
-				description = inputList.get(i).getContent();
-			} else if (Operations.deadlineOperations.contains(operation)) {
-
-				try {
-					String dateInput = inputList.get(i).getContent();
-					deadline = getDeadline(dateInput);
-				} catch (ParseException e) {
-					logger.log(Level.WARNING, "Wrong date format!");
-				}
-			} else if (Operations.colorOperations.contains(operation)) {
-
-				color = inputList.get(i).getContent();
-			} else if (Operations.labelOperations.contains(operation) && i > 0) {
-
-				String label = inputList.get(i).getContent();
-				
-				labelID = getLabelId(label);
-			}
-		}
-		
-		Item newItem;
-				
-		if (!isLabel) {
-
-			Task newTask = new Task(name, description);
-			newTask.editState(Operations.ADD_OPERATION);
-			bufferTasksList.add(newTask);
-			
-			if(deadline == -1) {
-				deadline = getEndOfToday();
-				newTask.editDeadline(deadline);
-			}
-			
-			if(labelID != -1) {
-				newTask.editLabel(labelID);
-			}
-			
-			newItem = newTask;
-
-			logger.log(Level.INFO, "New task added to bufferTasksList");
-		} else {
-			
-			Label newLabel = new Label(name);
-			newLabel.editState(Operations.ADD_LABEL_OPERATION);
-			bufferLabelsList.add(newLabel);
-			
-			if (!color.isEmpty()) {
-				newLabel.editColor(color);
-			}
-			
-			newItem = newLabel;
-
-			logger.log(Level.INFO, "New label added to bufferTasksList");
-		}
-		return newItem;
-	}
-
-	private long getLabelId(String label) {
-		
-		long labelID = -1;
-		
-		for(int j = 0; j < bufferLabelsList.size(); j++) {
-			
-			if(bufferLabelsList.get(j).isLabel(label)) {
-				Label tempLabel = bufferLabelsList.get(j);
-				labelID = tempLabel.getTimeStamp();
-			}
-		}
-		System.out.println(labelID);
-		return labelID;
-	}
 
 	//@author A0111942N
 	/**
@@ -584,151 +812,166 @@ public class LogicMain {
 			return deleteTask;
 		}
 	}
+	
+	
+	
+	
+		
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING FIND =======================================================
+	 * ================================================================================
+	 */
 
 	//@author A0111942N
 	/**
-	 * This method executes the "edit" functionality of the program.
+	 * Process post-view operation to return to GUI
 	 * 
-	 * Return edited task.
-	 * If the task's name or id is not provided, it will return null.
-	 * 
-	 * @return	Edited task
+	 * @return	List containing all the tasks
+	 * 			(First task will have the "view" state)
 	 */
-	private Item executeEdit() {
+	private LinkedList<Item> processFind() {
 
-		int editID = -1;
-		String name = "";
-		String description = "";
-		String color = "";
-		long labelId = -1;
-		long deadline = -1;
-		boolean nameEdited = false;
-		boolean descriptionEdited = false;
-		boolean deadlineEdited = false;
-		boolean colorEdited = false;
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		String keyword = inputList.get(0).getContent();
+		keyword = keyword.toLowerCase();
 
-		for (int i = 0; i < inputList.size(); i++) {
+		Task returnTask;
 
-			String operation = inputList.get(i).getOperation();
+		for (int i = 0; i < bufferTasksList.size(); i++) {
 
-			if (Operations.editOperations.contains(operation)) {
-
-				String stringID = inputList.get(i).getContent();
-
-				if (stringID.isEmpty()) {
-					return null;
-				}
-
-				editID = Integer.parseInt(stringID);
-
-				if (editID >= bufferTasksList.size()) {
-					return null;
-				}
-			} else if (Operations.nameOperations.contains(operation)) {
-
-				name = inputList.get(i).getContent();
-
-				if (name.isEmpty()) {
-
-					logger.log(Level.INFO, "Edit operation: Invalid name");
-					return null;
-				}
-
-				nameEdited = true;
-			} else if (Operations.descriptionOperations.contains(operation)) {
-
-				description = inputList.get(i).getContent();
-				descriptionEdited = true;
-			} else if (Operations.deadlineOperations.contains(operation)) {
-
-				try {
-					String dateInput = inputList.get(i).getContent();
-					deadline = getDeadline(dateInput);
-
-					deadlineEdited = true;
-				} catch (ParseException e) {
-					logger.log(Level.WARNING, "Wrong date format!");
-				}
-			} else if (Operations.colorOperations.contains(operation)) {
-
-				color = inputList.get(i).getContent();
-
-				if (color.isEmpty()) {
-
-					logger.log(Level.INFO, "Color operation: Invalid color");
-					return null;
-				}
-
-				colorEdited = true;
-			} else if (Operations.labelOperations.contains(operation) && i > 0) {
-				
-				String label = inputList.get(i).getContent();
-				labelId = getLabelId(label);
-
-				if (color.isEmpty()) {
-
-					logger.log(Level.INFO, "Color operation: Invalid color");
-					return null;
-				}
-
-				colorEdited = true;
+			Task tempTask = bufferTasksList.get(i);
+			if (tempTask.contains(keyword)) {
+				tempTask.editState(Operations.FIND_OPERATION);
+				returningTasks.add(tempTask);
 			}
 		}
-		
-		Item editItem;
-		
-		if (!isLabel) {
-			
-			Task editTask;
-			if (!tempList.isEmpty()) {
-				editTask = (Task) tempList.get(editID);
-				tempList = new LinkedList<Item>();
-			} else {
-				editTask = bufferTasksList.get(editID);
-			}
 
-			bufferTasksList.remove(editTask);
-			
-			Task newTask = new Task(editTask);
+		if (returningTasks.isEmpty()) {
 
-			if (nameEdited) {
-				newTask.editName(name);
-			}
-			if (descriptionEdited) {
-				newTask.editDescription(description);
-			}
-			if (deadlineEdited) {
-				newTask.editDeadline(deadline);
-			}
-			if (labelId != -1) {
-				newTask.editLabel(labelId);
-			}
-			
-			bufferTasksList.add(newTask);
-			
-			editItem = newTask;
-			
-		} else {
-			
-			Label editLabel = bufferLabelsList.get(editID);
-			
-			if (nameEdited) {
-				editLabel.editName(name);
-			}
-			if (colorEdited) {
-				editLabel.editColor(color);
-			}
-			
-			editLabel.editState(Operations.EDIT_OPERATION);
-			
-			editItem = editLabel;
+			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returningTasks.add(returnTask);
 		}
 
-		logger.log(Level.INFO, "Task edited");
-		return editItem;
+		tempList = new LinkedList<Item>(returningTasks);
+
+		return returningTasks;
+
+	}	
+	
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING UNDO =======================================================
+	 * ================================================================================
+	 */
+	
+	
+	//@author A0111942N
+	/**
+	 * Process post-undo operation to return to GUI
+	 * 
+	 * @return	List containing the deleted task with
+	 * 			the "undo" state
+	 */
+	private LinkedList<Item> processUndo() {
+
+		LinkedList<Task> tempTasks = new LinkedList<Task>(bufferTasksList);
+		bufferTasksList = undoTasks;
+		undoTasks = tempTasks;
+
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		Task tempTask = new Task(Operations.NOT_EMPTY_MESSAGE);
+		tempTask.editState(Operations.UNDO_OPERATION);
+
+		returningTasks.add(tempTask);
+
+		logger.log(Level.INFO, "Undo operation completed ");
+
+		return returningTasks;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  PROCESSING SAVE =======================================================
+	 * ================================================================================
+	 */
+	
+	
+	//@author A0111942N
+	/**
+	 * Process post-saving operation to return to GUI
+	 * 
+	 * @return	List containing an empty task
+	 * 			with the "save" state
+	 */
+	private LinkedList<Item> processSave() {
+
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		commitToStorage();
+		returningTasks = new LinkedList<Item>();
+		Task saveTask = new Task(Operations.EMPTY_MESSAGE);
+		saveTask.editState(Operations.SAVE_OPERATION);
+		returningTasks.add(saveTask);
+
+		logger.log(Level.INFO, "Save operation completed");
+
+		return returningTasks;
+	}
+	
+	
+	//@author A0111942N
+	/**
+	 * This method will contact StorageMain to export bufferTasksList and bufferLabelsList
+	 * into a text file.
+	 */
+	private void commitToStorage() {
+
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferTasksList);
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,bufferLabelsList);
+	}
+	
+	
+	
+	
+	
+	/**
+	 * ================================================================================
+	 * =======  MISC. =================================================================
+	 * ================================================================================
+	 */
+	
+	
+	//@author A0111942N
+	/**
+	 * Gets the time stamp (ID) of the label
+	 * 
+	 * @param	Name of label
+	 * @return	Label time stamp (ID)
+	 */
+	private long getLabelId(String label) {
+
+		long labelID = -1;
+
+		for(int j = 0; j < bufferLabelsList.size(); j++) {
+
+			if(bufferLabelsList.get(j).isLabel(label)) {
+				Label tempLabel = bufferLabelsList.get(j);
+				labelID = tempLabel.getTimeStamp();
+			}
+		}
+		System.out.println(labelID);
+		return labelID;
 	}
 
-
+	
 	//@author A0111942N
 	/**
 	 * @return	Today 23:59 in millisecond
@@ -743,6 +986,7 @@ public class LogicMain {
 		return endOfToday.getTimeInMillis();
 	}
 
+	
 	//@author A0111942N
 	/**
 	 * Convert string to milliseconds and return
@@ -750,7 +994,7 @@ public class LogicMain {
 	 * 
 	 * @return	Date in milliseconds
 	 */
-	private long getDeadline(String dateInput) throws ParseException {
+	private long convertDateString(String dateInput) throws ParseException {
 
 		long deadline;
 		dateInput = dateInput.toUpperCase();
@@ -764,6 +1008,7 @@ public class LogicMain {
 		return deadline;
 	}
 
+	
 	//@author A0111942N
 	/**
 	 * This method checks if the input word is an operation.
@@ -775,17 +1020,6 @@ public class LogicMain {
 		return word.startsWith(Operations.OPERATION);
 	}
 
-	//@author A0111942N
-	/**
-	 * This method will contact StorageMain to export bufferTasksList and bufferLabelsList
-	 * into a text file.
-	 */
-	private void commitToStorage() {
-
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,bufferTasksList);
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,bufferLabelsList);
-	}
-
 	
 	//@author A0111942N
 	/**
@@ -795,6 +1029,7 @@ public class LogicMain {
 		return bufferLabelsList;
 	}
 	
+	
 	//@author A0111942N
 	/**
 	 * This method returns the list of all the tasks.
@@ -803,37 +1038,5 @@ public class LogicMain {
 	 */
 	public static LinkedList<Task> getAllTasks() {
 		return bufferTasksList;
-	}
-
-	//@author A0111942N
-	/**
-	 * Mainly for testing purpose.
-	 * 
-	 * @return	All the tasks in string format
-	 */
-	public void printbufferTasksList() {
-		System.out.println(bufferTasksList.toString());
-	}
-
-	//@author A0111942N
-	/**
-	 * Mainly for testing purpose.
-	 */
-	public static void main(String[] args) {
-
-		System.out.print("Input: ");
-		Scanner scanner = new Scanner(System.in);
-
-		while (scanner.hasNextLine()) {
-			Logger logger = Logger.getLogger(LOG_NAME);
-			String testInput = scanner.nextLine();
-
-			LogicMain logic = new LogicMain();
-
-			logger.log(Level.INFO, logic.processInput(testInput).toString());
-			//logger.log(Level.INFO, logic.getAllTasks().toString());
-		}
-
-		scanner.close();
 	}
 }
