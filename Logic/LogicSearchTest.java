@@ -113,7 +113,7 @@ public class LogicSearchTest {
 				testStartLetterSearch("l",testType2,predictedResult_2_2));
 
 		assertEquals("Test 8 - 'LogicSearch - startLetterSearch'", true, 
-				testStartLetterSearch("b",testType2,predictedResult_2_2));
+				testStartLetterSearch("b",testType2,predictedResult_2_3));
 		
 		/************************ END TEST TYPE 2 - TEST CASES **************************************/
 		/********************************************************************************************/
@@ -128,7 +128,7 @@ public class LogicSearchTest {
 		
 		LinkedList<Task> collatedTask = new LinkedList<Task>();
 		
-		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
 		
 		if(collatedTask.equals(predictedResult)){
 			return true;
@@ -139,10 +139,31 @@ public class LogicSearchTest {
 			System.out.println(t.getName());
 		}
 		
-		System.out.println("I came here");
-		
 		return false;
 	}
+	
+	
+	//@author A0112898U
+	/**
+	 * Test for 'matchWordSearch' function
+	 */	
+	public static boolean matchWordSearch(String searchLine, LinkedList<Task> storedTasks, LinkedList<Task> predictedResult) {
+		
+		LinkedList<Task> collatedTask = new LinkedList<Task>();
+		
+		collatedTask = LogicSearch.smartSearch(searchLine, storedTasks, LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD);
+		
+		if(collatedTask.equals(predictedResult)){
+			return true;
+		}
+		
+		//For debugging purposes
+		for(Task t : collatedTask){
+			System.out.println(t.getName());
+		}
+		
+		return false;
+	}	
 	
 	//Used for debuggin purpsoe
 	public static void main (String[] args){
@@ -156,7 +177,7 @@ public class LogicSearchTest {
 		
 		//predicted test results
 		LinkedList<Task> predictedResult = testTasks;
-		testStartLetterSearch("1",testTasks,predictedResult); //keep as sample
+		testStartLetterSearch("t",testTasks,predictedResult); //keep as sample
 		
 		//System.out.println("hi");
 		

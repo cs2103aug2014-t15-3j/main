@@ -271,16 +271,16 @@ public final class LogicSearch {
 							//Search through the first Letter of every word in the description
 							if (searchString.equals(Character.toString(chkT.charAt(0)))){
 								
-								System.out.println(chkTok);
+								//System.out.println(chkTok);
 								
 								//Task tt = new Task(t);
 								
-								//if(!tempCollatedList.contains(t)){  // why only t0 got added? // i really need this
+								if(!isTaskExist(tempCollatedList,t)){  // why only t0 got added? // i really need this
 									
 									tempCollatedList.add(t);
 									isTaskAdded = true;
 									break; //Break out of the current task
-								//}
+								}
 							}
 						}	
 						
@@ -327,53 +327,58 @@ public final class LogicSearch {
 		//Search each query string through all the stored task via name
 		for (String searchString:tokenizedInputs){
 			
-			for(Task t:bufferedTaskList){ 
-				
-				//Tokenized the searchType string
-				LinkedList<String> chkString = new LinkedList<String>();
-				
-				switch (searchType){
+			//if the token is a word
+			if (searchString.length() > 1){
+			
+				for(Task t:bufferedTaskList){ 
 					
-					case TYPE_ALL:
-						
-					case TYPE_DESCRIPTION:
-						chkString.add(t.getDescription());
-						
-						if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
-							break;
-						}
-						
-					case TYPE_NAME:
-						chkString.add(t.getName());
-						
-						if (searchType == SEARCH_TYPES.TYPE_NAME){
-							break;
-						}
-						
-					case TYPE_LABEL:
-						//chkString[2] = t.getLabel();
-						break;	
-				}
+					//Tokenized the searchType string
+					LinkedList<String> chkString = new LinkedList<String>();
 					
-				
-				for (String chkStr:chkString){
-					
-					if (chkStr.contains(searchString)){
+					switch (searchType){
 						
-						System.out.println(chkString);
-						
-						//Task tt = new Task(t);
-						
-						//if(!tempCollatedList.contains(t)){  // why only t0 got added?
+						case TYPE_ALL:
 							
-							tempCollatedList.add(t);
+						case TYPE_DESCRIPTION:
+							chkString.add(t.getDescription());
 							
-							break; //Break out of the current task if task is added
-						//}
-					}					
+							if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION){
+								break;
+							}
+							
+						case TYPE_NAME:
+							chkString.add(t.getName());
+							
+							if (searchType == SEARCH_TYPES.TYPE_NAME){
+								break;
+							}
+							
+						case TYPE_LABEL:
+							//chkString[2] = t.getLabel();
+							break;	
+					}
+						
+					
+					for (String chkStr:chkString){
+						
+						if (chkStr.contains(searchString)){
+							
+							System.out.println(chkString);
+							
+							//Task tt = new Task(t);
+							
+							if(!isTaskExist(tempCollatedList,t)){
+								
+								tempCollatedList.add(t);
+								
+								break; //Break out of the current task if task is added
+							}
+						}					
+					}
 				}
 			}
 		}
+		
 
 		return tempCollatedList;
 	}
@@ -390,7 +395,7 @@ public final class LogicSearch {
 	 * 
 	 */
 	public static LinkedList<Task> smartSearch(String searchLine, 
-				LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType){
+				LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType, SEARCH_TYPES searchAlgoType){
 		
 		//Task that is collated through the searches.
 		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
@@ -403,43 +408,41 @@ public final class LogicSearch {
 		}
 		*/
 		
-		matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+		//matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
 		//matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
 		
-		/*
-		switch(searchType){
 		
+		switch(searchAlgoType){
+		
+			case TYPE_ALL:
+			
 			case SEARCH_START_LETTER:
-				matchedTasks = startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
+				//matchedTasks = startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
 				//startLetterSearch(matchedTasks, bufferedTaskList, SEARCH_TYPES.TYPE_NAME);
-				break;
+				matchedTasks.addAll(startLetterSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+				
+				if (searchAlgoType == SEARCH_TYPES.SEARCH_START_LETTER){
+					break;
+				}
 				
 			case SEARCH_MATCH_WORD:
-				matchedTasks = matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
-				break;
+				//matchedTasks = matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType);
+				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType));
+				
+				if (searchAlgoType == SEARCH_TYPES.SEARCH_MATCH_WORD){
+					break;
+				}
 				
 			case SEARCH_POWER_SEARCH:
 				
 				System.out.println("Type not supproted yet");
 				break;
 		}
-		*/
+		
 		return matchedTasks;
-		
 	}
 	
-	
-	private LinkedList<Task> removeDuplicateTasks (LinkedList<Task> checkList){
-		
-		LinkedList<Task> tempList = new LinkedList<Task>();
-		
-		Set<Task> newSet = new HashSet<Task>(checkList);
-		
-		tempList = new LinkedList<Task>(newSet);
-		 
-		return tempList;
-	}
-	
+
 	//Freaking expensive to search and tiring to implment 
 	/* - TBA - may or may not implement */
 	//@author A0112898U
@@ -498,5 +501,37 @@ public final class LogicSearch {
 		return tempCollatedSuggestedStrings;
 	}
 	*/
+	
+	//@author A0112898U
+	/**
+	 * Checks if the task to be added is already in the collated list of matched task
+	 * 
+	 * Reason why not to use the '.contains' but to create and use this function is because the 
+	 * '.equals' in task was overrided by the original creator for other checking purpose 
+	 * thus the .contain doesn't work like the intended original purpose, which would work for my code
+	 *
+	 * @param currentCollatedTasks the added list of task to check with
+	 * @param tobeAddedTask task that is to be added to check if it already existed
+	 * 
+	 * @return returns true if task is already present in the collated task, and returns
+	 * 				   false if task hasn't been found in the collated task
+	 */
+	public static boolean isTaskExist(LinkedList<Task> currentCollatedTasks, Task tobeAddedTask){
+		
+		for(Task t:currentCollatedTasks){
+			
+			if(t.getName().equals(tobeAddedTask.getName()) 
+					&& t.getDescription().equals(tobeAddedTask.getDescription())
+					&& (t.getTimeStamp() == tobeAddedTask.getTimeStamp())
+					&& (t.getLabel() == tobeAddedTask.getLabel())
+					){
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 
 }
