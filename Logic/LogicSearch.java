@@ -285,6 +285,7 @@ public final class LogicSearch {
 						}	
 						
 						//if task is already added dont' need to check for the next type
+						//for double security of check duplicated task purpose!
 						if (isTaskAdded){
 							break;
 						}
@@ -308,6 +309,11 @@ public final class LogicSearch {
 	 * Searches the user search inputs, with the list of tasks via name/label/description,
 	 * Simple substring search via .contains with the tokenized inputs
 	 * if applies, matched task is added to the list of return linkedlist string
+	 * 
+	 * ***IMPT***
+	 * This search only searches 2char and above string because, this system assume users 
+	 * uses 1 char as the heading of the word to be search, which is covered in and advance
+	 * search by 'startLetterSearch'
 	 * 
 	 * @param collatedList - accepts a LinkedList<Task> type list that has been 
 	 * 						 previously initiated/accumulated 
