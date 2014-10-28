@@ -28,7 +28,8 @@ public class LogicSearchTest {
 		//assertEquals("Test - 'Remembra Storage .init()'", true,testStorageInit(storageMain)); //keep as sample
 			
 		testCases_startLetterSearch();
-		//testCases_matchWordSearch();
+		testCases_matchWordSearch();
+		testCases_CombineSearch();
 	}	
 	
 
@@ -164,6 +165,56 @@ public class LogicSearchTest {
 		/********************************************************************************************/
 	}
 	
+	
+	//@author A0112898U
+		/**
+		 * Test cases/senarios for 'matchWordSearch' function
+		 */	
+		public void testCases_CombineSearch(){
+		
+			LogicSearch.SEARCH_TYPES searchAlgoType = LogicSearch.SEARCH_TYPES.TYPE_ALL;
+			
+			//Init Test Type 1 - all test cases are init with the same datas except their indexes
+			LinkedList<Task> testType1 = new LinkedList<Task>();
+			
+			for (int i = 0; i < 4; i++){
+				
+				testType1.add(new Task("t" + i , "task" + i + " matchWord test"));
+			}
+			
+			//predicted test results for testType 1
+			LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testType1);
+			LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
+
+			/********************************************************************************************/
+			/********************** START TEST TYPE 1 - TEST CASES **************************************/
+			
+			/* Equivalence Partition Test - Test for boundary case - 'single character' in the search String */
+			//Test for 1 chacracter search input but match word doesn't search 1 char
+			//assume users uses 1 char as the heading of the word to be search
+			assertEquals("Test 1 - 'LogicSearch - testCases_CombineSearch'", true, 
+					testSearchAlgo("t",testType1,predictedResult_1_1,searchAlgoType));
+			
+			//Test for combine search input but task doesn't exist in the list
+			assertEquals("Test 2 - 'LogicSearch - testCases_CombineSearch'", true, 
+					testSearchAlgo("tt e",testType1,predictedResult_1_2,searchAlgoType));
+
+			//Test for any applicable cases with many input token - only chars input should be checked
+			assertEquals("Test 3 - 'LogicSearch - testCases_CombineSearch'", true, 
+					testSearchAlgo("task",testType1,predictedResult_1_1,searchAlgoType));
+
+			//Test for any duplicate result
+			assertEquals("Test 4 - 'LogicSearch - testCases_CombineSearch'", true, 
+					testSearchAlgo("task match",testType1,predictedResult_1_1,searchAlgoType));
+
+			//Test for combine search type in a String
+			assertEquals("Test 5 - 'LogicSearch - testCases_CombineSearch'", true, 
+					testSearchAlgo("t task match",testType1,predictedResult_1_1,searchAlgoType));			
+
+			/************************ END TEST TYPE 1 - TEST CASES **************************************/
+			/********************************************************************************************/
+		}
+		
 	
 	//@author A0112898U
 	/**
