@@ -256,10 +256,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING ADD
-	 * ========================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING ADD =========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -404,10 +402,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING EDIT
-	 * =======================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING EDIT ========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -470,7 +466,7 @@ public class LogicMain {
 
 				try {
 
-					editID = Integer.parseInt(stringID);
+					editID = Integer.parseInt(stringID) - 1;
 
 				} catch (Exception e) {
 
@@ -638,10 +634,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING VIEW
-	 * =======================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING VIEW ========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -735,10 +729,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING DELETE
-	 * =====================================================
-	 * ====================
-	 * ============================================================
+	 * =============== PROCESSING DELETE ======================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -766,10 +758,16 @@ public class LogicMain {
 	private Task executeDelete() {
 
 		int deleteID = 0;
+		boolean isValid = true;
+		
 		String content = inputList.get(0).getContent();
 
 		if (!content.isEmpty()) {
-			deleteID = Integer.parseInt(inputList.get(0).getContent());
+			try {
+				deleteID = Integer.parseInt(inputList.get(0).getContent()) - 1;
+			} catch (Exception e) {
+				isValid = false;
+			}
 		}
 
 		if (deleteID < bufferTasksList.size()) {
@@ -787,20 +785,23 @@ public class LogicMain {
 			logger.log(Level.INFO, "Task deleted");
 			return deleteTask;
 		} else {
+			isValid = false;
+		}
+		
+		if (!isValid) {
 			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
 			deleteTask.editState(Operations.DELETE_OPERATION);
 
 			logger.log(Level.INFO, "Invalid task to be deleted");
 			return deleteTask;
 		}
+		return null;
 	}
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING FIND
-	 * =======================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING FIND ========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -841,10 +842,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING UNDO
-	 * =======================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING UNDO ========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -872,10 +871,8 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= PROCESSING SAVE
-	 * =======================================================
-	 * ==================
-	 * ==============================================================
+	 * =============== PROCESSING SAVE ========================================
+	 * ========================================================================
 	 */
 
 	// @author A0111942N
@@ -913,9 +910,7 @@ public class LogicMain {
 
 	/**
 	 * ========================================================================
-	 * ======== ======= MISC.
-	 * =================================================================
-	 * ========
+	 * =============== MISC. ==================================================
 	 * ========================================================================
 	 */
 
@@ -983,22 +978,7 @@ public class LogicMain {
 			
 			// Specify time only hh mm am/pm
 			if ( inputArray.length == 3 && !isNumeric(inputArray[2]) ) {
-				hour = Integer.parseInt(inputArray[0]);
-				minute = Integer.parseInt(inputArray[1]);
-				period = inputArray[2].toLowerCase();
-				
-				if ( period.equals("am") && hour == 12 ) {
-					hour = 0;
-				} else if ( period.equals("pm") && hour != 12 ) {
-					hour += 12;
-				} else if ( !period.equals("am") && !period.equals("pm") ) {
-					return -1;
-				}
-				
-				tempCal.set(Calendar.HOUR_OF_DAY, hour);
-				tempCal.set(Calendar.MINUTE, minute);
-				tempCal.set(Calendar.MILLISECOND, 0);
-				
+				processTime(inputArray, tempCal);
 				throw new Exception(LOG_NAME);
 			}
 			
@@ -1008,7 +988,7 @@ public class LogicMain {
 			tempCal.set(Calendar.DATE, day);
 			tempCal.set(Calendar.MONTH, month - 1); // Start from index 0
 			
-			// Specify only day, month and year
+			// Specify year too
 			if ( inputArray.length == 3 ) {
 				year = Integer.parseInt(inputArray[2]);
 				tempCal.set(Calendar.YEAR, year);
@@ -1017,6 +997,14 @@ public class LogicMain {
 			tempCal.set(Calendar.HOUR_OF_DAY, 23);
 			tempCal.set(Calendar.MINUTE, 59);
 			tempCal.set(Calendar.MILLISECOND, 999);
+			
+			// Specify time too
+			if ( inputArray.length == 6 ) {
+				String[] timeArray = { inputArray[3], inputArray[4], inputArray[5] };
+				processTime(timeArray, tempCal);
+			}
+			
+			
 
 		} catch (Exception e) {
 			
@@ -1030,24 +1018,23 @@ public class LogicMain {
 		return tempCal.getTimeInMillis();
 	}
 
-	// @author A0111942N
-	/**
-	 * Convert string to milliseconds and return milliseconds.
-	 * 
-	 * @return Date in milliseconds
-	 */
-	private long convertDateString(String dateInput) throws ParseException {
-
-		long deadline;
-		dateInput = dateInput.toUpperCase();
-
-		SimpleDateFormat format = new SimpleDateFormat(
-				Operations.DATE_INPUT_FORMAT);
-
-		Date date = format.parse(dateInput);
-		deadline = date.getTime();
-
-		return deadline;
+	private void processTime(String[] inputArray, Calendar tempCal) {
+		int hour;
+		int minute;
+		String period;
+		hour = Integer.parseInt(inputArray[0]);
+		minute = Integer.parseInt(inputArray[1]);
+		period = inputArray[2].toLowerCase();
+		
+		if ( period.equals("am") && hour == 12 ) {
+			hour = 0;
+		} else if ( period.equals("pm") && hour != 12 ) {
+			hour += 12;
+		}
+		
+		tempCal.set(Calendar.HOUR_OF_DAY, hour);
+		tempCal.set(Calendar.MINUTE, minute);
+		tempCal.set(Calendar.MILLISECOND, 0);
 	}
 
 	// @author A0111942N
