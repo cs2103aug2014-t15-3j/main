@@ -7,13 +7,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class LogicMain {
 
 	// Constant variables
 	private final static String LOG_NAME = "LogicMain";
+	private final static String LOG_NAME_STORAGE_SAVE = "StorageSaveLog";
 
 	// Flag to check if the program has initialized.
 	private static boolean isInitialize = false;
@@ -34,7 +41,8 @@ public class LogicMain {
 
 	// Logger: Use to troubleshoot problems
 	private Logger logger = Logger.getLogger(LOG_NAME);
-
+	private Logger storageLogger = Logger.getLogger(LOG_NAME_STORAGE_SAVE);
+	
 	// Flag to check if the current operation is a logic operation
 	private boolean isLabel;
 
@@ -63,7 +71,31 @@ public class LogicMain {
 		} else {
 			logger.log(Level.INFO, "LogicMain has already been initiated");
 		}
+
+		//Start Timer thread for saving file every 5 min
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
 	}
+	
+	// @author A0112898U
+	/**
+	 * Periodic Task Saving Functionality - saves the buffered input task
+	 * to storage every 5min
+	 */
+	Runnable storageSaveScheduler = new Runnable() {
+		   
+		Calendar cal = Calendar.getInstance();
+		
+	    public void run() {
+	    
+	    	//Save the current buffered list
+	    	commitToStorage();
+	    	
+	    	//Do Logging
+	    	storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
+	    }
+	    
+	};
 
 	// @author A0111942N
 	/**

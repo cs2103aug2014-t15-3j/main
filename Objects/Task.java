@@ -158,7 +158,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return Operations.EMPTY_MESSAGE;
 	}
 	
-	/*
+	
 	@Override
 	public boolean equals(Object object) {
 
@@ -168,7 +168,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		} else {
 			return false;
 		}
-	}*/
+	}
 
 	@Override
 	public String toString() {
