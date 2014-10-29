@@ -1,7 +1,13 @@
 Commands:
 
-;add - Add tasks	         ;view - View Tasks
-;delete - Delete Tasks     ;edit - Edit Tasks
+;add - Add tasks	         
+;view - View Tasks
+;delete - Delete Tasks     
+;edit - Edit Tasks
 
-If you want an in-depth help, simply type <help XXX> where XXX is any of the above functions
+If you want an in-depth help, 
+simply type <help XXX> where 
+XXX is any of the above 
+functions.
+
 e.g. help add

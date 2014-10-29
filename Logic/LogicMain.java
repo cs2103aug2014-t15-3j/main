@@ -32,7 +32,7 @@ public class LogicMain {
 	private Operations operations;
 
 	// Data structures
-	private static LinkedList<Task> bufferTasksList = new LinkedList<Task>();
+	static LinkedList<Task> bufferTasksList = new LinkedList<Task>();
 	private static LinkedList<Label> bufferLabelsList = new LinkedList<Label>();
 	private static LinkedList<Task> undoTasks = new LinkedList<Task>();
 	private static LinkedList<Item> tempList = new LinkedList<Item>();

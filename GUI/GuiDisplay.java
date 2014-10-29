@@ -28,8 +28,8 @@ public class GuiDisplay {
 			fileContent = readFile("HelpText.txt");
 			GuiMain.feedback.setText(fileContent);
 			//Something I am experimenting with for better GUI (for later)
-			//			Dialog dialog = new Dialog(GuiMain.frameRemembra);
-			//			DialogFX.fadeIn(dialog);
+			//Dialog dialog = new Dialog(GuiMain.frameRemembra);
+			//DialogFX.fadeIn(dialog);
 			break;
 		case Operations.ADD_OPERATION:
 			fileContent = readFile("HelpAdd.txt");
@@ -78,31 +78,11 @@ public class GuiDisplay {
 
 			case Operations.VIEW_OPERATION:
 			case Operations.FIND_OPERATION:
-				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-					for(int i=0; i<tasks.size(); i++) {
-						Item tempTask = tasks.get(i);
-						GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-								i + ".\n" + tempTask);
-					}
-					GuiMain.feedback.setText("All tasks displayed!");
-				}
-				else {
-					GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-							"No tasks found!\n\n");
-				}
+				findOperation(tasks, firstTask);
 				break;
 
 			case Operations.DELETE_OPERATION:	
-				if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-					GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-							"The following task has been deleted:\n\n" + 
-							firstTask.toString());
-					GuiMain.feedback.setText("Task deleted successfully!");
-				}
-				else {
-					GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-							"You have specified an invalid task to delete\n\n");
-				}
+				deleteOperation(firstTask);
 				break;
 
 			case Operations.SAVE_OPERATION:
@@ -117,6 +97,35 @@ public class GuiDisplay {
 		}
 
 	}
+
+	private static void deleteOperation(Item firstTask) {
+		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+					"The following task has been deleted:\n\n" + 
+					firstTask.toString());
+			GuiMain.feedback.setText("Task deleted successfully!");
+		}
+		else {
+			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+					"You have specified an invalid task to delete\n\n");
+		}
+	}
+
+	private static void findOperation(LinkedList<Item> tasks, Item firstTask) {
+		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+			for(int i=0; i<tasks.size(); i++) {
+				Item tempTask = tasks.get(i);
+				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+						(i+1) + ".\n" + tempTask);
+			}
+			GuiMain.feedback.setText("All tasks displayed!");
+		}
+		else {
+			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+					"No tasks found!\n\n");
+		}
+	}
+	
 	static String readFile(String fileName) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		try {
