@@ -31,20 +31,24 @@ public class Remembra_SUT {
 		LogicMain logicMain = new LogicMain();
 		
 		//Create the task to save
-		logicMain.processInput(";add Hi Hi Hi");
+		logicMain.processInput(";add Samuel is awesome");
 		
 		//get the list of buffered tasks and save to bufferedTasks before calling storage
-		LinkedList<Task> bufferedTasks = new LinkedList<Task>();
+		LinkedList<Task> bufferedTasks = logicMain.getAllTasks();
 		
 		//Stores into storage via the save operation
+		StorageMain storageMain = new StorageMain();
+		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK, bufferedTasks);
 		
 		//retrieve from storage via the retrieve operation
+		LinkedList<Task> retrievedTasks =
+				(LinkedList<Task>) storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 		
 		//read back into Logic and check if stored bufferTaskList == listRetrievedFromStorage
 		
-		boolean isListSame = false;
+		boolean isListSame = bufferedTasks.equals(retrievedTasks);
 		
-		return true;//isListSame;
+		return isListSame;//isListSame;
 	}
 }
 

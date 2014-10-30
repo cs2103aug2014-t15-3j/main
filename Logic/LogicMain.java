@@ -475,7 +475,7 @@ public class LogicMain {
 
 				}
 
-				if (editID >= bufferTasksList.size()) {
+				if (editID < 0 || editID >= bufferTasksList.size()) {
 
 					return null;
 
@@ -815,28 +815,28 @@ public class LogicMain {
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		String keyword = inputList.get(0).getContent();
-		keyword = keyword.toLowerCase();
+		//keyword = keyword.toLowerCase();
 
 		Task returnTask;
 
-		for (int i = 0; i < bufferTasksList.size(); i++) {
+		LinkedList<Task> searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
+				LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		
+		System.out.println(searchTasks.toString());
 
-			Task tempTask = bufferTasksList.get(i);
-			if (tempTask.contains(keyword)) {
-				tempTask.editState(Operations.FIND_OPERATION);
-				returningTasks.add(tempTask);
-			}
-		}
-
-		if (returningTasks.isEmpty()) {
+		if (searchTasks.isEmpty()) {
 
 			returnTask = new Task(Operations.EMPTY_MESSAGE);
 			returningTasks.add(returnTask);
+		} else {
+			
+			returnTask = searchTasks.get(0);
+			returnTask.editState(Operations.VIEW_OPERATION);
 		}
 
-		tempList = new LinkedList<Item>(returningTasks);
+		tempList = new LinkedList<Item>(searchTasks);
 
-		return returningTasks;
+		return new LinkedList<Item>(searchTasks);
 
 	}
 
@@ -989,7 +989,7 @@ public class LogicMain {
 			tempCal.set(Calendar.MONTH, month - 1); // Start from index 0
 			
 			// Specify year too
-			if ( inputArray.length == 3 ) {
+			if ( inputArray.length >= 3 ) {
 				year = Integer.parseInt(inputArray[2]);
 				tempCal.set(Calendar.YEAR, year);
 			}
