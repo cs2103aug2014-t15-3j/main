@@ -162,6 +162,13 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.timeStamp = timestamp;
 		return timeStamp;
 	}
+	
+	private String getLabelName() {
+		
+		String labelName = getLabelName(label);
+		
+		return labelName;
+	}
 
 	private String getLabelName(long _label) {
 		LinkedList<Label> bufferLabelsList = LogicMain.getAllLabels();
@@ -223,7 +230,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		}
 
 		// Include label into message
-		String labelName = getLabelName(label);
+		String labelName = getLabelName();
 		
 		if(!labelName.equals(Operations.EMPTY_MESSAGE)) {
 			message += "Label: " + labelName + "\n";
