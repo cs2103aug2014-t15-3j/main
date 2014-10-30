@@ -24,6 +24,9 @@ public class LogicMain {
 
 	// Flag to check if the program has initialized.
 	private static boolean isInitialize = false;
+	
+	// Flag to check if there's any chances (For auto-save)
+	private static boolean hasChanged = false;
 
 	// StorageMain object
 	private static StorageMain storageMain;
@@ -161,11 +164,15 @@ public class LogicMain {
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 			returnTasks = processAdd();
+			
+			hasChanged = true;
 
 		} else if (Operations.editOperations.contains(mainOperation)) {
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 			returnTasks = processEdit();
+			
+			hasChanged = true;
 
 		} else if (Operations.viewOperations.contains(mainOperation)) {
 
@@ -178,11 +185,15 @@ public class LogicMain {
 		} else if (Operations.undoOperations.contains(mainOperation)) {
 
 			returnTasks = processUndo();
+			
+			hasChanged = true;
 
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 			returnTasks = processDelete();
+			
+			hasChanged = true;
 
 		} else if (Operations.saveOperations.contains(mainOperation)) {
 
@@ -908,7 +919,7 @@ public class LogicMain {
 	private void commitToStorage() {
 		
 		
-		if(isInitialize) {
+		if(isInitialize && hasChanged) {
 
 			System.out.println(bufferTasksList);
 
@@ -916,6 +927,8 @@ public class LogicMain {
 					bufferTasksList);
 			storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,
 					bufferLabelsList);
+			
+			hasChanged = false;
 		}
 	}
 
