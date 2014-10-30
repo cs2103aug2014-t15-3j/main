@@ -66,15 +66,17 @@ public class LogicMain {
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 
 			isInitialize = true;
+			
+			//Start Timer thread for saving file every 5 min
+			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+			executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
 
 			logger.log(Level.INFO, "Initializing is complete");
 		} else {
 			logger.log(Level.INFO, "LogicMain has already been initiated");
 		}
 
-		//Start Timer thread for saving file every 5 min
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
+		
 	}
 	
 	// @author A0112898U
@@ -87,12 +89,15 @@ public class LogicMain {
 		Calendar cal = Calendar.getInstance();
 		
 	    public void run() {
-	    
-	    	//Save the current buffered list
-	    	commitToStorage();
 	    	
-	    	//Do Logging
-	    	storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
+	    	if(isInitialize) {
+
+	    		//Save the current buffered list
+	    		commitToStorage();
+
+	    		//Do Logging
+	    		storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
+	    	}
 	    }
 	    
 	};
