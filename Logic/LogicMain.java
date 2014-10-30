@@ -64,13 +64,13 @@ public class LogicMain {
 			retrieveFromStorage();
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
-
-			isInitialize = true;
 			
 			//Start Timer thread for saving file every 5 min
 			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 			executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
 
+			isInitialize = true;
+			
 			logger.log(Level.INFO, "Initializing is complete");
 		} else {
 			logger.log(Level.INFO, "LogicMain has already been initiated");
@@ -906,11 +906,17 @@ public class LogicMain {
 	 * bufferLabelsList into a text file.
 	 */
 	private void commitToStorage() {
+		
+		
+		if(isInitialize) {
 
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
-				bufferTasksList);
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,
-				bufferLabelsList);
+			System.out.println(bufferTasksList);
+
+			storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
+					bufferTasksList);
+			storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,
+					bufferLabelsList);
+		}
 	}
 
 	/**

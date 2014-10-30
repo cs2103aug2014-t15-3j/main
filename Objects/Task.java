@@ -9,6 +9,9 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private final static String TO_DO_LABEL = "To-Do";
 	private final static int NOT_VALID = -1;
 	private final static long DAY_MILLISECOND = 86400000;
+	
+	private final static SimpleDateFormat dateFormat
+				= new SimpleDateFormat(Operations.DATE_OUTPUT_FORMAT);
 
 	// Class variable
 	private String name;
@@ -100,9 +103,25 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public long getDeadline() {
 		return deadline;
 	}
+	
+	public String getFormattedDeadline() {
+		
+		Date date = new Date(deadline);
+		String dateOutput = dateFormat.format(date);
+		
+		return dateOutput;
+	}
 
 	public long getReminder() {
 		return reminder;
+	}
+	
+	public String getFormattedReminder() {
+
+		Date date = new Date(reminder);
+		String dateOutput = dateFormat.format(date);
+
+		return dateOutput;
 	}
 
 	public String getState() {
@@ -184,22 +203,12 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		}
 
 		// Include deadline into message
-		Date date = new Date(deadline);
-		SimpleDateFormat format = new SimpleDateFormat(
-				Operations.DATE_OUTPUT_FORMAT);
-		String dateOutput = format.format(date);
-		
-		message += "Deadline: " + dateOutput + "\n";
+		message += "Deadline: " + getFormattedDeadline() + "\n";
 		
 		// Include reminder into message
-		if(reminder == NOT_VALID) {
+		if(reminder != NOT_VALID) {
 			
-		} else {
-			
-			date.setTime(reminder);
-			dateOutput = format.format(date);
-
-			message += "Remind at: " + dateOutput;
+			message += "Remind at: " + getFormattedReminder();
 			
 			if(reminder >= System.currentTimeMillis()) {
 				message += "\n";
