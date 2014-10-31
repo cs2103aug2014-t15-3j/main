@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 public final class LogicSearch {
 
 	//private Objects
-	private LinkedList<String> suggestInputs = new LinkedList<String>(); //but if static can't be changed! ><" resolve this asap!
+	private static LinkedList<String> suggestInputs = new LinkedList<String>();
 	private static LinkedList<String> tokenizedInputs = new LinkedList<String>(); 
 	private LinkedList<Task> matchedTasks = new LinkedList<Task>();
 	
@@ -344,7 +344,7 @@ public final class LogicSearch {
 		return tempCollatedList;
 	}
 	
-	
+	@SuppressWarnings("unchecked")
 	//@author A0112898U
 	/**
 	 * Smart Searches for user input via Stored Tasks
@@ -366,10 +366,10 @@ public final class LogicSearch {
 		
 			case SEARCH_POWER_SEARCH:
 
-				matchedTasks.addAll(matchWordSearch(searchLine, matchedTasks, bufferedTaskList,searchType,true));
+				LinkedList<LinkedList<?>> returnList = powerSearch(searchLine, matchedTasks ,bufferedTaskList);
+				suggestInputs = new LinkedList<String>((LinkedList<String>)returnList.get(1));
+				return (LinkedList<Task>) returnList.get(0); 
 				
-				System.out.println("Type not supproted yet");
-				break;
 			
 			case TYPE_ALL:
 			
@@ -395,6 +395,14 @@ public final class LogicSearch {
 		return removeDuplicate(matchedTasks);
 	}
 	
+	
+	//@author A0112898U
+	public static LinkedList<String> getSuggestedString() {
+	
+		return suggestInputs;
+		
+	}
+	
 
 	//Freaking expensive to search and tiring to implment 
 	/* - TBA - may or may not implement */
@@ -414,7 +422,8 @@ public final class LogicSearch {
 	 * 
 	 * @param bufferedTaskList - List of task that have been added by user
 	 * 
-	 * @return returns the newly collated list
+	 * @return returns List of List, the first list represents the matched tasks, the 2nd list
+	 * represents the suggested keywords
 	 */
 	public static LinkedList<LinkedList<?>> powerSearch(String queryString, LinkedList<Task> 
 				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
@@ -440,7 +449,7 @@ public final class LogicSearch {
 					
 					//Check against names
 					if (chkStrSimilarity(tok,t.getName()) > 50){
-						if(chkStrSimilarity(tok,t.getName()) > 75){
+						if(chkStrSimilarity(tok,t.getName()) > 70){
 							
 							suggestedString.add(t.getName());
 						}
@@ -460,7 +469,7 @@ public final class LogicSearch {
 						
 						if (chkStrSimilarity(tok,desTok) > 50){
 						
-							if(chkStrSimilarity(tok,desTok) > 75){
+							if(chkStrSimilarity(tok,desTok) > 70){
 								
 								suggestedString.add(desTok);
 							}
@@ -513,14 +522,28 @@ public final class LogicSearch {
 		
 		String queryString = "Sakalp Samel candie";
 		
-		LinkedList<LinkedList<?>> returnList = powerSearch(queryString, new LinkedList<Task>() ,taskList);
+		//LinkedList<LinkedList<?>> returnList = powerSearch(queryString, new LinkedList<Task>() ,taskList);
+		LinkedList<Task> returnList = smartSearch(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 		
-		System.out.println(returnList.get(0) + "\n");
+		System.out.println(returnList + "\n");
 		
 		System.out.println("You Searched : " + queryString);
 		
 		System.out.println("Did you mean : ");
-		System.out.print(returnList.get(1));
+		System.out.println(getSuggestedString());
+		
+		
+		
+		String queryString2 = "Sakalp candie";
+		
+		LinkedList<Task> returnList2 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		
+		System.out.println(returnList2 + "\n");
+		
+		System.out.println("You Searched : " + queryString2);
+		
+		System.out.println("Did you mean : ");
+		System.out.println(getSuggestedString());
 		
 	}
 	
