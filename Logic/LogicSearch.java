@@ -448,8 +448,8 @@ public final class LogicSearch {
 				if (!isTaskExist(collatedMatchedTaskList,t)){
 					
 					//Check against names
-					if (chkStrSimilarity(tok,t.getName()) > 50){
-						if(chkStrSimilarity(tok,t.getName()) > 70){
+					if (chkStrSimilarity(tok,t.getName()) > 40){
+						if(chkStrSimilarity(tok,t.getName()) > 50){
 							
 							suggestedString.add(t.getName());
 						}
@@ -467,9 +467,9 @@ public final class LogicSearch {
 					//Check against each word in the Description
 					for (String desTok:tokenizeDescription){
 						
-						if (chkStrSimilarity(tok,desTok) > 50){
+						if (chkStrSimilarity(tok,desTok) > 40){
 						
-							if(chkStrSimilarity(tok,desTok) > 70){
+							if(chkStrSimilarity(tok,desTok) > 50){
 								
 								suggestedString.add(desTok);
 							}
@@ -534,7 +534,7 @@ public final class LogicSearch {
 		
 		
 		
-		String queryString2 = "Sakalp candie";
+		String queryString2 = "Sank candie";
 		
 		LinkedList<Task> returnList2 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 		
