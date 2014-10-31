@@ -163,7 +163,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return timeStamp;
 	}
 	
-	private String getLabelName() {
+	public String getLabelName() {
 		
 		String labelName = getLabelName(label);
 		

@@ -200,7 +200,7 @@ public final class LogicSearch {
 							}
 							
 						case TYPE_LABEL:
-							//chkToks = tokenizeSearchInput(t.getLabel());
+							chkToks.add(tokenizeSearchInput(t.getLabelName()));
 							
 							if (searchType == SEARCH_TYPES.TYPE_LABEL){
 								break;
@@ -315,8 +315,12 @@ public final class LogicSearch {
 						}
 						
 					case TYPE_LABEL:
-						//chkString[2] = t.getLabel();
-						break;	
+						chkString.add(t.getLabelName());
+						
+						if (searchType == SEARCH_TYPES.TYPE_LABEL){
+							break;
+						}
+							
 				}
 					
 				
