@@ -21,13 +21,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
-import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -40,12 +40,18 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DefaultCaret;
 
 import com.sun.awt.AWTUtilities;
+
 import java.awt.SystemColor;
+import java.awt.GridLayout;
+
+import javax.swing.JTextPane;
 
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
@@ -81,15 +87,8 @@ public class GuiMain {
 	TrayIcon trayIcon;
 	SystemTray tray;
 
-	private static LinkedList<Task> bufferTasksList;
-	private static LinkedList<Label> bufferLabelsList;
-	private static Operations operations;
-	private static StorageMain storageMain;
-
 	static JFrame frameRemembra;
-	static JTextArea mainDisplay;
 	private static JTextField inputField;
-	private JScrollPane scrollPane;
 	static JTextArea feedback;
 	private JScrollPane scrollPane_1;
 
@@ -100,7 +99,7 @@ public class GuiMain {
 	private JPanel colorPanel1;
 	private ArrayList<String> keywords = new ArrayList<String>(5);
 
-	private static String[] tableHeaders = {
+	private static String[] tableHeaders = { "", 
 		"No.", "Label", "Task", "Description", "Deadline"
 	};
 	private static DefaultTableModel myData;
@@ -109,11 +108,19 @@ public class GuiMain {
 
 	private static final String COMMIT_ACTION = "commit";
 	private JPanel panel;
-	private JPanel panel_1;
+	private static JPanel calendar;
 	private JPanel panel_2;
 	private JPanel panel_3;
 	private JPanel panel_4;
-
+	private JPanel panel_5;
+	private JPanel panel_6;
+	private JTextPane txtpnId;
+	private JPanel tableDisplay;
+	private JLabel timeLabel = new JLabel();
+	private JPanel panel_7;
+	private JPanel panel_8;
+	private JPanel panel_9;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -126,6 +133,7 @@ public class GuiMain {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+
 				inputField.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg){
@@ -134,14 +142,7 @@ public class GuiMain {
 						 * typing something in the user input text field at the bottom of the GUI.
 						 */
 						String inputStr = inputField.getText(); //this is to get the user input text
-						String displayStr = mainDisplay.getText();
-						if(displayStr.equals("Welcome to Remembra!\nFor a quick guide, type help and press enter.")){
-							displayStr = "";
-						}
-
-
-						//this prints the input text on the display
-						mainDisplay.setText(displayStr + "\n");
+						
 						//this clears the input field
 						inputField.setText("");
 
@@ -154,12 +155,14 @@ public class GuiMain {
 						}else {
 							GuiDisplay.display(inputStr);
 							updateTable();
+							//GridLabel.createlabel();
 						}
 
 					}
 
 
 				});
+
 			}
 		});
 	}
@@ -169,6 +172,8 @@ public class GuiMain {
 	 */
 	public GuiMain() {
 		initialize();
+		GuiDisplay.initialize();
+		updateTable();
 
 	}
 
@@ -178,25 +183,35 @@ public class GuiMain {
 	@SuppressWarnings("serial")
 	private void initialize() {
 		frameRemembra = new JFrame("Remembra");
-
-		try {
-			JLabel label = new JLabel(new ImageIcon(ImageIO.read(new File("media/b.jpg"))));
-			frameRemembra.setContentPane(label);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//For background
+		//		try {
+		//			JLabel label = new JLabel(new ImageIcon(ImageIO.read(new File("media/j.jpg"))));
+		//			frameRemembra.setContentPane(label);
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 		frameRemembra.setResizable(false);
 		frameRemembra.setFont(new Font("Accord Light SF", Font.PLAIN, 12));
 		frameRemembra.setForeground(new Color(0, 0, 0));
-		frameRemembra.setTitle("Remembra V0.3");
+		frameRemembra.setTitle("Remembra V0.4");
+		Timer timer = new Timer(500, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateTime();
+			}
+		});
+		timer.setRepeats(true);
+		timer.setCoalesce(true);
+		timer.setInitialDelay(0);
+		timer.start();
 
 		try
 		{
 			frameRemembra.setUndecorated(true);
 			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
-			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,0,0,20));
+			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,30,0,0));
 			UIManager.put("RootPane.setupButtonVisible", false);		
 			AWTUtilities.setWindowOpaque(frameRemembra, false);
 		}
@@ -224,18 +239,63 @@ public class GuiMain {
 
 		frameRemembra.setResizable(false);
 		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
-		frameRemembra.setBounds(100, 100, 954, 681);
+		frameRemembra.setBounds(100, 100, 1043, 675);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
+
+		panel_2 = new JPanel();
+		panel_2.setLayout(null);
+		panel_2.setBackground(new Color(204, 0, 51));
+		panel_2.setBounds(0, 0, 989, 83);
+		frameRemembra.getContentPane().add(panel_2);
+
+		JTextPane txtpnRemembra = new JTextPane();
+		txtpnRemembra.setEditable(false);
+		txtpnRemembra.setForeground(new Color(255, 255, 255));
+		txtpnRemembra.setBackground(new Color(204, 0, 51));
+		txtpnRemembra.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 41));
+		txtpnRemembra.setText("REMEMBRA");
+		txtpnRemembra.setBounds(12, 12, 639, 64);
+		panel_2.add(txtpnRemembra);
+
+		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 13));
+		timeLabel.setForeground(new Color(255, 255, 255));
+		timeLabel.setBounds(818, 0, 171, 22);
+		panel_2.add(timeLabel);
+		timeLabel.setText("Time");
+
+		panel_4 = new JPanel();
+		panel_4.setBounds(0, 80, 41, 31);
+		frameRemembra.getContentPane().add(panel_4);
+		panel_4.setLayout(null);
+		panel_4.setBackground(new Color(204, 0, 51));
+
+		panel_5 = new JPanel();
+		panel_5.setBounds(643, 80, 346, 31);
+		frameRemembra.getContentPane().add(panel_5);
+		panel_5.setLayout(null);
+		panel_5.setBackground(new Color(204, 0, 51));
+
+		panel_3 = new JPanel();
+		panel_3.setBounds(0, 104, 41, 12);
+		frameRemembra.getContentPane().add(panel_3);
+		panel_3.setLayout(null);
+		panel_3.setBackground(SystemColor.scrollbar);
+
+		panel_6 = new JPanel();
+		panel_6.setLayout(null);
+		panel_6.setBackground(SystemColor.scrollbar);
+		panel_6.setBounds(643, 95, 96, 21);
+		frameRemembra.getContentPane().add(panel_6);
 		//frameRemembra.getContentPane().setLayout(null);
 
 		JPanel inputPanel = new JPanel();
-		inputPanel.setBounds(45, 501, 810, 58);
+		inputPanel.setBounds(34, 501, 872, 58);
 		frameRemembra.getContentPane().add(inputPanel);
 		inputPanel.setBackground(new Color(255, 255, 255));
 
 		inputField =  new JTextField();
-		inputField.setBounds(12, 0, 774, 58);
+		inputField.setBounds(12, 0, 848, 58);
 		inputField.setMargin(new Insets(0, 0, 0, 0));
 		inputField.setCaretColor(new Color(0, 0, 0));
 		inputField.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -246,54 +306,86 @@ public class GuiMain {
 		inputField.setBackground(new Color(255, 255, 255));
 		inputPanel.add(inputField);
 		inputField.setColumns(49);
+		
+		panel_7 = new JPanel();
+		panel_7.setBounds(0, 115, 41, 328);
+		frameRemembra.getContentPane().add(panel_7);
+		panel_7.setLayout(null);
+		panel_7.setBackground(SystemColor.controlHighlight);
+		
+		panel_8 = new JPanel();
+		panel_8.setLayout(null);
+		panel_8.setBackground(SystemColor.scrollbar);
+		panel_8.setBounds(45, 437, 601, 6);
+		frameRemembra.getContentPane().add(panel_8);
+		
+		panel_9 = new JPanel();
+		panel_9.setLayout(null);
+		panel_9.setBackground(SystemColor.scrollbar);
+		panel_9.setBounds(643, 87, 3, 356);
+		frameRemembra.getContentPane().add(panel_9);
 
 		JLayeredPane displayPanel = new JLayeredPane();
-		displayPanel.setBackground(new Color(204, 204, 255));
-		displayPanel.setBounds(45, 46, 605, 412);
+		displayPanel.setBackground(SystemColor.controlHighlight);
+		displayPanel.setBounds(34, 80, 705, 378);
 		frameRemembra.getContentPane().add(displayPanel);
 		myData = new DefaultTableModel(objects, tableHeaders);
 
-		tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
-		tabbedPane.setBounds(0, 0, 605, 411);
+		tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
+		tabbedPane.setBounds(0, 0, 705, 363);
 
-		tabbedPane.setBackground(new Color(204, 204, 255));
+		tabbedPane.setBackground(SystemColor.controlHighlight);
 		tabbedPane.setBorder(null);
 		tabbedPane.setFont(new Font("Levenim MT", Font.PLAIN, 13));
+		displayPanel.setLayout(null);
+
+		tableDisplay = new JPanel();
+		tableDisplay.setBackground(Color.WHITE);
+		tabbedPane.addTab("Table", null, tableDisplay, null);
 
 		table_1 = new JTable(myData);
+		table_1.setForeground(new Color(0, 0, 0));
+		table_1.setFont(new Font("Dialog", Font.PLAIN, 17));
+		table_1.setShowHorizontalLines(false);
 		table_1.setBorder(null);
+		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table_1.setTableHeader(null);
+		table_1.getColumnModel().getColumn(0).setPreferredWidth(10);
+		table_1.getColumnModel().getColumn(1).setPreferredWidth(10);
+		table_1.getColumnModel().getColumn(2).setPreferredWidth(65);
+		table_1.getColumnModel().getColumn(3).setPreferredWidth(100);
+		table_1.getColumnModel().getColumn(4).setPreferredWidth(210);
+		table_1.getColumnModel().getColumn(5).setPreferredWidth(100);
 
-		table_1.getColumnModel().getColumn(0).setPreferredWidth(30);
-		table_1.getColumnModel().getColumn(1).setPreferredWidth(67);
-		table_1.getColumnModel().getColumn(2).setPreferredWidth(211);
-		table_1.getColumnModel().getColumn(3).setPreferredWidth(227);
+		table_1.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+		tableDisplay.setLayout(null);
+
+		txtpnId = new JTextPane();
+		txtpnId.setBounds(0, 0, 616, 39);
+		tableDisplay.add(txtpnId);
+		txtpnId.setEditable(false);
+		txtpnId.setForeground(new Color(204, 0, 0));
+		txtpnId.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		txtpnId.setText("    ID       LABEL       TASK               DESCRIPTION                          DEADLINE");
+
 		JScrollPane scrollPaneTable = new JScrollPane(table_1);
+		scrollPaneTable.setBounds(0, 32, 616, 326);
+		tableDisplay.add(scrollPaneTable);
 		scrollPaneTable.setBackground(new Color(255, 255, 255));
 		scrollPaneTable.setBorder(null);
 		table_1.setFillsViewportHeight(true);
+		displayPanel.add(tabbedPane);
 
-		scrollPane = new JScrollPane();
-		scrollPane.setBorder(null);
-		tabbedPane.addTab("Display", null, scrollPane, null);
-
-		mainDisplay = new JTextArea();
-		mainDisplay.setMargin(new Insets(0, 0, 0, 0));
-		mainDisplay.setColumns(78);
-		scrollPane.setViewportView(mainDisplay);
-		mainDisplay.setRows(15);
-		mainDisplay.setForeground(Color.DARK_GRAY);
-		mainDisplay.setFont(new Font("Consolas", Font.BOLD, 15));
-		mainDisplay.setBackground(SystemColor.menu);
-		mainDisplay.setEditable(false);
-		mainDisplay.setText("Welcome to Remembra!\nFor a quick guide, type help and press enter.");
-		mainDisplay.setBounds(14, 22, 323, 120);
-		tabbedPane.addTab("Table", null, scrollPaneTable, null);
-
-
+		calendar = new JPanel();
+		tabbedPane.addTab("Calendar", null, calendar, null);
+		calendar.setLayout(new GridLayout(0, 1, 0, 0));
+		calendar.setBorder(BorderFactory.createTitledBorder("Calendar"));
+		
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		displayPanel.setLayout(null);
-		displayPanel.add(tabbedPane);
+		//JLabel lblMonth = new JLabel("Task");
+		//lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
+		//calendar.add(lblMonth);
 
 		keywords.add("add");
 		keywords.add("view");
@@ -305,71 +397,58 @@ public class GuiMain {
 		keywords.add("by");
 		keywords.add("remind");
 		keywords.add("label");
+
 		// Without this, cursor always leaves text field
 		inputField.setFocusTraversalKeysEnabled(false);
 
 
 		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
 
+		panel = new JPanel();
+		panel.setLayout(null);
+		panel.setBackground(new Color(192, 192, 192));
+		panel.setBounds(44, 505, 867, 58);
+		frameRemembra.getContentPane().add(panel);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		panel_1.setBackground(SystemColor.controlHighlight);
+		panel_1.setBounds(0, 110, 739, 486);
+		frameRemembra.getContentPane().add(panel_1);
+
+		colorPanel1 = new JPanel();
+		colorPanel1.setBounds(24, 382, 20, 76);
+		panel_1.add(colorPanel1);
+		colorPanel1.setBackground(new Color(51, 51, 51));
+		colorPanel1.setLayout(null);
+
 		JPanel feedbackpanel = new JPanel();
-		feedbackpanel.setBounds(686, 46, 169, 412);
+		feedbackpanel.setBounds(739, 110, 250, 486);
 		frameRemembra.getContentPane().add(feedbackpanel);
-		feedbackpanel.setBackground(SystemColor.menu);
+		feedbackpanel.setBackground(new Color(51, 51, 51));
 		feedbackpanel.setLayout(null);
 
 		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(12, 0, 158, 411);
+		scrollPane_1.setBounds(0, 0, 250, 391);
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_1.setBorder(null);
 		feedbackpanel.add(scrollPane_1);
-		scrollPane_1.setBackground(new Color(220, 220, 220));
+		scrollPane_1.setBackground(new Color(51, 51, 51));
 
 		feedback = new JTextArea();
+		feedback.setAutoscrolls(false);
 		feedback.setColumns(6);
-		feedback.setText("Feedback Display");
 		scrollPane_1.setViewportView(feedback);
 		feedback.setWrapStyleWord(true);
-		feedback.setForeground(Color.DARK_GRAY);
-		feedback.setBackground(SystemColor.menu);
+		feedback.setForeground(UIManager.getColor("Button.background"));
+		feedback.setBackground(new Color(51, 51, 51));
 		feedback.setRows(4);
-		feedback.setFont(new Font("Bookman Old Style", Font.BOLD, 13));
+		feedback.setFont(new Font("Calibri", Font.PLAIN, 15));
 		feedback.setEditable(false);
-
-		colorPanel1 = new JPanel();
-		colorPanel1.setBackground(new Color(204, 0, 0));
-		colorPanel1.setBounds(34, 491, 23, 79);
-		frameRemembra.getContentPane().add(colorPanel1);
-		colorPanel1.setLayout(null);
-
-		panel = new JPanel();
-		panel.setLayout(null);
-		panel.setBackground(new Color(0, 0, 0));
-		panel.setBounds(45, 491, 821, 79);
-		frameRemembra.getContentPane().add(panel);
-
-		panel_3 = new JPanel();
-		panel_3.setLayout(null);
-		panel_3.setBackground(new Color(0, 128, 0));
-		panel_3.setBounds(676, 35, 190, 44);
-		frameRemembra.getContentPane().add(panel_3);
-
-		panel_1 = new JPanel();
-		panel_1.setLayout(null);
-		panel_1.setBackground(Color.BLACK);
-		panel_1.setBounds(676, 35, 190, 434);
-		frameRemembra.getContentPane().add(panel_1);
-
-		panel_4 = new JPanel();
-		panel_4.setLayout(null);
-		panel_4.setBackground(new Color(25, 25, 112));
-		panel_4.setBounds(34, 415, 170, 52);
-		frameRemembra.getContentPane().add(panel_4);
-
-		panel_2 = new JPanel();
-		panel_2.setLayout(null);
-		panel_2.setBackground(Color.BLACK);
-		panel_2.setBounds(34, 35, 627, 395);
-		frameRemembra.getContentPane().add(panel_2);
+		//To prevent autoscrolling
+		DefaultCaret caret1 = (DefaultCaret) feedback.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		
 		inputField.getDocument().addDocumentListener(autoComplete);
 
 		// Maps the tab key to the commit action, which finishes the autocomplete
@@ -385,7 +464,7 @@ public class GuiMain {
 			initSystemTray();
 		}
 
-		//Activate Jfram windowstate listener for hiding programe into system tray
+		//Activate Jframe windowstate listener for hiding program into system tray
 		activateWindowStateListener();
 		frameRemembra.addWindowListener( new WindowAdapter() {
 			public void windowOpened( WindowEvent e ){
@@ -489,29 +568,52 @@ public class GuiMain {
 	public static void updateTable() {
 		DefaultTableModel tableModel = (DefaultTableModel) table_1.getModel();
 		tableModel.setRowCount(0);
-
-		if (!(LogicMain.bufferTasksList.size()==0)){
-			Item firstTask = LogicMain.bufferTasksList.get(0);
+		LinkedList<Task> allTasks= LogicMain.getAllTasks();
+		if (!(allTasks.size()==0)){
+			Item firstTask = allTasks.get(0);
 
 			myData = (DefaultTableModel) table_1.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 
-				for(int i=0; i<LogicMain.bufferTasksList.size(); i++) {
-					Task tempTask = LogicMain.bufferTasksList.get(i);
-					Object[] data = new Object[5];
+				for(int i=0; i<allTasks.size(); i++) {
+					Task tempTask = allTasks.get(i);
+					Object[] data = new Object[6];
 
-					data[0] = i+1;
-					data[1] = tempTask.getLabel();
-					data[2] = tempTask.getName();
-					data[3] = tempTask.getDescription();
-					data[4] = tempTask.getDeadline();
+					data[1] = i+1;
+					data[2] = tempTask.getLabelName();
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+					data[5] = tempTask.getFormattedDeadline();
 
 					myData.addRow(data);
+					//					JLabel[][] array = new JLabel[allTasks.size()][];
+					//					for(int j=0 ; j<5 ; j++){
+					//
+					//						calendar.remove(array[i][j]);
+					//						array[i][j] = new JLabel(tempTask.getName());
+					//						calendar.add(array[i][j]);
+					//						//this.validate();
 				}
 
-				table_1.setModel(myData);
+				//JTextArea tf = new JTextArea("Sometjhing\nelse");
+				//JLabel lb = new JLabel();
+				//lb.add(tf);
+				//lb.setForeground(Color.WHITE);
+				//lb.setVisible(true);
+				//tf.setBounds(NORMAL, NORMAL, 20, 30);
+				//calendar.add(tf);
+				//calendar.set
 			}
+
+			table_1.setModel(myData);
+
 		}
+	}
+	//Updates the label which displays the time
+	void updateTime(){
+		Date date = new Date();
+		String str = DateFormat.getDateTimeInstance().format(date);
+		timeLabel.setText(str);
 	}
 
 

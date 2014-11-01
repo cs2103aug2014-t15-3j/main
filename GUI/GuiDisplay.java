@@ -3,8 +3,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import javax.swing.JDialog;
-
 /*********************************************************************/
 /******************* QA I - Refactor Code I***************************/
 /*********************************************************************/
@@ -19,32 +17,33 @@ import javax.swing.JDialog;
 
 public class GuiDisplay {
 
+
 	static void displayHelp(String input) throws IOException {
 		String helpFunction = input.substring(4).trim();
 		GuiMain.feedback.setText(helpFunction);
 		String fileContent;
 		switch (helpFunction){
 		case "":
-			fileContent = readFile("HelpText.txt");
+			fileContent = readFile("media/HelpText.txt");
 			GuiMain.feedback.setText(fileContent);
 			//Something I am experimenting with for better GUI (for later)
 			//Dialog dialog = new Dialog(GuiMain.frameRemembra);
 			//DialogFX.fadeIn(dialog);
 			break;
 		case Operations.ADD_OPERATION:
-			fileContent = readFile("HelpAdd.txt");
+			fileContent = readFile("media/HelpAdd.txt");
 			GuiMain.feedback.setText(fileContent);
 			break;
 		case Operations.EDIT_OPERATION:
-			fileContent = readFile("HelpEdit.txt");
+			fileContent = readFile("media/HelpEdit.txt");
 			GuiMain.feedback.setText(fileContent);
 			break;
 		case Operations.DELETE_OPERATION:
-			fileContent = readFile("HelpDelete.txt");
+			fileContent = readFile("media/HelpDelete.txt");
 			GuiMain.feedback.setText(fileContent);
 			break;
 		case Operations.VIEW_OPERATION:
-			fileContent = readFile("HelpView.txt");
+			fileContent = readFile("media/HelpView.txt");
 			GuiMain.feedback.setText(fileContent);
 			break;
 		}
@@ -63,17 +62,15 @@ public class GuiDisplay {
 
 			switch (state){
 			case Operations.ADD_OPERATION:
-				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+				GuiMain.feedback.setText(
 						"The following task has been added:\n\n" + 
 						firstTask.toString());
-				GuiMain.feedback.setText("Task added successfully!");
 				break;
 
 			case Operations.EDIT_OPERATION:
-				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+				GuiMain.feedback.setText(
 						"The following task has been edited:\n\n" + 
 						firstTask.toString());
-				GuiMain.feedback.setText("Task edited successfully!");
 				break;
 
 			case Operations.VIEW_OPERATION:
@@ -86,43 +83,39 @@ public class GuiDisplay {
 				break;
 
 			case Operations.SAVE_OPERATION:
-				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-						"The save is successful!\n\n");
+				GuiMain.feedback.setText("The save is successful!\n");
 				break;
 			}
 		}else {
 
-			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-					"Remembra doesn't understand your input!\n\n");
+			GuiMain.feedback.setText("Remembra doesn't understand your input!\n");
 		}
 
 	}
 
 	private static void deleteOperation(Item firstTask) {
 		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+			GuiMain.feedback.setText(
 					"The following task has been deleted:\n\n" + 
 					firstTask.toString());
 			GuiMain.feedback.setText("Task deleted successfully!");
 		}
 		else {
-			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-					"You have specified an invalid task to delete\n\n");
+			GuiMain.feedback.setText("You have specified an invalid\ntask to delete\n");
 		}
 	}
 
 	private static void findOperation(LinkedList<Item> tasks, Item firstTask) {
+		GuiMain.feedback.setText("All tasks displayed below:\n");
 		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
-				GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
+				GuiMain.feedback.setText(GuiMain.feedback.getText() +
 						(i+1) + ".\n" + tempTask);
 			}
-			GuiMain.feedback.setText("All tasks displayed!");
 		}
 		else {
-			GuiMain.mainDisplay.setText(GuiMain.mainDisplay.getText()+
-					"No tasks found!\n\n");
+			GuiMain.feedback.setText("No Tasks Found!\n");
 		}
 	}
 	
@@ -141,5 +134,11 @@ public class GuiDisplay {
 		} finally {
 			br.close();
 		}
+	}
+	static void initialize(){
+		LogicMain logic = new LogicMain();
+		logic.processInput(";");
+		GuiMain.feedback.setText("Hi, there!\nThis is your feedback display.\n\nFor a quick guide, type help and\npress enter.\n\n\nAll your tasks, if any, are displayed\non the left.\n\n\n\n\n\n\n\n\n\nTo change tabs, press Alt+X\nwhere X is the tab no.");
+		
 	}
 }
