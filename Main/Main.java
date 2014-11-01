@@ -154,8 +154,12 @@ public class Main {
 		/******************************************POWER SEARCH*************************************/
 		String queryString = "Sakalp Samel candie";
 		
-		//This will return as per normal
+		//This will return as per normal in pwoer search
 		LinkedList<Task> returnList = LogicSearch.searchTasks(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList2 = LogicSearch.searchTasks(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_LABEL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList3 = LogicSearch.searchTasks(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList5 = LogicSearch.searchTasks(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+			
 		
 		System.out.println(returnList + "\n");
 		
@@ -165,6 +169,9 @@ public class Main {
 		
 		//This is to get the suggested task list
 		System.out.println(LogicSearch.getSuggestedString());
+		
+		
+		
 		
 		/*************************************** * DO NOT REMOVE :D ******************************/
 		/************ Chuan Wei's Example for Logic Search for LogicMain Implementation ***********/	

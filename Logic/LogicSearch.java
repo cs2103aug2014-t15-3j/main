@@ -370,7 +370,15 @@ public final class LogicSearch {
 			case SEARCH_POWER_SEARCH:
 
 				LinkedList<LinkedList<?>> returnList = powerSearch(searchLine, matchedTasks ,bufferedTaskList, searchType);
-				suggestInputs = new LinkedList<String>((LinkedList<String>)returnList.get(1));
+				
+				if (!(returnList.get(0).size() == 0)){
+//					//addSuggestedString(new LinkedList<String>((LinkedList<String>)returnList.get(1)));
+					
+					suggestInputs = new LinkedList<String>((LinkedList<String>)returnList.get(1));	
+				}else {
+//					//suggestInputs = new LinkedList<String>();
+					suggestInputs.add("no match found");
+				}
 				return (LinkedList<Task>) returnList.get(0); 
 				
 			
@@ -398,6 +406,18 @@ public final class LogicSearch {
 		return removeDuplicate(matchedTasks);
 	}
 	
+	
+	//@author A0112898U
+	/*
+	private static LinkedList<String> addSuggestedString(LinkedList<String> suggestedStrings) {
+	
+		LinkedList<String> temp = suggestedStrings;
+		suggestInputs/
+		
+		return ;
+		
+	}
+	*/
 	
 	//@author A0112898U
 	public static LinkedList<String> getSuggestedString() {
@@ -576,14 +596,21 @@ public final class LogicSearch {
 		//System.out.println(getSuggestedString());
 		
 		
-		
+		String queryString1 = "candie";
 		String queryString2 = "Sank candie";
-		LinkedList<Task> returnList2 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList2 = searchTasks(queryString1,taskList,LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 		LinkedList<Task> returnList3 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 
 		System.out.println("BREAKER\nBREAKER\nBREAKER");		
 		
 		System.out.println(returnList2 + "\n");
+	
+		System.out.println("You Searched : " + queryString1);
+		
+		System.out.println("Did you mean : ");
+		
+		System.out.println(getSuggestedString());
+		
 		
 		System.out.println("BREAKER\nBREAKER\nBREAKER");		
 		
