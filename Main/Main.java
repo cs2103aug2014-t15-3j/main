@@ -79,7 +79,7 @@ public class Main {
 		taskList.add(task4);
 		taskList.add(task5);
 		
-		//retun all 
+		/********************************************Search normal********************************************/
 		LinkedList<Task> searchedList1 = LogicSearch.searchTasks("love", taskList, 
 					LogicSearch.SEARCH_TYPES.TYPE_ALL);
 		
@@ -97,13 +97,51 @@ public class Main {
 		LinkedList<Task> searchedList3 = LogicSearch.searchTasks("1 4 e", taskList, 
 					LogicSearch.SEARCH_TYPES.TYPE_ALL);
 
-		//return task 1, 3, 4
-		LinkedList<Task> searchedList4 = LogicSearch.searchTasks("1 4", taskList, 
-					LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 
+		/********************************************Search DEADLINE********************************************/
+		//THIS IS DIFFERENT, BCOS IT TAKES IN LONG!
+		long testVar = 123;
+		LinkedList<Task> searchedList4 = LogicSearch.searchTasks(LogicSearch.SEARCH_TYPES.SEARCH_DEADLINE,testVar, taskList);
+		
+		/********************************************Search LABEL********************************************/
+		//return task 1, 3, 4
+		LinkedList<Task> searchedList5 = LogicSearch.searchTasks("1 4", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_LABEL, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		
+		/********************************************Search DESCRIPTION********************************************/
 		//return all task
-		LinkedList<Task> searchedList5 = LogicSearch.searchTasks("1 4 e", taskList, 
-					LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> searchedList6 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		
+		/********************************************Search TYPE_NAME********************************************/
+		//return all task
+		LinkedList<Task> searchedList7 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		
+		/***************************Search TYPE_NAME / LABEL / DECRIPTIONS BY STARTING CHARACTER********************************************/
+		//return all task
+		LinkedList<Task> searchedList8 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
+		//return all task
+		LinkedList<Task> searchedList9 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
+				
+		//return all task
+		LinkedList<Task> searchedList10 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_LABEL, LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER);
+						
+		
+		/***************************Search TYPE_NAME / LABEL / DECRIPTIONS BY WORD MATCH ********************************************/
+		//return all task
+		LinkedList<Task> searchedList11 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD);
+		//return all task
+		LinkedList<Task> searchedList12 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD);
+				
+		//return all task
+		LinkedList<Task> searchedList113 = LogicSearch.searchTasks("1 4 e", taskList, 
+					LogicSearch.SEARCH_TYPES.TYPE_LABEL, LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD);
 		
 		
 		//Hi Sam, do change the index of the searchList'1|2|3|4' below to see the result

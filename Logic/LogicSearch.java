@@ -22,7 +22,6 @@ public final class LogicSearch {
 	public enum SEARCH_TYPES{
 		
 		//Types of search that could be available to search in a  task
-		SEARCH_NAME,
 		SEARCH_DEADLINE,
 		TYPE_NAME,
 		TYPE_LABEL,
@@ -370,7 +369,7 @@ public final class LogicSearch {
 		
 			case SEARCH_POWER_SEARCH:
 
-				LinkedList<LinkedList<?>> returnList = powerSearch(searchLine, matchedTasks ,bufferedTaskList);
+				LinkedList<LinkedList<?>> returnList = powerSearch(searchLine, matchedTasks ,bufferedTaskList, searchType);
 				suggestInputs = new LinkedList<String>((LinkedList<String>)returnList.get(1));
 				return (LinkedList<Task>) returnList.get(0); 
 				
@@ -430,7 +429,7 @@ public final class LogicSearch {
 	 * represents the suggested keywords
 	 */
 	public static LinkedList<LinkedList<?>> powerSearch(String queryString, LinkedList<Task> 
-				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList){
+				collatedMatchedTaskList, LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchTypes){
 		
 		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
 		
@@ -449,51 +448,91 @@ public final class LogicSearch {
 			
 			for (Task t:bufferedTaskList){
 			
-				if (!isTaskExist(collatedMatchedTaskList,t)){
+				
+				switch (searchTypes){
+				
+					case TYPE_ALL:
 					
-					//Check against names
-					if (chkStrSimilarity(tok,t.getName()) > 40){
-						if(chkStrSimilarity(tok,t.getName()) > 50){
+					case TYPE_DESCRIPTION:
+					
+						//Double security to check if task has been added
+						if(!isTaskExist(collatedMatchedTaskList,t)){
 							
-							suggestedString.add(t.getName());
-						}
-						collatedMatchedTaskList.add(t);
-						break; //break out loop if task is added
-					}
-				}
-
-				//Double security to check if task has been added
-				if(!isTaskExist(collatedMatchedTaskList,t)){
-					
-					LinkedList<String> tokenizeDescription 
-							= tokenizeSearchInput(t.getDescription());
-					
-					//Check against each word in the Description
-					for (String desTok:tokenizeDescription){
-						
-						if (chkStrSimilarity(tok,desTok) > 40){
-						
-							if(chkStrSimilarity(tok,desTok) > 50){
+							LinkedList<String> tokenizeDescription 
+									= tokenizeSearchInput(t.getDescription());
+							
+							//Check against each word in the Description
+							for (String desTok:tokenizeDescription){
 								
-								suggestedString.add(desTok);
+								if (chkStrSimilarity(tok,desTok) > 40){
+								
+									if(chkStrSimilarity(tok,desTok) > 50){
+										
+										suggestedString.add(desTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
+								}
 							}
-							collatedMatchedTaskList.add(t);
-							break; //break out loop if task is added
+							
 						}
-					}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_DESCRIPTION){
+							break;
+						}
 					
+					case TYPE_NAME:
+					
+						//Search Names
+						if (!isTaskExist(collatedMatchedTaskList,t)){
+							
+							//Check against names
+							if (chkStrSimilarity(tok,t.getName()) > 40){
+								if(chkStrSimilarity(tok,t.getName()) > 50){
+									
+									suggestedString.add(t.getName());
+								}
+								collatedMatchedTaskList.add(t);
+								break; //break out loop if task is added
+							}
+						}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_NAME){
+							break;
+						}
+					
+					case TYPE_LABEL:
+					
+						//Double security to check if task has been added
+						if(!isTaskExist(collatedMatchedTaskList,t)){
+							
+							LinkedList<String> tokenizeLabel
+									= tokenizeSearchInput(t.getLabelName());
+							
+							//Check against each word in the label
+							for (String labelTok:tokenizeLabel){
+								
+								if (chkStrSimilarity(tok,labelTok) > 40){
+								
+									if(chkStrSimilarity(tok,labelTok) > 50){
+										
+										suggestedString.add(labelTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
+								}
+							}
+							
+						}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_LABEL){
+							break;
+						}
+					
+					default:
+						System.out.println("type not supported");
+						break;
 				}
-				
-				/*
-				
-				if(!isTaskExist(collatedMatchedTaskList,t)){
-					
-					//Check against label
-					
-				}
-			
-				*/
-				
 			}
 		}
 		
@@ -527,22 +566,28 @@ public final class LogicSearch {
 		String queryString = "Sakalp Samel candie";
 		
 		//LinkedList<LinkedList<?>> returnList = powerSearch(queryString, new LinkedList<Task>() ,taskList);
-		LinkedList<Task> returnList = smartSearch(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		//LinkedList<Task> returnList = smartSearch(queryString,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
 		
-		System.out.println(returnList + "\n");
+		//System.out.println(returnList + "\n");
 		
-		System.out.println("You Searched : " + queryString);
+		//System.out.println("You Searched : " + queryString);
 		
-		System.out.println("Did you mean : ");
-		System.out.println(getSuggestedString());
+		//System.out.println("Did you mean : ");
+		//System.out.println(getSuggestedString());
 		
 		
 		
 		String queryString2 = "Sank candie";
-		
-		LinkedList<Task> returnList2 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList2 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+		LinkedList<Task> returnList3 = searchTasks(queryString2,taskList,LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+
+		System.out.println("BREAKER\nBREAKER\nBREAKER");		
 		
 		System.out.println(returnList2 + "\n");
+		
+		System.out.println("BREAKER\nBREAKER\nBREAKER");		
+		
+		System.out.println(returnList3 + "\n");
 		
 		System.out.println("You Searched : " + queryString2);
 		
