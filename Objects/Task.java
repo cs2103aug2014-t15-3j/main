@@ -21,6 +21,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private long deadline;
 	private long reminder;
 	private String state;
+	private boolean hasReminder = false;
+	private boolean isReminded = false; 
 	
 	//@author A0111942N
 	/**
@@ -184,6 +186,35 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return Operations.EMPTY_MESSAGE;
 	}
 	
+	//@author A0112898U
+	/**
+	 * Getter method to see if the task have reminder
+	 * 
+	 * @return boolean - returns isReminded
+	 */
+	public boolean gethasReminder(){
+		return this.hasReminder;
+	}
+	
+	//@author A0112898U
+	/**
+	 * Getter method to see if the task have been reminded
+	 * 
+	 * @return boolean - returns isReminded
+	 */
+	public boolean getIsReminded(){
+		return this.isReminded;
+	}
+	
+	//@author A0112898U
+	/**
+	 * Setter method to set the task to being reminded
+	 * 
+	 * @return boolean - returns isReminded
+	 */
+	public void setIsReminded(){
+		isReminded = true;
+	}
 	
 	@Override
 	public boolean equals(Object object) {
