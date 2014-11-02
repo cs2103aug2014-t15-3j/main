@@ -1,19 +1,11 @@
-//@author A0111942N
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class LogicMain {
@@ -830,24 +822,86 @@ public class LogicMain {
 	private LinkedList<Item> processFind() {
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
-		String keyword = inputList.get(0).getContent();
-		//keyword = keyword.toLowerCase();
-
-		Task returnTask;
-
-		LinkedList<Task> searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
-				LogicSearch.SEARCH_TYPES.TYPE_ALL);
+		LinkedList<Task> searchTasks = new LinkedList<Task>();
+		String keyword = "";
 		
-		System.out.println(searchTasks.toString());
+		// Normal Search
+		if (inputList.size() == 1) {
+			
+			keyword = inputList.get(0).getContent();
+			
+			searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
+					LogicSearch.SEARCH_TYPES.TYPE_ALL);
+			
+		} else {
+			
+			boolean isPowerSearch = false;
+			LogicInputPair searchFieldPair = inputList.get(1);
+			String searchField = searchFieldPair.getOperation();
+			keyword = searchFieldPair.getContent();
+			
+			// Check if it's a power search
+			
+			if ( Operations.POWER_OPERATION.contains(searchField) ) {
+				
+				isPowerSearch = true;
 
+				if( inputList.size() == 2 ) {
+					System.out.println(">>>"+keyword);
+					searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList,
+							LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+				} else if ( inputList.size() > 2 ) {
+					searchFieldPair = inputList.get(2);
+					searchField = searchFieldPair.getOperation();
+					keyword = searchFieldPair.getContent();
+				}
+			}
+			
+			
+			if ( Operations.nameOperations.contains(searchField) ) {
+				
+				if (isPowerSearch) {
+					searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList,
+							LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
+				} else {
+					searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
+							LogicSearch.SEARCH_TYPES.TYPE_NAME, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+				}
+				
+			} else if ( Operations.descriptionOperations.contains(searchField) ) {
+				
+				searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
+						LogicSearch.SEARCH_TYPES.TYPE_DESCRIPTION, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+				
+			} else if ( Operations.labelOperations.contains(searchField) ) {
+				
+				searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList, 
+						LogicSearch.SEARCH_TYPES.TYPE_LABEL, LogicSearch.SEARCH_TYPES.TYPE_ALL);
+				
+			} else if ( Operations.deadlineOperations.contains(searchField) ) {
+				
+				long searchDate = processDate(keyword);
+				System.out.println(searchDate);
+				
+				searchTasks = LogicSearch.searchTasks(LogicSearch.SEARCH_TYPES.TYPE_DEADLINE,
+						searchDate, bufferTasksList);
+				
+			}
+			
+		}
+		
+		Task returnTask;
+		
 		if (searchTasks.isEmpty()) {
 
 			returnTask = new Task(Operations.EMPTY_MESSAGE);
 			returningTasks.add(returnTask);
+			
 		} else {
 			
 			returnTask = searchTasks.get(0);
 			returnTask.editState(Operations.VIEW_OPERATION);
+			
 		}
 
 		tempList = new LinkedList<Item>(searchTasks);

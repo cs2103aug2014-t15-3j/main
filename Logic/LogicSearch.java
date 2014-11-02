@@ -8,6 +8,9 @@ import java.util.StringTokenizer;
 
 
 public final class LogicSearch {
+	
+	// Constant
+	private static final long DAY_MILLISECOND = 86400000;
 
 	//private Objects
 	private static LinkedList<String> suggestInputs = new LinkedList<String>();
@@ -78,15 +81,23 @@ public final class LogicSearch {
 				long queryParam, LinkedList<Task> bufferedTaskList){
 
 		LinkedList<Task> storedTasks = bufferedTaskList;
-		LinkedList<Task> tempCollatedList = new LinkedList();
+		LinkedList<Task> tempCollatedList = new LinkedList<Task>();
 
-		switch(searchType){
+		switch(searchType) {
 
 		case TYPE_DEADLINE:
 
 			for(Task t:storedTasks){
+				
+				System.out.println(">>>"+queryParam);
+				
+				int startOfDay = (int) (queryParam / DAY_MILLISECOND);
+				long startOfDayMs = startOfDay * DAY_MILLISECOND;
+				long endOfDayMs = startOfDayMs + DAY_MILLISECOND;
+				
 
-				if(t.getDeadline() == queryParam){
+				if ( t.getDeadline() >= startOfDayMs &&
+						t.getDeadline() < endOfDayMs ) {
 					tempCollatedList.add(t);
 				}
 			}
@@ -107,7 +118,7 @@ public final class LogicSearch {
 
 		default:
 			System.out.println("Type not supported");
-			return null;
+			return new LinkedList<Task>();
 		}
 
 		return tempCollatedList;
