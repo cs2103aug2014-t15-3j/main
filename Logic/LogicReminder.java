@@ -14,13 +14,18 @@ import java.util.TimerTask;
 public class LogicReminder {
 
 	
-	
-	
 	static LinkedList<ReminderTask> taskToBeReminded =  new LinkedList<ReminderTask>();
+	
 	
 	
 	//Constructor
 	//Only generate reminder for daily task
+	//@author A0112898U
+	/**
+	 * 
+	 * @param tasks
+	 * @throws ParseException
+	 */
 	LogicReminder(LinkedList<Task> tasks) throws ParseException{
 	
 		for(Task t:tasks){
@@ -31,39 +36,21 @@ public class LogicReminder {
 	}
 	
 	
-	//every 0000 the task to be reminded should be re-generated
+	
+	//Logic should call this every 0000 the task to be reminded should be re-generated
+	//@author A0112898U
+	/**
+	 * 
+	 * @param tasks
+	 * @throws ParseException
+	 */
 	private static void regenReminderList(LinkedList<Task> tasks) throws ParseException{
 		
 		for(Task t:tasks){
 		
-			
 			//Checks for today's task and add reminder.
-			
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.HOUR_OF_DAY, 0);
-		    c.set(Calendar.MINUTE, 0);
-		    c.set(Calendar.SECOND, 0);
-		    c.set(Calendar.MILLISECOND, 0);
-		    
-		    Date today = c.getTime();
-		    
-		    
-			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-
-			
-			Date date1 = sdf.parse(sdf.format(t.getReminder()));
-			Date date2 = sdf.parse(sdf.format(today));
-			
-		    //System.out.println("today " + c.equals(today));
-		    
-			
-			System.out.println("today " + (date1.getTime() == date2.getTime()));		
-			System.out.println("today " + date2.toString());
-		    System.out.println("remind " + date1.toString());
-		    System.out.println();
-		    
-		    
-		    if(date1.getTime() == date2.getTime()){
+			//Only set alarm for today!
+		    if (checkIsTodayTask(t)){
 		    	
 		    	//Create a reminder task and add to the list of reminders
 
@@ -73,26 +60,120 @@ public class LogicReminder {
 		    }
 		}
 		
-		
+		//For testing purposes
 		for(ReminderTask rTsk:taskToBeReminded){
 			System.out.println(rTsk.getTask().getName());	
 		}	
 	}
 	
 	
-	//Tasks should be sort accordingly to their reminder time
-	private void sortRTask(){
-		
-	}
 	
 	//Add new task
 	//ask sam to check if reminder is for today, then add a reminder
+	//@author A0112898U
+	/**
+	 * 
+	 * @param t
+	 * @throws ParseException
+	 */
 	public void addTaskTobeReminded(Task t) throws ParseException{
 		
 		ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
 		taskToBeReminded.add(rTask);
 		rTask.scheduleAlarm();
 	}
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * 
+	 * @param t
+	 * @return
+	 * @throws ParseException
+	 */
+	private static boolean checkIsTodayTask(Task t) throws ParseException{
+		
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+	    c.set(Calendar.MINUTE, 0);
+	    c.set(Calendar.SECOND, 0);
+	    c.set(Calendar.MILLISECOND, 0);
+	    
+	    Date today = c.getTime();
+	    
+	    
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+
+		
+		Date date1 = sdf.parse(sdf.format(t.getReminder()));
+		Date date2 = sdf.parse(sdf.format(today));
+		
+		//Testing Purposes
+		System.out.println("today " + (date1.getTime() == date2.getTime()));		
+		System.out.println("today " + date2.toString());
+	    System.out.println("remind " + date1.toString());
+	    System.out.println();
+	    
+	    //Only set alarm for today!
+	    if (date1.getTime() == date2.getTime()){
+	    	return true;
+	    }
+	    
+	    return false;
+	}
+
+	//A0112898U
+	/**
+	 * 
+	 * @param taskToStop
+	 */
+	public void stopTask(Task taskToStop){
+		
+		for(ReminderTask rTsk:taskToBeReminded){
+			if(isTaskExist(rTsk.getTask(),taskToStop))
+			{
+				rTsk.stopAlarm();
+				break;
+			}
+		}
+				
+	}
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * Checks if the task to be added is already in the collated list of matched task
+	 * 
+	 * Reason why not to use the '.contains' but to create and use this function is because the 
+	 * '.equals' in task was override by the original creator for other important checking purpose 
+	 * thus the .contain doesn't work like the intended original purpose, which would work for my code
+	 *
+	 * @param currentCollatedTasks the added list of task to check with
+	 * @param tobeAddedTask task that is to be added to check if it already existed
+	 * 
+	 * @return returns true if task is already present in the collated task, and returns
+	 * 				   false if task hasn't been found in the collated task
+	 */
+	public static boolean isTaskExist(Task taskToCheck, Task tobeAddedTask){
+		
+		//for(Task t:currentCollatedTasks){
+			
+			if(taskToCheck.getName().equals(tobeAddedTask.getName()) 
+					&& taskToCheck.getDescription().equals(tobeAddedTask.getDescription())
+					&& (taskToCheck.getTimeStamp() == tobeAddedTask.getTimeStamp())
+					&& (taskToCheck.getLabel() == tobeAddedTask.getLabel())
+					){
+				
+				return true;
+			}
+		//}
+		
+		return false;
+	}
+	
+	
 	
 	
 	public static void main(String[] args) throws ParseException {
@@ -105,7 +186,7 @@ public class LogicReminder {
 																		//2359 format
 		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-		Date date1 = isoFormat.parse("2014-11-03T15:08:00");
+		Date date1 = isoFormat.parse("2014-11-03T16:13:30");
 		Task t1 = new Task("hi 1", "lalal", 123123, date1.getTime() ,date1.getTime());
 		
 		Date date2 = isoFormat.parse("2014-11-04T02:53:00");
@@ -133,52 +214,4 @@ public class LogicReminder {
 
 }
 
-class ReminderTask extends TimerTask{
-	
-	Task taskToRemind;
-	Timer taskAlarm;
-	Date alarmTime;
-	
 
-	
-	
-	public ReminderTask(Task t, Date date) throws ParseException{
-		taskToRemind = t;
-		
-		/*
-		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		//isoFormat.setTimeZone(TimeZone.getTimeZone("UTC+08:00"));
-		//Date 
-		
-		date = isoFormat.parse("2014-11-03T02:53:40");
-		*/
-		alarmTime = date;
-		//alarmTime.setTime(time);
-	}
-	
-	public ReminderTask(){
-		//this.ReminderTask(taskToRemind,alarmTime);
-	}
-	
-	public Task getTask(){
-		return taskToRemind;
-	}
-	
-	public void run() {
-	    
-    	System.out.println("Here's your reminder for : " 
-    			+ taskToRemind.getName()+ "\n" 
-    			+ taskToRemind.getDescription());
-	}
-	
-	public void stopAlarm (){
-		
-		taskAlarm.cancel();
-	}
-	
-	public void scheduleAlarm () throws ParseException{
-		taskAlarm = new Timer();
-		//taskAlarm.schedule(new ReminderTask(t),  new Date(t.getReminder()));
-		taskAlarm.schedule(new ReminderTask(taskToRemind,alarmTime), alarmTime);
-	}
-}

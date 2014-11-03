@@ -23,6 +23,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private String state;
 	private boolean hasReminder = false;
 	private boolean isReminded = false; 
+	private boolean isOverdue = false; 
 	
 	//@author A0111942N
 	/**
