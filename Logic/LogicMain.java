@@ -289,7 +289,7 @@ public class LogicMain {
 				returnItem.editState(Operations.ADD_OPERATION);
 			} else {
 				returnItem = new Label((Label) addTask);
-				returnItem.editState(Operations.ADD_OPERATION);
+				returnItem.editState(Operations.ADD_LABEL_OPERATION);
 			}
 
 			returningItem.add(returnItem);
@@ -392,7 +392,7 @@ public class LogicMain {
 		} else {
 
 			Label newLabel = new Label(name);
-			newLabel.editState(Operations.ADD_LABEL_OPERATION);
+			newLabel.editState(Operations.EDIT_LABEL_OPERATION);
 			bufferLabelsList.add(newLabel);
 
 			if (!color.isEmpty()) {
@@ -432,7 +432,14 @@ public class LogicMain {
 
 		}
 
-		returnTask.editState(Operations.EDIT_OPERATION);
+		if (!isLabel) {
+			
+			returnTask.editState(Operations.EDIT_OPERATION);
+		} else {
+			
+			returnTask.editState(Operations.EDIT_LABEL_OPERATION);
+		}
+
 		returningTasks.add(returnTask);
 
 		logger.log(Level.INFO, "Edit operation completed");
@@ -467,6 +474,8 @@ public class LogicMain {
 		for (int i = 0; i < inputList.size(); i++) {
 
 			String operation = inputList.get(i).getOperation();
+			
+			logger.log(Level.INFO, ">>"+operation);
 
 			if (Operations.editOperations.contains(operation)) {
 
@@ -514,16 +523,18 @@ public class LogicMain {
 				deadlineEdited = true;
 
 			} else if (Operations.reminderOperations.contains(operation)) {
-				
-					String dateInput = inputList.get(i).getContent();
-					
-					if (dateInput.equals(Operations.REMOVE_INPUT)) {
-						reminder = -1;
-					} else {
-						reminder = processDate(dateInput);
-					}
 
-					reminderEdited = true;
+				String dateInput = inputList.get(i).getContent();
+				
+				
+
+				if (dateInput.equals(Operations.REMOVE_INPUT)) {
+					reminder = -1;
+				} else {
+					reminder = processDate(dateInput);
+				}
+
+				reminderEdited = true;
 
 			} else if (Operations.colorOperations.contains(operation)) {
 
@@ -714,14 +725,14 @@ public class LogicMain {
 
 				returningItems = new LinkedList<Item>(bufferLabelsList);
 				Label tempLabel = new Label((Label) returningItems.get(0));
-				tempLabel.editState(Operations.VIEW_OPERATION);
+				tempLabel.editState(Operations.VIEW_LABEL_OPERATION);
 
 				returningItems.set(0, tempLabel);
 
 			} else {
 
 				returnLabel = new Label(Operations.EMPTY_MESSAGE);
-				returnLabel.editState(Operations.VIEW_OPERATION);
+				returnLabel.editState(Operations.VIEW_LABEL_OPERATION);
 				returningItems.add(returnLabel);
 
 				return returningItems;
@@ -798,7 +809,12 @@ public class LogicMain {
 		
 		if (!isValid) {
 			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
-			deleteTask.editState(Operations.DELETE_OPERATION);
+			
+			if(!isLabel) {
+				deleteTask.editState(Operations.DELETE_OPERATION);
+			} else {
+				deleteTask.editState(Operations.DELETE_LABEL_OPERATION);
+			}
 
 			logger.log(Level.INFO, "Invalid task to be deleted");
 			return deleteTask;
@@ -1019,7 +1035,7 @@ public class LogicMain {
 	/**
 	 * @return Today 23:59 in millisecond
 	 */
-	private long getEndOfToday() {
+	public static long getEndOfToday() {
 		Calendar endOfToday = Calendar.getInstance();
 		endOfToday.set(Calendar.HOUR_OF_DAY, 23);
 		endOfToday.set(Calendar.MINUTE, 59);
