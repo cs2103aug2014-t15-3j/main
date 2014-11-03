@@ -132,7 +132,7 @@ public class LogicMain {
 	 * @return LinkedList<Item> with corresponding items to operation
 	 */
 	public LinkedList<Item> processInput(String input) {
-
+		
 		LinkedList<Item> returnTasks = new LinkedList<Item>();
 
 		input = cleanUpInput(input);
@@ -169,6 +169,7 @@ public class LogicMain {
 		} else if (Operations.viewOperations.contains(mainOperation)) {
 
 			returnTasks = processView();
+			System.out.println(bufferTasksList);
 
 		} else if (Operations.findOperations.contains(mainOperation)) {
 
@@ -191,6 +192,18 @@ public class LogicMain {
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 			returnTasks = processSave();
+
+		} else if (!isLabel && Operations.doneOperations.contains(mainOperation)) {
+
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = processDone(true);
+			hasChanged = true;
+
+		} else if (!isLabel && Operations.notDoneOperations.contains(mainOperation)) {
+
+			undoTasks = new LinkedList<Task>(bufferTasksList);
+			returnTasks = processDone(false);
+			hasChanged = true;
 
 		} else {
 
@@ -525,8 +538,6 @@ public class LogicMain {
 			} else if (Operations.reminderOperations.contains(operation)) {
 
 				String dateInput = inputList.get(i).getContent();
-				
-				
 
 				if (dateInput.equals(Operations.REMOVE_INPUT)) {
 					reminder = -1;
@@ -672,14 +683,14 @@ public class LogicMain {
 		LogicInputPair viewOperation = inputList.get(0);
 
 		if (!isLabel) {
-
-			if (bufferTasksList.size() != 0
+			
+			if (inputList.size() == 1 && bufferTasksList.size() != 0
 					&& !isNumeric(viewOperation.getContent())) {
 
-				Collections.sort(bufferTasksList);
-				returningItems = new LinkedList<Item>(bufferTasksList);
+				returningItems = new LinkedList<Item>( getNotDoneTasks() );
+				tempList = new LinkedList<Item>( getNotDoneTasks() );
 
-			} else if (bufferTasksList.size() != 0) {
+			} else if (inputList.size() == 1 && bufferTasksList.size() != 0) {
 
 				try {
 
@@ -700,6 +711,26 @@ public class LogicMain {
 
 				}
 
+			} else if (inputList.size() == 2 && bufferTasksList.size() != 0) {
+				
+				LogicInputPair inputPair = inputList.get(1);
+				
+				if (Operations.doneOperations.contains(inputPair.getOperation())) {
+					
+					returningItems = new LinkedList<Item>( getDoneTasks() );
+					tempList = new LinkedList<Item>( getDoneTasks() );
+					
+				} else if (Operations.notDoneOperations.contains(inputPair.getOperation())) {
+
+					returningItems = new LinkedList<Item>( getNotDoneTasks() );
+					tempList = new LinkedList<Item>( getNotDoneTasks() );
+
+				} else if (Operations.allOperations.contains(inputPair.getOperation())) {
+
+					returningItems = new LinkedList<Item>( getAllTasks() );
+					tempList = new LinkedList<Item>( getAllTasks() );
+				}
+
 			}
 
 			if (returningItems.isEmpty()) {
@@ -716,7 +747,7 @@ public class LogicMain {
 			returnTask.editState(Operations.VIEW_OPERATION);
 			returningItems.set(0, returnTask);
 
-			tempList = new LinkedList<Item>();
+			//tempList = new LinkedList<Item>();
 
 		} else {
 			Label returnLabel;
@@ -734,11 +765,11 @@ public class LogicMain {
 				returnLabel = new Label(Operations.EMPTY_MESSAGE);
 				returnLabel.editState(Operations.VIEW_LABEL_OPERATION);
 				returningItems.add(returnLabel);
-
+				
 				return returningItems;
 			}
 		}
-
+		
 		return returningItems;
 	}
 
@@ -1001,6 +1032,64 @@ public class LogicMain {
 			hasChanged = false;
 		}
 	}
+	
+	/**
+	 * ========================================================================
+	 * =============== PROCESSING SAVE ========================================
+	 * ========================================================================
+	 */
+
+	// @author A0111942N
+	/**
+	 * Process post-saving operation to return to GUI
+	 * 
+	 * @return List containing an empty task with the "save" state
+	 */
+	private LinkedList<Item> processDone(boolean toggle) {
+		
+		LinkedList<Item> returningTasks = new LinkedList<Item>();
+		Task returningTask;
+
+		try {
+			
+			int doneId = Integer.parseInt( inputList.get(0).getContent() ) - 1;
+			Task doneTask;
+			
+			if(undoTasks.size() > 0) {
+				
+				doneTask = undoTasks.remove(doneId);
+				bufferTasksList.remove(doneTask);
+				undoTasks.clear();
+			} else {
+				
+				doneTask = bufferTasksList.remove(doneId);
+			}
+			
+			doneTask.toggleDone(toggle);
+			
+			bufferTasksList.add(doneTask);
+			
+			System.out.println(bufferTasksList);
+			
+			returningTask = new Task(doneTask);
+			returningTask.editState(Operations.DONE_OPERATION);
+			
+			returningTasks.add(returningTask);
+			
+		} catch (Exception e) {
+			logger.log(Level.INFO, "DONE OPERATION: Invalid ID");
+			
+			returningTask = new Task(Operations.EMPTY_MESSAGE);
+			returningTask.editState(Operations.DONE_OPERATION);
+			
+			returningTasks.add(returningTask);
+		}
+		
+		
+		return returningTasks;
+	}
+	
+	
 
 	/**
 	 * ========================================================================
@@ -1147,6 +1236,7 @@ public class LogicMain {
 	 * @return All the labels in LinkedList
 	 */
 	public static LinkedList<Label> getAllLabels() {
+		Collections.sort(bufferTasksList);
 		return bufferLabelsList;
 	}
 
@@ -1157,7 +1247,55 @@ public class LogicMain {
 	 * @return All tasks in LinkedList
 	 */
 	public static LinkedList<Task> getAllTasks() {
+		
+		Collections.sort(bufferTasksList);
 		return bufferTasksList;
+	}
+	
+	// @author A0111942N
+	/**
+	 * This method returns the list of all the tasks.
+	 * 
+	 * @return All tasks in LinkedList
+	 */
+	public static LinkedList<Task> getNotDoneTasks() {
+
+		LinkedList<Task> returnTasks = new LinkedList<Task>();
+
+		for(int i = 0; i < bufferTasksList.size(); i++) {
+
+			Task tempTask = bufferTasksList.get(i);
+
+			if( !tempTask.getDone() ) {
+				returnTasks.add(tempTask);
+			}
+		}
+
+		Collections.sort(returnTasks);
+		return returnTasks;
+	}
+	
+	// @author A0111942N
+	/**
+	 * This method returns the list of all the tasks.
+	 * 
+	 * @return All tasks in LinkedList
+	 */
+	public static LinkedList<Task> getDoneTasks() {
+
+		LinkedList<Task> returnTasks = new LinkedList<Task>();
+
+		for(int i = 0; i < bufferTasksList.size(); i++) {
+
+			Task tempTask = bufferTasksList.get(i);
+
+			if( tempTask.getDone() ) {
+				returnTasks.add(tempTask);
+			}
+		}
+
+		Collections.sort(returnTasks);
+		return returnTasks;
 	}
 	
 	

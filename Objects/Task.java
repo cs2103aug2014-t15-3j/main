@@ -23,7 +23,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private String state;
 	private boolean hasReminder = false;
 	private boolean isReminded = false; 
-	private boolean isOverdue = false; 
+	private boolean isOverdue = false;
+	private boolean isDone; 
 	
 	//@author A0111942N
 	/**
@@ -64,6 +65,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.deadline = oldTask.getDeadline();
 		this.reminder = oldTask.getReminder();
 		this.state = "";
+		this.isDone = oldTask.getDone();
 	}
 
 	/**
@@ -84,6 +86,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.deadline = deadline;
 		this.reminder = reminder;
 		this.state = "";
+		this.isDone = false;
 	}
 
 	// Accessor: Return name
@@ -130,6 +133,10 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public String getState() {
 		return state;
 	}
+	
+	public boolean getDone() {
+		return isDone;
+	}
 
 	public String editName(String name) {
 		this.name = name;
@@ -164,6 +171,10 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public long editTimestamp(long timestamp) {
 		this.timeStamp = timestamp;
 		return timeStamp;
+	}
+	
+	public void toggleDone(boolean _isDone) {
+		isDone = _isDone;
 	}
 	
 	public String getLabelName() {
@@ -234,7 +245,14 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		String message = "";
 		
 		// Include name into message
-		message += "Task: " + name + "\n";
+		message += "Task: " + name;
+		
+		// Include done or not
+		if (isDone) {
+			message += " [DONE]\n";
+		} else {
+			message += "\n";
+		}
 		
 		// Include description into message
 		if (!description.isEmpty()) {

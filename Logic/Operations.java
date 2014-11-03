@@ -17,6 +17,7 @@ public class Operations {
 	protected final static String FIND_OPERATION = "find";
 	protected final static String UNDO_OPERATION = "undo";
 	protected final static String DELETE_OPERATION = "delete";
+	protected final static String DONE_OPERATION = "done";
 	protected final static String SAVE_OPERATION = "save";
 	protected final static String POWER_OPERATION = ";power";
 	
@@ -46,6 +47,10 @@ public class Operations {
 	protected static LinkedList<String> colorOperations;
 	protected static LinkedList<String> descriptionOperations;
 	protected static LinkedList<String> deadlineOperations;
+	protected static LinkedList<String> doneOperations;
+	protected static LinkedList<String> notDoneOperations;
+	protected static LinkedList<String> allOperations;
+	
 
 	protected static LinkedList<String> january;
 	protected static LinkedList<String> febuary;
@@ -84,6 +89,9 @@ public class Operations {
 			colorOperations = populateColor();
 			descriptionOperations = populateDescription();
 			deadlineOperations = populateDeadline();
+			doneOperations = populateDone();
+			notDoneOperations = populateNotDone();
+			allOperations = populateAll();
 			
 			populateMonths();
 			
@@ -298,6 +306,55 @@ public class Operations {
 		return operations;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Populate done list with its keywords
+	 *
+	 * @return List of done keywords
+	 */
+	private LinkedList<String> populateDone() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";done");
+		operations.add(";complete");
+		operations.add(";finish");
+		operations.add(";kill");
+
+		return operations;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Populate not done list with its keywords
+	 *
+	 * @return List of done keywords
+	 */
+	private LinkedList<String> populateNotDone() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";!done");
+		operations.add(";!complete");
+		operations.add(";!finish");
+		operations.add(";!kill");
+
+		return operations;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Populate all list with its keywords
+	 *
+	 * @return List of done keywords
+	 */
+	private LinkedList<String> populateAll() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";all");
+		operations.add(";*");
+		operations.add(";everything");
+
+		return operations;
+	}
 
 	
 	private void populateMonths() {

@@ -114,7 +114,7 @@ public class Label implements Item, java.io.Serializable{
 	 */
 	public boolean isLabel(String _name) {
 
-		return name.equals(_name);
+		return name.toLowerCase().contains(_name.toLowerCase());
 	}
 
 	//@author A0111942N
