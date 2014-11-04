@@ -213,8 +213,10 @@ public class Main {
 		//Start here! Do some simple testing after implementing it thks! 
 	
 		/* 2.
-		//Call this function everytime you update/edit a task
-		//best is if you check if a reminder is required, i've already included a parameter hasReminder for you to use
+		// Call this function everytime you update/edit a task
+		// best is if you check if a reminder is required first, before calling 
+		// i've already included a parameter hasReminder in Task Class for you to use
+		/ /for checking purpose
 		 * 
 		//LogicReminder.getInstance().updateTaskTobeReminded(newTask, oldTask);
 		//since you have a undo function, please parse the oldTask in.
@@ -227,8 +229,8 @@ public class Main {
 		
 		
 		/* 3.
-		//Call this function everytime you add a task
-		//also best is if you check if a reminder is required, i've already included a parameter hasReminder for you to use
+		//Call this function everytime you add a new task
+		//also best is if you check if a reminder is required first as indicated abv
 		 * 
 		LogicReminder.getInstance().addTaskTobeReminded(t);
 		*
