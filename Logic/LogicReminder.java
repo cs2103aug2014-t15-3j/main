@@ -15,41 +15,78 @@ public class LogicReminder {
 
 	
 	static LinkedList<ReminderTask> taskToBeReminded =  new LinkedList<ReminderTask>();
+	private static LogicReminder logicReminderSingleton;
+	private boolean isInitiated = false;
 	
 	
+
+	/**************************************************************************/
+	/**************************************************************************/
+	/**************************      APIs      ********************************/
+	/**************************************************************************/
+	/**************************************************************************/
 	
-	//Constructor
-	//Only generate reminder for daily task
 	//@author A0112898U
 	/**
+	 * //Constructor fo Logic Reminder Object, should only have one instance!
+	 * Only generate reminder for daily task - Only add today's task!	
 	 * 
 	 * @param tasks
 	 * @throws ParseException
 	 */
-	LogicReminder(LinkedList<Task> tasks) throws ParseException{
-	
+	private LogicReminder(LinkedList<Task> tasks) throws ParseException{
+		
 		for(Task t:tasks){
 			
-			ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
-			taskToBeReminded.add(rTask);
+			if (checkIsTodayTask(t)){
+				ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
+				taskToBeReminded.add(rTask);				
+			}
+
 		}
+		
+		isInitiated = true;
 	}
 	
 	
 	
-	//Logic should call this every 0000 the task to be reminded should be re-generated
 	//@author A0112898U
 	/**
+	 * @param tasks
+	 * @throws ParseException
+	 */
+	public void initiateSingleton (LinkedList<Task> tasks) throws ParseException{
+		
+		if (!isInitiated){
+			logicReminderSingleton = new LogicReminder(tasks);
+		}
+	}
+	
+	
+	//@author A0112898U
+	/**
+	 * 	The getInstance getter for this Singleton class!
+	 * @return the Singleton object LogicReminder
+	 */
+	static public LogicReminder getInstance(){
+		return logicReminderSingleton;
+	}
+	
+	
+
+	//@author A0112898U
+	/**
+	 * Logic should call this every 0000 the task to be reminded should be re-generated
 	 * 
 	 * @param tasks
 	 * @throws ParseException
 	 */
-	private static void regenReminderList(LinkedList<Task> tasks) throws ParseException{
+	public void regenReminderList(LinkedList<Task> tasks) throws ParseException{
 		
 		for(Task t:tasks){
 		
 			//Checks for today's task and add reminder.
-			//Only set alarm for today!
+			//Only set alarm for today! For efficiency
 		    if (checkIsTodayTask(t)){
 		    	
 		    	//Create a reminder task and add to the list of reminders
@@ -65,11 +102,74 @@ public class LogicReminder {
 			System.out.println(rTsk.getTask().getName());	
 		}	
 	}
-	
+
 	
 	
 	//Add new task
 	//ask sam to check if reminder is for today, then add a reminder
+	//@author A0112898U
+	/**
+	 * Add new tasks or Updates the old task with the new task, and 
+	 * re-schedules/schedules the new reminder
+	 * 
+	 * @param t
+	 * @throws ParseException
+	 */
+	public void updateTaskTobeReminded(Task newTask, Task oldTask) throws ParseException{
+		
+		
+		boolean isTaskAdded = false;
+		boolean isTodayReminder = false;
+		
+		//check if the reminder for the new task is today
+		if (checkIsTodayTask(newTask)){
+			
+			isTodayReminder = true;
+		}
+		
+		
+		//search for the old task
+		for (ReminderTask tempRtask:taskToBeReminded){
+				
+			//Update task if task exists
+			if (isTaskExist(tempRtask.getTask(),oldTask)){
+				
+				tempRtask.stopAlarm();
+				
+				if (isTodayReminder){
+					
+					//Edit and reschedule task
+					tempRtask.editTask(newTask);
+					tempRtask.scheduleAlarm();
+				
+				}else {
+					
+					taskToBeReminded.remove(oldTask);
+					
+				}
+				
+				isTaskAdded = true;
+				
+				break;
+			}
+		}
+		
+		//If task doesn't exist in the current list
+		if (!isTaskAdded && isTodayReminder){
+			
+			addTaskTobeReminded(newTask);
+		}
+	}
+	
+	
+	
+
+	/**************************************************************************/
+	/**************************************************************************/
+	/***********************      PRIVATEs      *******************************/
+	/**************************************************************************/
+	/**************************************************************************/
+	
 	//@author A0112898U
 	/**
 	 * 
@@ -87,12 +187,13 @@ public class LogicReminder {
 	
 	//@author A0112898U
 	/**
+	 * Check if the reminder for the task is today's task
 	 * 
 	 * @param t
 	 * @return
 	 * @throws ParseException
 	 */
-	private static boolean checkIsTodayTask(Task t) throws ParseException{
+	private boolean checkIsTodayTask(Task t) throws ParseException{
 		
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.HOUR_OF_DAY, 0);
@@ -122,6 +223,8 @@ public class LogicReminder {
 	    
 	    return false;
 	}
+	
+	
 
 	//A0112898U
 	/**
@@ -145,21 +248,15 @@ public class LogicReminder {
 	//@author A0112898U
 	/**
 	 * Checks if the task to be added is already in the collated list of matched task
-	 * 
-	 * Reason why not to use the '.contains' but to create and use this function is because the 
-	 * '.equals' in task was override by the original creator for other important checking purpose 
-	 * thus the .contain doesn't work like the intended original purpose, which would work for my code
-	 *
+	 * **
 	 * @param currentCollatedTasks the added list of task to check with
 	 * @param tobeAddedTask task that is to be added to check if it already existed
 	 * 
 	 * @return returns true if task is already present in the collated task, and returns
 	 * 				   false if task hasn't been found in the collated task
 	 */
-	public static boolean isTaskExist(Task taskToCheck, Task tobeAddedTask){
+	private boolean isTaskExist(Task taskToCheck, Task tobeAddedTask){
 		
-		//for(Task t:currentCollatedTasks){
-			
 			if(taskToCheck.getName().equals(tobeAddedTask.getName()) 
 					&& taskToCheck.getDescription().equals(tobeAddedTask.getDescription())
 					&& (taskToCheck.getTimeStamp() == tobeAddedTask.getTimeStamp())
@@ -168,15 +265,12 @@ public class LogicReminder {
 				
 				return true;
 			}
-		//}
-		
 		return false;
 	}
 	
 	
 	
-	
-	public static void main(String[] args) throws ParseException {
+	public void main(String[] args) throws ParseException {
 		
 		//LogicMain logicMain = new LogicMain();
 		//logicMain.processInput(";add Samuel is awesome ;i lalalalal ;deadline 3 nov ;remind 03 11 2014 02 38");

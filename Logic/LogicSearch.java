@@ -497,7 +497,7 @@ public final class LogicSearch {
 								
 								if (chkStrSimilarity(tok,desTok) > 40){
 								
-									if(chkStrSimilarity(tok,desTok) > 50){
+									if((chkStrSimilarity(tok,desTok) > 50) && (chkStrSimilarity(tok,desTok)!= 100)){
 										
 										suggestedString.add(desTok);
 									}
@@ -517,15 +517,23 @@ public final class LogicSearch {
 						//Search Names
 						if (!isTaskExist(collatedMatchedTaskList,t)){
 							
-							//Check against names
-							if (chkStrSimilarity(tok,t.getName()) > 40){
-								if(chkStrSimilarity(tok,t.getName()) > 50){
-									
-									suggestedString.add(t.getName());
+							LinkedList<String> tokenizeName
+							= tokenizeSearchInput(t.getName());
+							
+							
+							for (String nameTok:tokenizeName){
+								//Check against names
+								if (chkStrSimilarity(tok,nameTok) > 40){
+									if(chkStrSimilarity(tok,nameTok) > 50 && chkStrSimilarity(tok,nameTok) != 100){
+										
+										suggestedString.add(nameTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
 								}
-								collatedMatchedTaskList.add(t);
-								break; //break out loop if task is added
 							}
+							
+							
 						}
 						
 						if (searchTypes == SEARCH_TYPES.TYPE_NAME){
@@ -545,7 +553,7 @@ public final class LogicSearch {
 								
 								if (chkStrSimilarity(tok,labelTok) > 40){
 								
-									if(chkStrSimilarity(tok,labelTok) > 50){
+									if((chkStrSimilarity(tok,labelTok) > 50) && (chkStrSimilarity(tok,labelTok) != 100)){
 										
 										suggestedString.add(labelTok);
 									}
