@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -61,6 +62,7 @@ public class GuiDisplay {
 
 			Item firstItem = tasks.get(0);
 			String state = firstItem.getState();
+			System.out.print(state);
 			switch (state){
 			case Operations.ADD_OPERATION:
 				GuiMain.feedback.setText(
@@ -75,17 +77,22 @@ public class GuiDisplay {
 								firstItem.toString());
 				updateTable();
 				break;
-
 			case Operations.VIEW_OPERATION:
-			case Operations.FIND_OPERATION:
 				viewOperation(tasks, firstItem, inputStr);
+				updateTable();
+				break;
+			case Operations.FIND_OPERATION:
 				updateSearchTable(tasks, firstItem);
+				findOperation(tasks, inputStr);
 				break;
 			case Operations.DELETE_OPERATION:	
+				System.out.print("WHY");
 				deleteOperation(firstItem);
 				updateTable();
 				break;
-
+			case Operations.DONE_OPERATION:
+				updateTable();
+				break;
 			case Operations.SAVE_OPERATION:
 				GuiMain.feedback.setText("The save is successful!\n");
 				break;
@@ -109,22 +116,22 @@ public class GuiDisplay {
 
 	}
 
-	//	private static void findOperation(LinkedList<Item> tasks, String str) {
-	//		String[] s = str.split(" ");
-	//		Item item = tasks.get(0);
-	//		GuiMain.feedback.setText("Search results for \"" + s[s.length-1] + ":\n");
-	//		if(!item.getName().equals(Operations.EMPTY_MESSAGE)) {
-	//			for(int i=0; i<tasks.size(); i++) {
-	//				Item tempTask = tasks.get(i);
-	//				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-	//						(i+1) + ".\n" + tempTask);
-	//			}
-	//		}
-	//		else {
-	//			GuiMain.feedback.setText("No Tasks Found containing that keyword!\n");
-	//		}
-	//
-	//	}
+		private static void findOperation(LinkedList<Item> tasks, String str) {
+			String[] s = str.split(" ");
+			Item item = tasks.get(0);
+			GuiMain.feedback.setText("Search results for \"" + s[s.length-1] + "\":\n");
+			if(!item.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Item tempTask = tasks.get(i);
+					GuiMain.feedback.setText(GuiMain.feedback.getText() +
+							(i+1) + ".\n" + tempTask);
+				}
+			}
+			else {
+				GuiMain.feedback.setText("No Tasks Found containing that keyword!\n");
+			}
+	
+		}
 
 	private static void deleteOperation(Item firstTask) {
 		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
@@ -152,7 +159,7 @@ public class GuiDisplay {
 		}
 	}
 	private static void viewLabelsOperation(LinkedList<Item> labels, Item firstLabel) {
-		GuiMain.feedback.setText("All labels displayed below:\n");
+		GuiMain.feedback.setText("All Labels Displayed Below:\n");
 		if(!firstLabel.getName().equals(Operations.EMPTY_MESSAGE)) {
 			for(int i=0; i<labels.size(); i++) {
 				Item tempLabel = labels.get(i);
@@ -186,6 +193,7 @@ public class GuiDisplay {
 	 * Updates and displays the table.
 	 */
 	public static void updateTable() {
+		
 		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.table_1.getModel();
 		tableModel.setRowCount(0);
 		LinkedList<Task> allTasks= LogicMain.getAllTasks();
@@ -194,21 +202,33 @@ public class GuiDisplay {
 
 			GuiMain.myData = (DefaultTableModel) GuiMain.table_1.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-
+				
 				for(int i=0; i<allTasks.size(); i++) {
 					Task tempTask = allTasks.get(i);
-					Object[] data = new Object[6];
+					Object[] data = new Object[7];
 
 					data[1] = i+1;
-					data[2] = tempTask.getLabelName();
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "-";
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
 					data[3] = tempTask.getName();
 					data[4] = tempTask.getDescription();
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + tempTask.getFormattedEnd();
+					}else {
 					data[5] = tempTask.getFormattedDeadline();
-
+					}
+					data[6] = tempTask.getDone();
 					GuiMain.myData.addRow(data);
+//					if((!tempTask.getLabelName().equalsIgnoreCase("<equals>"))){
+//						data[0] = Color.BLUE;
+//					}
 				}
 			}
-
+			
+		        
 			GuiMain.table_1.setModel(GuiMain.myData);
 
 		}

@@ -101,11 +101,11 @@ public class GuiMain {
 	private ArrayList<String> keywords = new ArrayList<String>(5);
 
 	private static String[] tableHeaders = { "", 
-		"No.", "Label", "Task", "Description", "Deadline"
+		"No.", "Label", "Task", "Description", "Deadline", "Done"
 	};
 	static DefaultTableModel myData;
 
-	static Object[][] objects = new Object[9][5];
+	static Object[][] objects = new Object[9][7];
 
 	private static final String COMMIT_ACTION = "commit";
 	private static JPanel calendar;
@@ -177,15 +177,6 @@ public class GuiMain {
 	@SuppressWarnings("serial")
 	private void initialize() {
 		frameRemembra = new JFrame("Remembra");
-		//For background
-		//		try {
-		//			JLabel label = new JLabel(new ImageIcon(ImageIO.read(new File("media/j.jpg"))));
-		//			frameRemembra.setContentPane(label);
-		//		} catch (IOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
 		frameRemembra.setResizable(false);
 		frameRemembra.setFont(new Font("Accord Light SF", Font.PLAIN, 12));
 		frameRemembra.setForeground(new Color(0, 0, 0));
@@ -230,15 +221,13 @@ public class GuiMain {
 			}
 
 		});
-
-		frameRemembra.setResizable(false);
 		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
-		frameRemembra.setBounds(100, 100, 1043, 675);
+		frameRemembra.setBounds(100, 100, 1109, 704);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
 
 		panel_7 = new JPanel();
-		panel_7.setBounds(642, 115, 3, 347);
+		panel_7.setBounds(711, 115, 3, 347);
 		frameRemembra.getContentPane().add(panel_7);
 		panel_7.setLayout(null);
 		panel_7.setBackground(SystemColor.controlHighlight);
@@ -250,21 +239,21 @@ public class GuiMain {
 
 		panel_6 = new JPanel();
 		panel_6.setBackground(new Color(204, 0, 51));
-		panel_6.setBounds(31, 80, 610, 5);
+		panel_6.setBounds(31, 80, 680, 5);
 		frameRemembra.getContentPane().add(panel_6);
 
 		panel_4 = new JPanel();
 		panel_4.setBackground(new Color(204, 0, 51));
-		panel_4.setBounds(639, 80, 69, 30);
+		panel_4.setBounds(709, 80, 97, 30);
 		frameRemembra.getContentPane().add(panel_4);
 
 		JLayeredPane displayPanel = new JLayeredPane();
 		displayPanel.setBackground(SystemColor.controlHighlight);
-		displayPanel.setBounds(34, 80, 705, 382);
+		displayPanel.setBounds(34, 80, 774, 382);
 		frameRemembra.getContentPane().add(displayPanel);
 
 		tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
-		tabbedPane.setBounds(0, 0, 705, 382);
+		tabbedPane.setBounds(0, 0, 774, 382);
 
 		tabbedPane.setBackground(SystemColor.controlHighlight);
 		tabbedPane.setBorder(null);
@@ -275,7 +264,14 @@ public class GuiMain {
 		tableDisplay.setBackground(Color.WHITE);
 		tabbedPane.addTab("Table", null, tableDisplay, null);
 
-		myData = new DefaultTableModel(objects, tableHeaders);
+		myData = new DefaultTableModel(objects, tableHeaders){
+			Class[] columnTypes = new Class[] {
+					Color.class, Object.class, Object.class, Object.class, Object.class, Object.class, Boolean.class
+				};
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+			};
 		table_1 = new JTable(myData);
 		table_1.setForeground(new Color(0, 0, 0));
 		table_1.setFont(new Font("Dialog", Font.PLAIN, 17));
@@ -286,27 +282,29 @@ public class GuiMain {
 		tableDisplay.setLayout(null);
 		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		table_1.setTableHeader(null);
+		tableDisplay.setLayout(null);
+		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table_1.setTableHeader(null);
+		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table_1.setTableHeader(null);
 		table_1.getColumnModel().getColumn(0).setPreferredWidth(10);
 		table_1.getColumnModel().getColumn(1).setPreferredWidth(10);
 		table_1.getColumnModel().getColumn(2).setPreferredWidth(65);
 		table_1.getColumnModel().getColumn(3).setPreferredWidth(100);
 		table_1.getColumnModel().getColumn(4).setPreferredWidth(210);
 		table_1.getColumnModel().getColumn(5).setPreferredWidth(100);
-
+		table_1.getColumnModel().getColumn(6).setPreferredWidth(10);
 		table_1.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-		tableDisplay.setLayout(null);
-
-
-		JTextPane textPane = new JTextPane();
-		textPane.setText("   ID       LABEL       TASK               DESCRIPTION                          DEADLINE");
-		textPane.setForeground(new Color(204, 0, 0));
-		textPane.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
-		textPane.setEditable(false);
-		textPane.setBounds(5, 0, 600, 33);
-		tableDisplay.add(textPane);
+		JTextPane txtpnIdLabelTask = new JTextPane();
+		txtpnIdLabelTask.setText("     ID     LABEL         TASK               DESCRIPTION                          DEADLINE");
+		txtpnIdLabelTask.setForeground(new Color(204, 0, 0));
+		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		txtpnIdLabelTask.setEditable(false);
+		txtpnIdLabelTask.setBounds(5, 0, 669, 33);
+		tableDisplay.add(txtpnIdLabelTask);
 
 		JScrollPane scrollPaneTable = new JScrollPane(table_1);
-		scrollPaneTable.setBounds(5, 28, 600, 343);
+		scrollPaneTable.setBounds(5, 27, 669, 344);
 		tableDisplay.add(scrollPaneTable);
 		scrollPaneTable.setBackground(new Color(255, 255, 255));
 		scrollPaneTable.setBorder(null);
@@ -329,12 +327,12 @@ public class GuiMain {
 		//frameRemembra.getContentPane().setLayout(null);
 
 		PanelWithShadow inputPanel = new PanelWithShadow(5);
-		inputPanel.setBounds(34, 501, 610, 65);
+		inputPanel.setBounds(34, 501, 680, 65);
 		frameRemembra.getContentPane().add(inputPanel);
 		inputPanel.setBackground(new Color(255, 255, 255));
 
 		inputField =  new JTextField();
-		inputField.setBounds(25, 0, 581, 59);
+		inputField.setBounds(25, 0, 650, 59);
 		inputField.setMargin(new Insets(0, 0, 0, 0));
 		inputField.setCaretColor(new Color(0, 0, 0));
 		inputField.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -342,6 +340,7 @@ public class GuiMain {
 		inputPanel.setLayout(null);
 
 		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
 		panel.setBounds(0, 0, 36, 59);
 		inputPanel.add(panel);
 		inputField.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -374,13 +373,13 @@ public class GuiMain {
 		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
 
 		PanelWithShadow feedbackpanel = new PanelWithShadow(5);
-		feedbackpanel.setBounds(739, 80, 250, 516);
+		feedbackpanel.setBounds(806, 80, 251, 545);
 		frameRemembra.getContentPane().add(feedbackpanel);
 		feedbackpanel.setBackground(new Color(51, 51, 51));
 		feedbackpanel.setLayout(null);
 
 		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(5, 5, 245, 511);
+		scrollPane_1.setBounds(5, 5, 245, 540);
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_1.setBorder(null);
 		feedbackpanel.add(scrollPane_1);
@@ -410,12 +409,12 @@ public class GuiMain {
 		panel_2 = new PanelWithShadow(5);
 		panel_2.setLayout(null);
 		panel_2.setBackground(new Color(204, 0, 51));
-		panel_2.setBounds(0, 0, 989, 114);
+		panel_2.setBounds(0, 0, 1057, 114);
 		frameRemembra.getContentPane().add(panel_2);
 
-		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 13));
+		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 15));
 		timeLabel.setForeground(new Color(255, 255, 255));
-		timeLabel.setBounds(818, 0, 171, 22);
+		timeLabel.setBounds(876, 0, 181, 22);
 		panel_2.add(timeLabel);
 		timeLabel.setText("Time");
 
@@ -425,18 +424,26 @@ public class GuiMain {
 		txtpnRemembra.setBackground(new Color(204, 0, 51));
 		txtpnRemembra.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 41));
 		txtpnRemembra.setText("REMEMBRA");
-		txtpnRemembra.setBounds(12, 22, 631, 64);
+		txtpnRemembra.setBounds(12, 22, 708, 64);
 		panel_2.add(txtpnRemembra);
 
 		panel_3 = new JPanel();
-		panel_3.setBounds(0, 0, 989, 110);
+		panel_3.setBounds(0, 0, 1057, 110);
 		panel_2.add(panel_3);
 		panel_3.setBackground(new Color(204, 0, 51));
+		
+		JTextArea txtrReminder = new JTextArea();
+		txtrReminder.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 16));
+		txtrReminder.setText("Reminder: ");
+		txtrReminder.setForeground(new Color(204, 0, 51));
+		txtrReminder.setBackground(SystemColor.controlHighlight);
+		txtrReminder.setBounds(0, 595, 812, 30);
+		frameRemembra.getContentPane().add(txtrReminder);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBackground(SystemColor.controlHighlight);
-		panel_1.setBounds(0, 0, 989, 596);
+		panel_1.setBounds(0, 0, 1057, 625);
 		frameRemembra.getContentPane().add(panel_1);
 		//To prevent autoscrolling
 		DefaultCaret caret1 = (DefaultCaret) feedback.getCaret();
@@ -464,7 +471,6 @@ public class GuiMain {
 				inputField.requestFocus();
 			}
 		} );
-
 	}
 
 
