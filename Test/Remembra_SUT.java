@@ -37,12 +37,12 @@ public class Remembra_SUT {
 		LinkedList<Task> bufferedTasks = logicMain.getAllTasks();
 		
 		//Stores into storage via the save operation
-		StorageMain storageMain = new StorageMain();
-		storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK, bufferedTasks);
+		
+		StorageMain.getInstance().storeObject(StorageMain.OBJ_TYPES.TYPE_TASK, bufferedTasks);
 		
 		//retrieve from storage via the retrieve operation
 		LinkedList<Task> retrievedTasks =
-				(LinkedList<Task>) storageMain.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
+				(LinkedList<Task>) StorageMain.getInstance().retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 		
 		//read back into Logic and check if stored bufferTaskList == listRetrievedFromStorage
 		

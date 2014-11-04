@@ -8,16 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-/*********************************************************************/
-/******************* QA I - Refactor Code I***************************/
-/*********************************************************************/
-// @ChuanWei - StorageMain.java
-//
-// 1. Seems good!
-//
-// @ChuanWei - StorageMain.java
-/*********************************************************************/
-/*********************************************************************/
+
 
 public class StorageMain {
 	
@@ -32,7 +23,8 @@ public class StorageMain {
 	StorageTask taskStorage; // should be set to private and have getInstances after doing singleton
 	StorageLabel labelStorage; // should be set to private and have getInstances after doing singleton
 	
-
+	static StorageMain storageMain = new StorageMain();
+	
 	//@author A0112898U
 	/**
 	 * Enum for retrival and storing methods 
@@ -51,10 +43,23 @@ public class StorageMain {
 	 * StorageMain's constructor, initiates storage object types
 	 * 
 	 */
-	StorageMain(){
+	private StorageMain(){
 		
 		taskStorage = new StorageTask();
 		labelStorage = new StorageLabel();
+	}
+	
+	
+	
+	//@author A0112898U
+	/**
+	 * StorageMain's Singleton's Accessor!
+	 * 
+	 * @return storageMain instance
+	 */
+	static public StorageMain getInstance(){
+		
+		return storageMain;
 	}
 	
 	

@@ -21,11 +21,11 @@ public class StorageTest {
 	@Test
 	public void testExecuteCommand() throws IOException{
 		
-		StorageMain storageMain = new StorageMain();
+		
 		
 		
 		//Test Cases - for storageMain init()
-		assertEquals("Test - 'Remembra Storage .init()'", true,testStorageInit(storageMain));
+		assertEquals("Test - 'Remembra Storage .init()'", true,testStorageInit(StorageMain.getInstance()));
 		
 		
 		

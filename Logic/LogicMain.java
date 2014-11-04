@@ -21,8 +21,6 @@ public class LogicMain {
 	// Flag to check if there's any chances (For auto-save)
 	private static boolean hasChanged = false;
 
-	// StorageMain object
-	private static StorageMain storageMain;
 
 	// Operation object
 	private Operations operations;
@@ -55,7 +53,6 @@ public class LogicMain {
 
 		if (!isInitialize) {
 			operations = new Operations();
-			storageMain = new StorageMain();
 
 			retrieveFromStorage();
 
@@ -117,8 +114,8 @@ public class LogicMain {
 	 */
 	private void retrieveFromStorage() {
 
-		Object retrievedTasks = storageMain
-				.retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
+		Object retrievedTasks = StorageMain.getInstance().
+				retrieveObject(StorageMain.OBJ_TYPES.TYPE_TASK);
 
 		if (retrievedTasks instanceof LinkedList<?>) {
 			bufferTasksList = (LinkedList<Task>) retrievedTasks;
@@ -127,8 +124,8 @@ public class LogicMain {
 			logger.log(Level.WARNING, "Unable to retrieve tasks from storage");
 		}
 
-		Object retrievedLabels = storageMain
-				.retrieveObject(StorageMain.OBJ_TYPES.TYPE_LABEL);
+		Object retrievedLabels = StorageMain.getInstance().
+				retrieveObject(StorageMain.OBJ_TYPES.TYPE_LABEL);
 
 		if (retrievedLabels instanceof LinkedList<?>) {
 			bufferLabelsList = (LinkedList<Label>) retrievedLabels;
@@ -1104,9 +1101,9 @@ public class LogicMain {
 
 			System.out.println(bufferTasksList);
 
-			storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
+			StorageMain.getInstance().storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
 					bufferTasksList);
-			storageMain.storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,
+			StorageMain.getInstance().storeObject(StorageMain.OBJ_TYPES.TYPE_LABEL,
 					bufferLabelsList);
 			
 			hasChanged = false;
