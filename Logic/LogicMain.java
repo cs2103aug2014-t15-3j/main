@@ -394,9 +394,6 @@ public class LogicMain {
 			bufferTasksList.add(newTask);
 
 			// Include deadline to new task
-			if (deadline == -1) {
-				deadline = getEndOfToday();
-			}
 			newTask.editDeadline(deadline);
 
 			// Include reminder to new task
@@ -742,6 +739,11 @@ public class LogicMain {
 
 					returningItems = new LinkedList<Item>( getAllTasks() );
 					tempList = new LinkedList<Item>( getAllTasks() );
+					
+				} else if (Operations.floatOperations.contains(inputPair.getOperation())) {
+
+					returningItems = new LinkedList<Item>( getFloatingTasks() );
+					tempList = new LinkedList<Item>( getFloatingTasks() );
 				}
 
 			}
@@ -1270,9 +1272,9 @@ public class LogicMain {
 	
 	// @author A0111942N
 	/**
-	 * This method returns the list of all the tasks.
+	 * This method returns the list of all uncompleted tasks.
 	 * 
-	 * @return All tasks in LinkedList
+	 * @return All uncompleted tasks in LinkedList
 	 */
 	public static LinkedList<Task> getNotDoneTasks() {
 
@@ -1293,9 +1295,9 @@ public class LogicMain {
 	
 	// @author A0111942N
 	/**
-	 * This method returns the list of all the tasks.
+	 * This method returns the list of all done tasks.
 	 * 
-	 * @return All tasks in LinkedList
+	 * @return All done tasks in LinkedList
 	 */
 	public static LinkedList<Task> getDoneTasks() {
 
@@ -1314,6 +1316,28 @@ public class LogicMain {
 		return returnTasks;
 	}
 	
+	// @author A0111942N
+	/**
+	 * This method returns the list of all floating tasks.
+	 * 
+	 * @return All floating tasks in LinkedList
+	 */
+	public static LinkedList<Task> getFloatingTasks() {
+
+		LinkedList<Task> returnTasks = new LinkedList<Task>();
+
+		for(int i = 0; i < bufferTasksList.size(); i++) {
+
+			Task tempTask = bufferTasksList.get(i);
+
+			if( tempTask.getDeadline() == -1 ) {
+				returnTasks.add(tempTask);
+			}
+		}
+
+		Collections.sort(returnTasks);
+		return returnTasks;
+	}
 	
 	/**
 	 * For testing purposes...

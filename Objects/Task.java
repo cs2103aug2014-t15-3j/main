@@ -112,8 +112,12 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	
 	public String getFormattedDeadline() {
 		
-		Date date = new Date(deadline);
-		String dateOutput = dateFormat.format(date);
+		String dateOutput = "";
+		
+		if (deadline > 0) {
+			Date date = new Date(deadline);
+			dateOutput = dateFormat.format(date);
+		}
 		
 		return dateOutput;
 	}

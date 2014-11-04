@@ -65,6 +65,7 @@ public class Operations {
 	protected static LinkedList<String> doneOperations;
 	protected static LinkedList<String> notDoneOperations;
 	protected static LinkedList<String> allOperations;
+	protected static LinkedList<String> floatOperations;
 	
 
 	protected static LinkedList<String> january;
@@ -107,6 +108,7 @@ public class Operations {
 			doneOperations = populateDone();
 			notDoneOperations = populateNotDone();
 			allOperations = populateAll();
+			floatOperations = populateFloat();
 			
 			populateMonths();
 			
@@ -370,8 +372,28 @@ public class Operations {
 
 		return operations;
 	}
+	
+	//@author A0111942N
+	/**
+	 * Populate float list with its keywords
+	 *
+	 * @return List of float keywords
+	 */
+	private LinkedList<String> populateFloat() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";float");
+		operations.add(";floating");
+		operations.add(";someday");
+
+		return operations;
+	}
 
 	
+	//@author A0111942N
+	/**
+	 * Populate the variation of month lists with its keywords
+	 */
 	private void populateMonths() {
 
 		january = new LinkedList<String>();
