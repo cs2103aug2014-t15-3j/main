@@ -81,7 +81,7 @@ public class LogicReminder {
 	 * @param tasks
 	 * @throws ParseException
 	 */
-	public void regenReminderList(LinkedList<Task> tasks) throws ParseException{
+	public static void regenReminderList(LinkedList<Task> tasks) throws ParseException{
 		
 		for(Task t:tasks){
 		
@@ -193,7 +193,7 @@ public class LogicReminder {
 	 * @return
 	 * @throws ParseException
 	 */
-	private boolean checkIsTodayTask(Task t) throws ParseException{
+	private static boolean checkIsTodayTask(Task t) throws ParseException{
 		
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.HOUR_OF_DAY, 0);
@@ -270,14 +270,9 @@ public class LogicReminder {
 	
 	
 	
-	public void main(String[] args) throws ParseException {
-		
-		//LogicMain logicMain = new LogicMain();
-		//logicMain.processInput(";add Samuel is awesome ;i lalalalal ;deadline 3 nov ;remind 03 11 2014 02 38");
-		
-
-		//Task t = logicMain.getAllTasks().get(0);
-																		//2359 format
+	public static void main(String[] args) throws ParseException {
+	
+		/*																//2359 format
 		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 		Date date1 = isoFormat.parse("2014-11-03T16:13:30");
@@ -299,11 +294,25 @@ public class LogicReminder {
 		isTasks.add(t3);
 		isTasks.add(t4);
 		
-		//ReminderTask rTask = new ReminderTask(t,date);
-		//rTask.scheduleAlarm();
-		
 		regenReminderList(isTasks);
-		//regenReminderList(logicMain.getAllTasks());
+		*/
+		
+		//START ADDING HERE!
+		LogicMain logicMain = new LogicMain();
+		logicMain.processInput(";add Samuel is awesome ;i lalalalal ;deadline 4 nov ;remind 04 11 2014 7 11 pm");
+		
+		regenReminderList(logicMain.getAllTasks());
+		
+		LinkedList<Task> listTasks = new LinkedList<Task>(logicMain.getAllTasks());
+		
+		for(Task t:listTasks){
+
+			
+			Date d = new Date(t.getReminder());
+			
+			System.out.println(d.toString());
+		}
+		
 	}
 
 }
