@@ -1,10 +1,8 @@
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.LinkedList;
 
-/**
- * 
- */
-
+//@author A0112898U
 /**
  *  Here are some ground rules I hope we can follow so that we can ensure that there's no
 	Conflicts when committing,merging and during QA of codes
@@ -46,19 +44,23 @@ import java.util.LinkedList;
  */
 public class Main {
 
-	static StorageMain storage;
+	//static StorageMain storage;
 	static GuiMain gui;
 	
-	@SuppressWarnings("unchecked") // To suppress the object type cast from LinkedList<?> to LinkedList<OBJTYPE>
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+
+		//Run Shell Script to set up hotkey
+		runWsShell();
+
 		
+		//Start Process
 		System.out.println("Starting Remembra...");
 		
 		gui = new GuiMain();
 		gui.launch();
 		
-		StorageMain storageMain = new StorageMain();
+		//StorageMain storageMain = new StorageMain();
 		
 				
 		/************ Chuan Wei's Example for Logic Search for LogicMain Implementation ***********/
@@ -176,8 +178,43 @@ public class Main {
 		/*************************************** * DO NOT REMOVE :D ******************************/
 		/************ Chuan Wei's Example for Logic Search for LogicMain Implementation ***********/	
 		
+		
+		
+		
+		/*************************************** * DO NOT REMOVE :D ******************************/
+		/************ Chuan Wei's Example for Logic Reminder for LogicMain Implementation ***********/	
+		
+		//Call this function (at your constructor after you read in the data from the sotrage)
+		//to init the LogicReminder System's reminder list
+		
+		LinkedList<Task> tasks = new LinkedList<Task>();
+		
+		try {
+			
+			LogicReminder.getInstance().regenReminderList(tasks);
+			
+		} catch (ParseException e) {
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 	}
 
+	//@author A0112898U
+	/**
+	 * Runs the Shell Script to set up HotKey to start remembra in windows desktop
+	 * @throws IOException
+	 */
+	public static void runWsShell() throws IOException{
+		
+		//Run windows PowerShell Script
+		Runtime.getRuntime().exec("wscript ./scripts/powerShell.vbs");
+	}
 }
 
 
