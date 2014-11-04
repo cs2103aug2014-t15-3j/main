@@ -292,10 +292,10 @@ public class LogicMain {
 		LinkedList<Item> returningItem = new LinkedList<Item>();
 
 		Item addTask = executeAdd();
+		
+		Item returnItem;
 
 		if (addTask != null) {
-
-			Item returnItem;
 
 			if (!isLabel) {
 				returnItem = new Task((Task) addTask);
@@ -305,8 +305,19 @@ public class LogicMain {
 				returnItem.editState(Operations.ADD_LABEL_OPERATION);
 			}
 
-			returningItem.add(returnItem);
+			
+		} else {
+			
+			if (!isLabel) {
+				returnItem = new Task(Operations.EMPTY_MESSAGE);
+				returnItem.editState(Operations.ADD_ERROR);
+			} else {
+				returnItem = new Label(Operations.EMPTY_MESSAGE);
+				returnItem.editState(Operations.ADD_LABEL_ERROR);
+			}
 		}
+		
+		returningItem.add(returnItem);
 
 		logger.log(Level.INFO, "Add operation completed");
 
@@ -441,6 +452,8 @@ public class LogicMain {
 
 		if (returnTask == null) {
 
+			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returnTask.editState(Operations.EDIT_ERROR);
 			return returningTasks;
 
 		}
@@ -736,7 +749,7 @@ public class LogicMain {
 			if (returningItems.isEmpty()) {
 
 				returnTask = new Task(Operations.EMPTY_MESSAGE);
-				returnTask.editState(Operations.VIEW_OPERATION);
+				returnTask.editState(Operations.VIEW_ERROR);
 				returningItems.add(returnTask);
 
 				return returningItems;
@@ -763,7 +776,7 @@ public class LogicMain {
 			} else {
 
 				returnLabel = new Label(Operations.EMPTY_MESSAGE);
-				returnLabel.editState(Operations.VIEW_LABEL_OPERATION);
+				returnLabel.editState(Operations.VIEW_ERROR);
 				returningItems.add(returnLabel);
 				
 				return returningItems;
@@ -842,9 +855,9 @@ public class LogicMain {
 			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
 			
 			if(!isLabel) {
-				deleteTask.editState(Operations.DELETE_OPERATION);
+				deleteTask.editState(Operations.DELETE_ERROR);
 			} else {
-				deleteTask.editState(Operations.DELETE_LABEL_OPERATION);
+				deleteTask.editState(Operations.DELETE_LABEL_ERROR);
 			}
 
 			logger.log(Level.INFO, "Invalid task to be deleted");
@@ -942,12 +955,13 @@ public class LogicMain {
 		if (searchTasks.isEmpty()) {
 
 			returnTask = new Task(Operations.EMPTY_MESSAGE);
+			returnTask.editState(Operations.FIND_ERROR);
 			returningTasks.add(returnTask);
 			
 		} else {
 			
 			returnTask = searchTasks.get(0);
-			returnTask.editState(Operations.VIEW_OPERATION);
+			returnTask.editState(Operations.FIND_OPERATION);
 			
 		}
 
@@ -1049,6 +1063,8 @@ public class LogicMain {
 		
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		Task returningTask;
+		
+		LinkedList<Task> tempTasks = new LinkedList<Task>(bufferTasksList);
 
 		try {
 			
@@ -1057,30 +1073,30 @@ public class LogicMain {
 			
 			if(undoTasks.size() > 0) {
 				
-				doneTask = undoTasks.remove(doneId);
+				doneTask = new Task( undoTasks.remove(doneId) );
 				bufferTasksList.remove(doneTask);
 				undoTasks.clear();
 			} else {
 				
-				doneTask = bufferTasksList.remove(doneId);
+				doneTask = new Task( bufferTasksList.remove(doneId) );
 			}
 			
 			doneTask.toggleDone(toggle);
 			
 			bufferTasksList.add(doneTask);
-			
-			System.out.println(bufferTasksList);
-			
+						
 			returningTask = new Task(doneTask);
 			returningTask.editState(Operations.DONE_OPERATION);
 			
 			returningTasks.add(returningTask);
 			
+			undoTasks = tempTasks;
+			
 		} catch (Exception e) {
 			logger.log(Level.INFO, "DONE OPERATION: Invalid ID");
 			
 			returningTask = new Task(Operations.EMPTY_MESSAGE);
-			returningTask.editState(Operations.DONE_OPERATION);
+			returningTask.editState(Operations.DONE_ERROR);
 			
 			returningTasks.add(returningTask);
 		}

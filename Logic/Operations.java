@@ -21,6 +21,15 @@ public class Operations {
 	protected final static String SAVE_OPERATION = "save";
 	protected final static String POWER_OPERATION = ";power";
 	
+	// Error messages for Task related operations
+	protected final static String ADD_ERROR = "add-error";
+	protected final static String EDIT_ERROR = "edit-error";
+	protected final static String VIEW_ERROR = "view-error";
+	protected final static String FIND_ERROR = "find-error";
+	protected final static String UNDO_ERROR = "undo-error";
+	protected final static String DELETE_ERROR = "delete-error";
+	protected final static String DONE_ERROR = "done-error";
+	
 	protected final static String REMOVE_INPUT = "-";
 	
 	// Constant Variables for Label related operations
@@ -28,6 +37,12 @@ public class Operations {
 	protected final static String EDIT_LABEL_OPERATION = "edit_label";
 	protected final static String VIEW_LABEL_OPERATION = "view_label";
 	protected final static String DELETE_LABEL_OPERATION = "delete_label";
+	
+	// Error messages for Label related operations
+	protected final static String ADD_LABEL_ERROR = "add_label-error";
+	protected final static String EDIT_LABEL_ERROR = "edit_label-error";
+	protected final static String VIEW_LABEL_ERROR = "view_label-error";
+	protected final static String DELETE_LABEL_ERROR = "delete_label-error";
 	
 	// Constant variable for date formating
 	protected final static String DATE_INPUT_FORMAT = "d/M/yyyy h:m a";
