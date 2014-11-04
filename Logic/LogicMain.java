@@ -342,6 +342,9 @@ public class LogicMain {
 		long reminder = -1;
 		String color = "";
 		long labelID = -1;
+		
+		long start = -1;
+		long end = -1;
 
 		for (int i = 0; i < inputList.size(); i++) {
 
@@ -360,6 +363,16 @@ public class LogicMain {
 			} else if (Operations.descriptionOperations.contains(operation)) {
 
 				description = inputList.get(i).getContent();
+
+			} else if (Operations.startOperations.contains(operation)) {
+
+				String dateInput = inputList.get(i).getContent();
+				start = processDate(dateInput);
+
+			} else if (Operations.endOperations.contains(operation)) {
+
+				String dateInput = inputList.get(i).getContent();
+				end = processDate(dateInput);
 
 			} else if (Operations.deadlineOperations.contains(operation)) {
 				
@@ -392,6 +405,11 @@ public class LogicMain {
 			Task newTask = new Task(name, description);
 			newTask.editState(Operations.ADD_OPERATION);
 			bufferTasksList.add(newTask);
+			
+			
+			// Include start and end time
+			newTask.editStart(start);
+			newTask.editEnd(end);
 
 			// Include deadline to new task
 			newTask.editDeadline(deadline);
@@ -486,10 +504,14 @@ public class LogicMain {
 		String description = "";
 		String color = "";
 		long labelId = -1;
+		long start = -1;
+		long end = -1;
 		long deadline = -1;
 		long reminder = -1;
 		boolean nameEdited = false;
 		boolean descriptionEdited = false;
+		boolean startEdited = false;
+		boolean endEdited = false;
 		boolean deadlineEdited = false;
 		boolean reminderEdited = false;
 		boolean colorEdited = false;
@@ -537,6 +559,20 @@ public class LogicMain {
 
 				description = inputList.get(i).getContent();
 				descriptionEdited = true;
+
+			} else if (Operations.startOperations.contains(operation)) {
+
+				String dateInput = inputList.get(i).getContent();
+				start = processDate(dateInput);
+				
+				startEdited = true;
+
+			} else if (Operations.endOperations.contains(operation)) {
+
+				String dateInput = inputList.get(i).getContent();
+				end = processDate(dateInput);
+				
+				endEdited = true;
 
 			} else if (Operations.deadlineOperations.contains(operation)) {
 
@@ -620,6 +656,20 @@ public class LogicMain {
 			if (descriptionEdited) {
 
 				newTask.editDescription(description);
+
+			}
+			
+			// Check if deadline has been edited
+			if (startEdited) {
+
+				newTask.editStart(start);
+
+			}
+
+			// Check if deadline has been edited
+			if (endEdited) {
+
+				newTask.editEnd(end);
 
 			}
 
@@ -769,7 +819,7 @@ public class LogicMain {
 
 			if (bufferLabelsList.size() > 0) {
 
-				returningItems = new LinkedList<Item>(bufferLabelsList);
+				returningItems = new LinkedList<Item>(getAllLabels());
 				Label tempLabel = new Label((Label) returningItems.get(0));
 				tempLabel.editState(Operations.VIEW_LABEL_OPERATION);
 
@@ -1254,7 +1304,7 @@ public class LogicMain {
 	 * @return All the labels in LinkedList
 	 */
 	public static LinkedList<Label> getAllLabels() {
-		Collections.sort(bufferTasksList);
+		Collections.sort(bufferLabelsList);
 		return bufferLabelsList;
 	}
 

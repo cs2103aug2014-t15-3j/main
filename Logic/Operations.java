@@ -61,6 +61,8 @@ public class Operations {
 	protected static LinkedList<String> reminderOperations;
 	protected static LinkedList<String> colorOperations;
 	protected static LinkedList<String> descriptionOperations;
+	protected static LinkedList<String> startOperations;
+	protected static LinkedList<String> endOperations;
 	protected static LinkedList<String> deadlineOperations;
 	protected static LinkedList<String> doneOperations;
 	protected static LinkedList<String> notDoneOperations;
@@ -109,6 +111,8 @@ public class Operations {
 			notDoneOperations = populateNotDone();
 			allOperations = populateAll();
 			floatOperations = populateFloat();
+			startOperations = populateFrom();
+			endOperations = populateTo();
 			
 			populateMonths();
 			
@@ -388,7 +392,36 @@ public class Operations {
 
 		return operations;
 	}
+	
+	//@author A0111942N
+	/**
+	 * Populate from (start) list with its keywords
+	 *
+	 * @return List of float keywords
+	 */
+	private LinkedList<String> populateFrom() {
 
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";from");
+		operations.add(";start");
+
+		return operations;
+	}
+
+	//@author A0111942N
+	/**
+	 * Populate from (start) list with its keywords
+	 *
+	 * @return List of float keywords
+	 */
+	private LinkedList<String> populateTo() {
+
+		LinkedList<String> operations = new LinkedList<>();
+		operations.add(";to");
+		operations.add(";end");
+
+		return operations;
+	}
 	
 	//@author A0111942N
 	/**

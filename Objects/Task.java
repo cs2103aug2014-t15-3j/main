@@ -18,13 +18,15 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private String description;
 	private long label;
 	private long timeStamp;
+	private long start;
+	private long end;
 	private long deadline;
 	private long reminder;
 	private String state;
 	private boolean hasReminder = false;
 	private boolean isReminded = false; 
 	private boolean isOverdue = false;
-	private boolean isDone; 
+	private boolean isDone = false;
 	
 	//@author A0111942N
 	/**
@@ -62,6 +64,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.description = oldTask.getDescription();
 		this.label = oldTask.getLabel();
 		this.timeStamp = oldTask.getTimeStamp();
+		this.start = oldTask.getStart();
+		this.end = oldTask.getEnd();
 		this.deadline = oldTask.getDeadline();
 		this.reminder = oldTask.getReminder();
 		this.state = "";
@@ -105,32 +109,52 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public long getTimeStamp() {
 		return timeStamp;
 	}
+	
+	public long getStart() {
+		return start;
+	}
+	
+	public long getEnd() {
+		return end;
+	}
 
 	public long getDeadline() {
 		return deadline;
-	}
-	
-	public String getFormattedDeadline() {
-		
-		String dateOutput = "";
-		
-		if (deadline > 0) {
-			Date date = new Date(deadline);
-			dateOutput = dateFormat.format(date);
-		}
-		
-		return dateOutput;
 	}
 
 	public long getReminder() {
 		return reminder;
 	}
 	
+	public String getFormattedStart() {
+
+		return getFormattedDate(start);
+	}
+	
+	public String getFormattedEnd() {
+
+		return getFormattedDate(end);
+	}
+	
+	public String getFormattedDeadline() {
+		
+		return getFormattedDate(deadline);
+	}
+	
 	public String getFormattedReminder() {
 
-		Date date = new Date(reminder);
-		String dateOutput = dateFormat.format(date);
-
+		return getFormattedDate(reminder);
+	}
+	
+	public String getFormattedDate(long dateMs) {
+		
+		String dateOutput = "";
+		
+		if (dateMs > 0) {
+			Date date = new Date(dateMs);
+			dateOutput = dateFormat.format(date);
+		}
+		
 		return dateOutput;
 	}
 
@@ -160,6 +184,16 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public long editLabel(long label) {
 		this.label = label;
 		return label;
+	}
+
+	public long editStart(long start) {
+		this.start = start;
+		return start;
+	}
+
+	public long editEnd(long end) {
+		this.end = end;
+		return end;
 	}
 
 	public long editDeadline(long deadline) {
@@ -262,6 +296,10 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		if (!description.isEmpty()) {
 			message += "Description: " + description + "\n";
 		}
+		
+		// Include start and end into message
+		message += "Start: " + getFormattedStart() + "\n";
+		message += "End: " + getFormattedEnd() + "\n";
 
 		// Include deadline into message
 		message += "Deadline: " + getFormattedDeadline() + "\n";

@@ -3,7 +3,7 @@ import java.util.Date;
 
 //@author A0111942N
 
-public class Label implements Item, java.io.Serializable{
+public class Label implements Item, java.io.Serializable, Comparable<Label>{
 
 	// Class variables
 	private String name;
@@ -113,8 +113,12 @@ public class Label implements Item, java.io.Serializable{
 	 * @return Whether two labels are the same
 	 */
 	public boolean isLabel(String _name) {
-
-		return name.toLowerCase().contains(_name.toLowerCase());
+		
+		if(_name.length() < 3) {
+			return name.toLowerCase().equals(_name.toLowerCase());
+		} else {
+			return name.toLowerCase().contains(_name.toLowerCase());
+		}
 	}
 
 	//@author A0111942N
@@ -142,6 +146,9 @@ public class Label implements Item, java.io.Serializable{
 	public String toString() {
 		return "Label: " + name + "\nColor: " + color + "\n\n";
 	}
-	
-	
+
+	@Override
+	public int compareTo(Label label) {
+		return name.compareTo(label.getName());
+	}
 }

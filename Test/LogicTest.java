@@ -48,18 +48,18 @@ public class LogicTest {
 		returnTasks.addAll( logic.processInput(";add ;deadline") );
 		returnTasks.addAll( logic.processInput(";add ;label") );
 		returnTasks.addAll( logic.processInput(";add ;someInvalidOperation") );
+
+		Task task = (Task) returnTasks.get(0);
 		
-		assertTrue(returnTasks.size() == 0);
+		assertEquals(task.getState(), Operations.ADD_ERROR);
 		
 		// 2z: Invalid ";description" ";deadline" ";label" & some invalid operation
 		returnTasks = logic.processInput(";add " + TASK_NAME + " ;description ;deadline ;label ;someInvalidOperation");
 		Task addedTask = (Task) returnTasks.get(0);
-		
-		System.out.println(addedTask.getDeadline());
-		
+				
 		assertTrue(addedTask.getName().equals(TASK_NAME)
 				&& addedTask.getDescription().isEmpty()
-				&& addedTask.getDeadline() == LogicMain.getEndOfToday()
+				&& addedTask.getDeadline() == -1
 				&& addedTask.getLabel() == -1 );
 	}
 
@@ -139,9 +139,7 @@ public class LogicTest {
 		if ( LogicMain.getAllTasks().size() == 0 ) {
 			logic.processInput(";add Mock task");
 		}
-		
-		System.out.println(LogicMain.getAllTasks());
-		
+				
 		Task task = LogicMain.getAllTasks().get(0);
 		
 		// 2a: ";edit <Task Name>" only
