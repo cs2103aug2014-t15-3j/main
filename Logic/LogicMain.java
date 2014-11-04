@@ -1,3 +1,4 @@
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -65,6 +66,19 @@ public class LogicMain {
 			executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
 
 			isInitialize = true;
+			
+			//Initiates the Reminder System
+			try {
+				 //don't worry about the warning thingy
+				//I'll remove it later on
+				LogicReminder.getInstance().regenReminderList(bufferTasksList);
+				
+			} catch (ParseException e) {
+				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			
 			logger.log(Level.INFO, "Initializing is complete");
 		} else {

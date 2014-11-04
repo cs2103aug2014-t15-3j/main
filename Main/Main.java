@@ -184,24 +184,73 @@ public class Main {
 		/*************************************** * DO NOT REMOVE :D ******************************/
 		/************ Chuan Wei's Example for Logic Reminder for LogicMain Implementation ***********/	
 		
+		
+		//1.
 		//Call this function (at your constructor after you read in the data from the sotrage)
 		//to init the LogicReminder System's reminder list
 		
-		LinkedList<Task> tasks = new LinkedList<Task>();
+
+		//***NOTE *****/
 		
-		try {
-			
-			LogicReminder.getInstance().regenReminderList(tasks);
-			
-		} catch (ParseException e) {
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//I've implemented this for u already !
+		
+		//		LinkedList<Task> tasks = new LinkedList<Task>();
+		//		
+		//		try {
+		//			
+		//			LogicReminder.getInstance().regenReminderList(tasks);
+		//			
+		//		} catch (ParseException e) {
+		//			
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+		
+		//***NOTE *****/
 		
 		
 		
+		//Start here! Do some simple testing after implementing it thks! 
+	
+		/* 2.
+		//Call this function everytime you update/edit a task
+		//best is if you check if a reminder is required, i've already included a parameter hasReminder for you to use
+		 * 
+		//LogicReminder.getInstance().updateTaskTobeReminded(newTask, oldTask);
+		//since you have a undo function, please parse the oldTask in.
 		
+		*
+		* Testing 2
+		* like when u edit the reminder/task set to a nearest time, see if the reminder with
+		* the updated info shows at the console >>>
+		*/
+		
+		
+		/* 3.
+		//Call this function everytime you add a task
+		//also best is if you check if a reminder is required, i've already included a parameter hasReminder for you to use
+		 * 
+		LogicReminder.getInstance().addTaskTobeReminded(t);
+		*
+		* Testing 3
+		* like when u edit add a task set to a nearest time to your clock, see if the reminder shows at the console >>>
+		*/
+		
+		
+		
+		/* 4.
+		//Call this function everytime you delete a task
+		//also best is if you check if a reminder is present 
+		 * 
+		LogicReminder.getInstance().stopTask(taskToStop)		
+		*
+		* Testing 4
+		* Like when u add a task set to a nearest time to your clock like 1 min away, then
+		* delete the task, then see if the reminder shows at the console >>> (It shouldn't show!)
+		*/
+		
+		
+
 		
 	}
 
@@ -213,7 +262,7 @@ public class Main {
 	public static void runWsShell() throws IOException{
 		
 		//Run windows PowerShell Script
-		Runtime.getRuntime().exec("wscript ./scripts/powerShell.vbs");
+		//Runtime.getRuntime().exec("wscript ./scripts/powerShell.vbs");
 	}
 }
 
