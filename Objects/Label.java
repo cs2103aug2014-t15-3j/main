@@ -1,10 +1,13 @@
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Random;
 
 //@author A0111942N
 
 public class Label implements Item, java.io.Serializable, Comparable<Label>{
-
+	
+	// Use to generate random colors
+	private static String mainColor = "AB0123456789";
+	private static String subColor = "ABCDEF0123456789";
+	
 	// Class variables
 	private String name;
 	private String color;
@@ -17,7 +20,8 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 	 * When specified with its name only
 	 */
 	public Label(String name) {
-		this(name, "#80A6CD");
+
+		this(name, "");
 	}
 
 	//@author A0111942N
@@ -37,6 +41,27 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 	 * When specified with its name and color only
 	 */
 	public Label(String name, String color) {
+		
+		if (color.isEmpty()) {
+			// Generate color
+			color = "#";
+			Random random = new Random();
+
+			for (int i = 0; i < 6; i++) {
+
+				int j = 0;
+
+				if( i % 2 == 0 ) {
+					j = random.nextInt(mainColor.length());
+					color += mainColor.toCharArray()[j];
+				} else {
+					j = random.nextInt(subColor.length());
+					color += subColor.toCharArray()[j];
+				}
+
+			}
+		}
+		
 		this.name = name;
 		this.color = color;
 		this.timeStamp = System.currentTimeMillis();

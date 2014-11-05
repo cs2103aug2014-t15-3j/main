@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -157,8 +158,9 @@ public class LogicMain {
 
 		if (Operations.labelOperations.contains(mainOperation)
 				&& inputList.size() > 1) {
-
+			
 			mainOperation = inputList.get(1).getOperation();
+			inputList.remove();
 			isLabel = true;
 
 		}
@@ -526,6 +528,8 @@ public class LogicMain {
 		boolean deadlineEdited = false;
 		boolean reminderEdited = false;
 		boolean colorEdited = false;
+		
+		System.out.println(inputList);
 
 		for (int i = 0; i < inputList.size(); i++) {
 
@@ -548,7 +552,9 @@ public class LogicMain {
 
 				}
 
-				if (editID < 0 || editID >= bufferTasksList.size()) {
+				if (editID < 0
+						|| (!isLabel && editID >= bufferTasksList.size())
+						|| (isLabel && editID >= bufferLabelsList.size()) ) {
 
 					return null;
 
@@ -617,7 +623,7 @@ public class LogicMain {
 
 				colorEdited = true;
 
-			} else if (Operations.labelOperations.contains(operation) && i > 0) {
+			} else if (Operations.labelOperations.contains(operation)) {
 
 				String label = inputList.get(i).getContent();
 				labelId = getLabelId(label);
@@ -633,6 +639,8 @@ public class LogicMain {
 			}
 
 		}
+		
+		System.out.println(">>>>>>"+isLabel);
 
 		Item editItem;
 
@@ -713,6 +721,8 @@ public class LogicMain {
 			// PROCESSING FOR LABEL
 
 			Label editLabel = bufferLabelsList.get(editID);
+			
+			System.out.println("Hello>>"+editLabel);
 
 			if (nameEdited) {
 
@@ -881,7 +891,7 @@ public class LogicMain {
 	 * 
 	 * @return Deleted task
 	 */
-	private Task executeDelete() {
+	private Item executeDelete() {
 
 		int deleteID = 0;
 		boolean isValid = true;
@@ -896,7 +906,7 @@ public class LogicMain {
 			}
 		}
 
-		if (deleteID < bufferTasksList.size()) {
+		if (!isLabel && deleteID < bufferTasksList.size()) {
 			Task deleteTask;
 
 			if (!tempList.isEmpty()) {
@@ -907,25 +917,34 @@ public class LogicMain {
 			}
 
 			bufferTasksList.remove(deleteTask);
+			deleteTask.editState(Operations.DELETE_OPERATION);
 
 			logger.log(Level.INFO, "Task deleted");
 			return deleteTask;
+			
+		} else if (isLabel && deleteID < bufferLabelsList.size()) {
+			
+			Label deleteLabel;
+			
+			deleteLabel = bufferLabelsList.remove(deleteID);
+			deleteLabel.editState(Operations.DELETE_LABEL_OPERATION);
+			
+			logger.log(Level.INFO, "Label deleted");
+			return deleteLabel;
+			
 		} else {
 			isValid = false;
 		}
 		
 		if (!isValid) {
 			Task deleteTask = new Task(Operations.EMPTY_MESSAGE);
-			
-			if(!isLabel) {
-				deleteTask.editState(Operations.DELETE_ERROR);
-			} else {
-				deleteTask.editState(Operations.DELETE_LABEL_ERROR);
-			}
+
+			deleteTask.editState(Operations.DELETE_ERROR);
 
 			logger.log(Level.INFO, "Invalid task to be deleted");
 			return deleteTask;
 		}
+		
 		return null;
 	}
 
@@ -1098,8 +1117,6 @@ public class LogicMain {
 		
 		
 		if(isInitialize && hasChanged) {
-
-			System.out.println(bufferTasksList);
 
 			StorageMain.getInstance().storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
 					bufferTasksList);
@@ -1400,12 +1417,37 @@ public class LogicMain {
 		return returnTasks;
 	}
 	
+	// @author A0111942N
+	/**
+	 * This method returns the list of all floating tasks.
+	 * 
+	 * @return All floating tasks in LinkedList
+	 */
+	public static Color getLabelColor(long labelId) {
+
+		for (int i = 0; i < bufferLabelsList.size(); i++) {
+			
+			Label label = bufferLabelsList.get(i);
+			
+			if (label.getTimeStamp() == labelId) {
+				
+				Color color = Color.decode(label.getColor());
+				return color;
+			}
+		}
+		
+		return Color.WHITE;
+	}
+	
 	/**
 	 * For testing purposes...
 	 */
 	public static void main(String[] arg) {
 		
 		LogicMain logic = new LogicMain();
+		
+		Label label = getAllLabels().get(0);
+		System.out.println( getLabelColor(label.getTimeStamp()) );
 
 		System.out.println( logic.processDate("12 34 am") );
 		System.out.println( logic.processDate("9 12") );
