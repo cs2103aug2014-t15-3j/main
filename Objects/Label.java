@@ -4,10 +4,6 @@ import java.util.Random;
 
 public class Label implements Item, java.io.Serializable, Comparable<Label>{
 	
-	// Use to generate random colors
-	private static String mainColor = "AB0123456789";
-	private static String subColor = "ABCDEF0123456789";
-	
 	// Class variables
 	private String name;
 	private String color;
@@ -46,19 +42,10 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 			// Generate color
 			color = "#";
 			Random random = new Random();
-
-			for (int i = 0; i < 6; i++) {
-
-				int j = 0;
-
-				if( i % 2 == 0 ) {
-					j = random.nextInt(mainColor.length());
-					color += mainColor.toCharArray()[j];
-				} else {
-					j = random.nextInt(subColor.length());
-					color += subColor.toCharArray()[j];
-				}
-
+			
+			for (int i = 0; i < 3; i++) {
+				int value = random.nextInt(200)+16;
+				color += Integer.toHexString(value);
 			}
 		}
 		

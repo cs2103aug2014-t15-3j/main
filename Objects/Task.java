@@ -298,8 +298,12 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		}
 		
 		// Include start and end into message
-		message += "Start: " + getFormattedStart() + "\n";
-		message += "End: " + getFormattedEnd() + "\n";
+		if ( !getFormattedStart().isEmpty() ) {
+			message += "Start: " + getFormattedStart() + "\n";
+		}
+		if ( !getFormattedEnd().isEmpty() ) {
+			message += "End: " + getFormattedEnd() + "\n";
+		}
 
 		// Include deadline into message
 		message += "Deadline: " + getFormattedDeadline() + "\n";

@@ -46,7 +46,7 @@ public class Operations {
 	
 	// Constant variable for date formating
 	protected final static String DATE_INPUT_FORMAT = "d/M/yyyy h:m a";
-	protected final static String DATE_OUTPUT_FORMAT = "d MMMM yyyy h:mm a";
+	protected final static String DATE_OUTPUT_FORMAT = "d MMM yyyy h:mm a";
 
 	// Lists to contain its respective keywords
 	protected static LinkedList<String> labelOperations;
