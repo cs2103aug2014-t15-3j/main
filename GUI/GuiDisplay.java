@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /*********************************************************************/
@@ -69,6 +71,11 @@ public class GuiDisplay {
 						"The following task has been added:\n\n" + 
 								firstItem.toString());
 				updateTable();
+				Dialog d = new Dialog(GuiMain.frameRemembra);
+				d.setMyTitle("Following Task Added Successfully!");
+				d.setMessage(firstItem.getName());
+				DialogFX.fadeIn(d);
+				
 				break;
 
 			case Operations.EDIT_OPERATION:
@@ -202,14 +209,14 @@ public class GuiDisplay {
 
 			GuiMain.myData = (DefaultTableModel) GuiMain.table_1.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-				
 				for(int i=0; i<allTasks.size(); i++) {
 					Task tempTask = allTasks.get(i);
 					Object[] data = new Object[7];
-
+					
 					data[1] = i+1;
 					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
-						data[2] = "-";
+						data[2] = "";
+						
 					} else {
 						data[2] = tempTask.getLabelName();
 					}
@@ -221,16 +228,23 @@ public class GuiDisplay {
 					data[5] = tempTask.getFormattedDeadline();
 					}
 					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						data[0] = Color.RED;//will b the color function
+						} else {
+							data[0] = Color.WHITE;
+						}
 					GuiMain.myData.addRow(data);
-//					if((!tempTask.getLabelName().equalsIgnoreCase("<equals>"))){
-//						data[0] = Color.BLUE;
-//					}
+					
+
 				}
 			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEADING);
 			
-		        
 			GuiMain.table_1.setModel(GuiMain.myData);
-
+			GuiMain.table_1.setDefaultRenderer(Color.class, new CellColorRenderer());
+			GuiMain.table_1.setDefaultRenderer(String.class, centerRenderer);
+			GuiMain.table_1.setDefaultRenderer(Integer.class, centerRenderer);
 		}
 	}
 	
@@ -267,7 +281,7 @@ public class GuiDisplay {
 	static void initialize(){
 		LogicMain logic = new LogicMain();
 		logic.processInput(";");
-		GuiMain.feedback.setText("Hi, there!\nThis is your feedback display.\n\nFor a quick guide, type help and\npress enter.\n\n\nAll of your tasks, if any, are displayed\non the left.\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo change tabs, press Alt+X\nwhere X is the tab no.");
+		GuiMain.feedback.setText("Hi, there!\nThis is your feedback display.\n\nFor a quick guide, type help and\npress enter.\n\n\nAll of your tasks, if any, are displayed on the left.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo change tabs, press Alt+X\nwhere X is the tab no.");
 		updateTable();
 	}
 }
