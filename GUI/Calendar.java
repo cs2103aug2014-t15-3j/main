@@ -60,7 +60,7 @@ public class Calendar{
 		cmbYear.setBounds(590, 347, 80, 20);
 		btnPrev.setBounds(225, 342, 50, 25);
 		btnNext.setBounds(390, 342, 50, 25);
-		stblCalendar.setBounds(5, 0, 669, 372);
+		stblCalendar.setBounds(5, 0, 739, 379);
 		
 		
 		//Get real month/year

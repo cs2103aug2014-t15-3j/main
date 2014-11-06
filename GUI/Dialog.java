@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JDialog;
@@ -38,10 +39,11 @@ public class Dialog extends JDialog {
 	
 	public Dialog(JFrame parent) {
 		super(parent, true);
-
+		this.setLayout(new GridBagLayout());
 		setUndecorated(true);
 		AWTUtilities.setWindowOpaque(this, false);
-
+		
+		
 		setTitle(title);
 
 		label = new JLabel();

@@ -20,7 +20,7 @@ import javax.swing.table.TableCellRenderer;
             if (table.getRowHeight(row) != getPreferredSize().height) {
                     table.setRowHeight(row, getPreferredSize().height);
             }
-            setFont(new Font("WhitneyBook", Font.PLAIN, 15));
+            setFont(new Font("WhitneyBook", Font.PLAIN, 13));
             return this;
         }
     }

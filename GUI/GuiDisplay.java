@@ -71,10 +71,10 @@ public class GuiDisplay {
 						"The following task has been added:\n\n" + 
 								firstItem.toString());
 				updateTable();
-				Dialog d = new Dialog(GuiMain.frameRemembra);
-				d.setMyTitle("Following Task Added Successfully!");
-				d.setMessage(firstItem.getName());
-				DialogFX.fadeIn(d);
+				//Dialog d = new Dialog(GuiMain.frameRemembra);
+				//d.setMyTitle("Following Task Added Successfully!");
+				//d.setMessage(firstItem.getName());
+				//DialogFX.fadeIn(d);
 				
 				break;
 
@@ -127,11 +127,12 @@ public class GuiDisplay {
 			String[] s = str.split(" ");
 			Item item = tasks.get(0);
 			GuiMain.feedback.setText("Search results for \"" + s[s.length-1] + "\":\n");
-			if(!item.getName().equals(Operations.EMPTY_MESSAGE)) {
+			if(!(item.getName().equals(Operations.EMPTY_MESSAGE))) {
 				for(int i=0; i<tasks.size(); i++) {
 					Item tempTask = tasks.get(i);
 					GuiMain.feedback.setText(GuiMain.feedback.getText() +
-							(i+1) + ".\n" + tempTask);
+							(i+1) + ".\n" + tempTask + "--------------------x-------------------\n");
+					
 				}
 			}
 			else {
@@ -141,7 +142,7 @@ public class GuiDisplay {
 		}
 
 	private static void deleteOperation(Item firstTask) {
-		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 			GuiMain.feedback.setText(
 					"The following task has been deleted:\n\n" + 
 							firstTask.toString());
@@ -154,11 +155,11 @@ public class GuiDisplay {
 
 	private static void viewOperation(LinkedList<Item> tasks, Item firstTask, String inputStr) {
 		GuiMain.feedback.setText("All tasks displayed below:\n");
-		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempTask);
+						(i+1) + ".\n" + tempTask  + "--------------------x-------------------\n");
 			}
 		}
 		else {
@@ -167,11 +168,11 @@ public class GuiDisplay {
 	}
 	private static void viewLabelsOperation(LinkedList<Item> labels, Item firstLabel) {
 		GuiMain.feedback.setText("All Labels Displayed Below:\n");
-		if(!firstLabel.getName().equals(Operations.EMPTY_MESSAGE)) {
+		if(!(firstLabel.getName().equals(Operations.EMPTY_MESSAGE))) {
 			for(int i=0; i<labels.size(); i++) {
 				Item tempLabel = labels.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempLabel);
+						(i+1) + ".\n" + tempLabel  + "--------------------x-------------------\n");
 			}
 		}
 		else {
