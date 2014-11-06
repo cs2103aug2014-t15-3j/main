@@ -229,7 +229,8 @@ public class GuiDisplay {
 					}
 					data[6] = tempTask.getDone();
 					if(!(data[2].toString().isEmpty())){
-						data[0] = Color.RED;//will b the color function
+						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;//will b the color function
 						} else {
 							data[0] = Color.WHITE;
 						}
