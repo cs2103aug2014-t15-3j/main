@@ -3,16 +3,20 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sun.util.calendar.BaseCalendar.Date;
+
 
 public class LogicMain {
 
 	// Constant variables
+	private final static int ONE_DAY = 1;
 	private final static String LOG_NAME = "LogicMain";
 	private final static String LOG_NAME_STORAGE_SAVE = "StorageSaveLog";
 
@@ -61,6 +65,8 @@ public class LogicMain {
 			
 			initializeSaveTimer();
 			intializeReminder();
+			scheduleReminderSystem();
+
 
 			isInitialize = true;
 
@@ -103,6 +109,7 @@ public class LogicMain {
 	 * This method initialize the timer for auto saving.
 	 */
 	private void initializeSaveTimer() {
+		
 		//Start Timer thread for saving file every 5 min
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
@@ -113,18 +120,73 @@ public class LogicMain {
 	 * This method initialize the reminder system.
 	 */
 	private void intializeReminder() {
+		
 		//Initiates the Reminder System
 		try {
-			 //don't worry about the warning thingy
-			//I'll remove it later on
-			LogicReminder.getInstance().regenReminderList(bufferTasksList);
+			LogicReminder.getInstance().initiateSingleton(bufferTasksList);
 			
 		} catch (ParseException e) {
 			
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.log(Level.WARNING, "Unable to initiate Reminder System");
 		}
 	}
+	
+	//@author A0112898U
+	/**
+	 * This method schedules the reminderSystem to refresh daily at 0000.
+	 */
+	private void scheduleReminderSystem() {
+	
+		Calendar todayDate = Calendar.getInstance();
+		todayDate.getTime();
+		
+		Calendar nextDayDate = Calendar.getInstance();
+		nextDayDate.setTime(todayDate.getTime());
+		nextDayDate.add(Calendar.DATE, ONE_DAY);
+		nextDayDate.set(Calendar.HOUR_OF_DAY, 00);
+		nextDayDate.set(Calendar.MINUTE, 00);
+		nextDayDate.set(Calendar.SECOND, 00);
+		
+		long initialDelay = nextDayDate.getTimeInMillis() - todayDate.getTimeInMillis();
+		
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(refreshReminderScheduler, initialDelay, 
+				86400000, TimeUnit.MILLISECONDS);
+	}
+	
+	
+	// @author A0112898U
+	/**
+	 * Periodic Reminder System refresh - refresh the reminder list
+	 * every day at 0000
+	 */
+	Runnable refreshReminderScheduler = new Runnable() {
+		   
+		Calendar cal = Calendar.getInstance();
+		
+	    public void run() {
+	    	
+	    	if(isInitialize) {
+
+	    		//Refresh the reminder system
+//	    		/timer.sc(LogicReminder.getInstance().regenReminderList(bufferTasksList),dailyResetTime,86400000);
+	    		try {
+				
+	    			LogicReminder.getInstance().regenReminderList(bufferTasksList);
+				
+	    		} catch (ParseException e) {
+					
+	    			e.printStackTrace();
+	    			logger.log(Level.WARNING, "Unable to reschedule Reminders");
+				}
+	    		
+	    		//Do Logging
+	    		storageLogger.log(Level.INFO, "Reminder System list refreshed" + cal.getTime());
+	    	}
+	    }
+	    
+	};
 	
 	// @author A0112898U
 	/**

@@ -29,6 +29,7 @@ public abstract class StorageBase{
 	
 	//Constants
 	protected static final String FILENAME_EXTENSION = ".ser";
+	protected static final String PATH_RELATIVE = "C:\\Remembra\\";
 	
 	//Objects
 	FileOutputStream fileOut;
@@ -63,7 +64,7 @@ public abstract class StorageBase{
 		
 		try {
 			
-			fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
+			fileOut = new FileOutputStream(PATH_RELATIVE+filename + FILENAME_EXTENSION);
 			
 		} catch (FileNotFoundException e) {
 			
@@ -118,7 +119,7 @@ public abstract class StorageBase{
 		
 		try {
 			
-			fileIn = new FileInputStream(filename + FILENAME_EXTENSION);			
+			fileIn = new FileInputStream(PATH_RELATIVE+filename + FILENAME_EXTENSION);			
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
