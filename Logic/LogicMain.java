@@ -45,7 +45,7 @@ public class LogicMain {
 		initialize();
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Checks if the component has been initialized. It will initialize the
 	 * component if it is not.
@@ -59,57 +59,19 @@ public class LogicMain {
 
 			undoTasks = new LinkedList<Task>(bufferTasksList);
 			
-			//Start Timer thread for saving file every 5 min
-			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-			executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
+			initializeSaveTimer();
+			intializeReminder();
 
 			isInitialize = true;
-			
-			//Initiates the Reminder System
-			try {
-				 //don't worry about the warning thingy
-				//I'll remove it later on
-				LogicReminder.getInstance().regenReminderList(bufferTasksList);
-				
-			} catch (ParseException e) {
-				
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
+
 			logger.log(Level.INFO, "Initializing is complete");
 		} else {
+			
 			logger.log(Level.INFO, "LogicMain has already been initiated");
 		}
-
-		
 	}
-	
-	// @author A0112898U
-	/**
-	 * Periodic Task Saving Functionality - saves the buffered input task
-	 * to storage every 5min
-	 */
-	Runnable storageSaveScheduler = new Runnable() {
-		   
-		Calendar cal = Calendar.getInstance();
-		
-	    public void run() {
-	    	
-	    	if(isInitialize) {
 
-	    		//Save the current buffered list
-	    		commitToStorage();
-
-	    		//Do Logging
-	    		storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
-	    	}
-	    }
-	    
-	};
-
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Retrieve tasks from Storage
 	 */
@@ -135,8 +97,59 @@ public class LogicMain {
 			logger.log(Level.WARNING, "Unable to retrieve labels from storage");
 		}
 	}
+	
+	//@author A0112898U
+	/**
+	 * This method initialize the timer for auto saving.
+	 */
+	private void initializeSaveTimer() {
+		//Start Timer thread for saving file every 5 min
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
+	}
+	
+	//@author A0112898U
+	/**
+	 * This method initialize the reminder system.
+	 */
+	private void intializeReminder() {
+		//Initiates the Reminder System
+		try {
+			 //don't worry about the warning thingy
+			//I'll remove it later on
+			LogicReminder.getInstance().regenReminderList(bufferTasksList);
+			
+		} catch (ParseException e) {
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// @author A0112898U
+	/**
+	 * Periodic Task Saving Functionality - saves the buffered input task
+	 * to storage every 5min
+	 */
+	Runnable storageSaveScheduler = new Runnable() {
+		   
+		Calendar cal = Calendar.getInstance();
+		
+	    public void run() {
+	    	
+	    	if(isInitialize) {
 
-	// @author A0111942N
+	    		//Save the current buffered list
+	    		commitToStorage();
+
+	    		//Do Logging
+	    		storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
+	    	}
+	    }
+	    
+	};
+
+	//@author A0111942N
 	/**
 	 * This method will process the user's input and perform either add, edit,
 	 * view, delete or save based on the input.
@@ -227,7 +240,7 @@ public class LogicMain {
 		return returnTasks;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method cleans up the input string by removing empty spaces and
 	 * breaks at the front and back of it.
@@ -236,7 +249,7 @@ public class LogicMain {
 		return input.trim();
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Pre-process the user's input and categories them into a list.
 	 */
@@ -294,7 +307,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-adding operation to return to GUI
 	 * 
@@ -337,7 +350,7 @@ public class LogicMain {
 		return returningItem;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method executes the "add" functionality of the program.
 	 * 
@@ -427,14 +440,20 @@ public class LogicMain {
 			// Include deadline to new task
 			newTask.editDeadline(deadline);
 
-			// Include reminder to new task
-			if (reminder != -1) {
-				newTask.editReminder(reminder);
-			}
-
 			// Include label to new task
 			if (labelID != -1) {
 				newTask.editLabel(labelID);
+			}
+			
+			// Include reminder to new task
+			if (reminder != -1) {
+				newTask.editReminder(reminder);
+
+				try {
+					LogicReminder.getInstance().addTaskTobeReminded(newTask);
+				} catch (ParseException e) {
+					logger.log(Level.WARNING, "Adding to reminder failed.");
+				}
 			}
 
 			newItem = newTask;
@@ -466,7 +485,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-editing operation to return to GUI
 	 * 
@@ -501,7 +520,7 @@ public class LogicMain {
 		return returningTasks;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method executes the "edit" functionality of the program.
 	 * 
@@ -749,7 +768,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-view operation to return to GUI
 	 * 
@@ -869,7 +888,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-delete operation to return to GUI
 	 * 
@@ -885,7 +904,7 @@ public class LogicMain {
 		return returningTasks;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method executes the "delete" functionality of the program.
 	 * 
@@ -954,7 +973,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-view operation to return to GUI
 	 * 
@@ -1059,7 +1078,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-undo operation to return to GUI
 	 * 
@@ -1088,7 +1107,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-saving operation to return to GUI
 	 * 
@@ -1108,7 +1127,7 @@ public class LogicMain {
 		return returningTasks;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method will contact StorageMain to export bufferTasksList and
 	 * bufferLabelsList into a text file.
@@ -1133,7 +1152,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process post-saving operation to return to GUI
 	 * 
@@ -1193,7 +1212,7 @@ public class LogicMain {
 	 * ========================================================================
 	 */
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Gets the time stamp (ID) of the label
 	 * 
@@ -1216,7 +1235,7 @@ public class LogicMain {
 		return labelID;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * @return Today 23:59 in millisecond
 	 */
@@ -1230,7 +1249,7 @@ public class LogicMain {
 		return endOfToday.getTimeInMillis();
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * Process date and time format
 	 * 
@@ -1316,7 +1335,7 @@ public class LogicMain {
 		tempCal.set(Calendar.MILLISECOND, 0);
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method checks if the input word is an operation.
 	 * 
@@ -1327,7 +1346,7 @@ public class LogicMain {
 		return word.startsWith(Operations.OPERATION);
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * @return All the labels in LinkedList
 	 */
@@ -1336,7 +1355,7 @@ public class LogicMain {
 		return bufferLabelsList;
 	}
 
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method returns the list of all the tasks.
 	 * 
@@ -1348,7 +1367,7 @@ public class LogicMain {
 		return bufferTasksList;
 	}
 	
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method returns the list of all uncompleted tasks.
 	 * 
@@ -1371,7 +1390,7 @@ public class LogicMain {
 		return returnTasks;
 	}
 	
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method returns the list of all done tasks.
 	 * 
@@ -1394,7 +1413,7 @@ public class LogicMain {
 		return returnTasks;
 	}
 	
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method returns the list of all floating tasks.
 	 * 
@@ -1417,7 +1436,7 @@ public class LogicMain {
 		return returnTasks;
 	}
 	
-	// @author A0111942N
+	//@author A0111942N
 	/**
 	 * This method returns the list of all floating tasks.
 	 * 

@@ -151,8 +151,18 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		String dateOutput = "";
 		
 		if (dateMs > 0) {
-			Date date = new Date(dateMs);
-			dateOutput = dateFormat.format(date);
+			
+			dateFormat.applyLocalizedPattern(Operations.YEAR_FORMAT);
+			String year = dateFormat.format(dateMs);
+			String thisYear = dateFormat.format( System.currentTimeMillis() );
+			
+			if( year.equals(thisYear) ) {
+				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_NO_YEAR_FORMAT);
+			} else {
+				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_FORMAT);
+			}
+
+			dateOutput = dateFormat.format(dateMs);
 		}
 		
 		return dateOutput;
