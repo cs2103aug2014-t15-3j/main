@@ -101,8 +101,6 @@ public class GuiMain {
 	static JTextArea feedback;
 	private JScrollPane scrollPane_1;
 
-	private static Operations operations1;
-	private LogicMain logic;
 	private JTabbedPane tabbedPane;
 	static JTable table_1;
 	private JPanel colorPanel1;
@@ -112,6 +110,7 @@ public class GuiMain {
 		"No.", "Label", "Task", "Description", "Deadline", "Done"
 	};
 	static DefaultTableModel myData;
+	static DefaultTableModel myDoneData;
 
 	static Object[][] objects = new Object[9][7];
 
@@ -126,10 +125,10 @@ public class GuiMain {
 	private JPanel panel_5;
 	private JPanel panel_6;
 	private PanelWithShadow doneTaskTableDisplay;
-	private JTextPane textPane;
-	private JTable table;
 	private JScrollPane scrollPaneDoneTable;
-	private JTable table_2;
+	static JTable table_2;
+	private JTextPane txtpnIdLabelTask_1;
+	private JTextPane txtpnIdLabelTask;
 
 	/**
 	 * Launch the application.
@@ -174,7 +173,7 @@ public class GuiMain {
 				
 				// Here's a sample for notification, this seemed like the appropriate place to call it
 				
-				//new Notification("Sample Task", "Some Description", "Due on 12 November", "", "").display();
+				//new Notification("Sample Task", "Some Description", "12 November", "8 Dec, 9 PM", "9 Dec 9 PM").display();
 				
 			}
 		});
@@ -184,7 +183,7 @@ public class GuiMain {
 	 * Create the application.
 	 */
 	public GuiMain() {
-		Splash s = new Splash();
+		new Splash();
 		initialize();
 		GuiDisplay.initialize();
 		
@@ -260,7 +259,7 @@ public class GuiMain {
 
 		panel_4 = new JPanel();
 		panel_4.setBackground(new Color(204, 0, 51));
-		panel_4.setBounds(778, 80, 28, 30);
+		panel_4.setBounds(780, 80, 28, 30);
 		frameRemembra.getContentPane().add(panel_4);
 
 		JLayeredPane displayPanel = new JLayeredPane();
@@ -279,13 +278,10 @@ public class GuiMain {
 		tableDisplay = new PanelWithShadow(5);
 		tableDisplay.setForeground(Color.BLACK);
 		tableDisplay.setBackground(Color.WHITE);
-		tabbedPane.addTab("Table", null, tableDisplay, null);
+		tabbedPane.addTab("To-do", null, tableDisplay, null);
 
 		myData = new DefaultTableModel(objects, tableHeaders){
-			Class[] columnTypes = new Class[] {
-					Color.class, Object.class, Object.class, Object.class, Object.class, Object.class, Boolean.class
-				};
-				public Class getColumnClass(int columnIndex) {
+			public Class getColumnClass(int columnIndex) {
 			        int rowIndex = 0;
 			        Object o = getValueAt(rowIndex, columnIndex);
 			        if (o == null) {
@@ -296,6 +292,7 @@ public class GuiMain {
 				}
 			};
 		table_1 = new JTable(myData);
+		table_1.setEnabled(false);
 		table_1.setRequestFocusEnabled(false);
 		table_1.setFocusable(false);
 		table_1.setFocusTraversalKeysEnabled(false);
@@ -310,19 +307,20 @@ public class GuiMain {
 		table_1.getColumnModel().getColumn(0).setPreferredWidth(20);
 		table_1.getColumnModel().getColumn(1).setPreferredWidth(35);
 		table_1.getColumnModel().getColumn(2).setPreferredWidth(90);
-		table_1.getColumnModel().getColumn(3).setPreferredWidth(150);
+		table_1.getColumnModel().getColumn(3).setPreferredWidth(140);
 		table_1.getColumnModel().getColumn(4).setPreferredWidth(260);
 		table_1.getColumnModel().getColumn(5).setPreferredWidth(140);
 		table_1.getColumnModel().getColumn(6).setPreferredWidth(20);
 		
 		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
-		JTextPane txtpnIdLabelTask = new JTextPane();
-		txtpnIdLabelTask.setText("     ID     LABEL          TASK                        DESCRIPTION                                   DEADLINE");
+		txtpnIdLabelTask = new JTextPane();
+		txtpnIdLabelTask.setDisabledTextColor(new Color(204, 0, 51));
+		txtpnIdLabelTask.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
 		txtpnIdLabelTask.setForeground(new Color(204, 0, 0));
 		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
 		txtpnIdLabelTask.setEditable(false);
-		txtpnIdLabelTask.setBounds(5, 4, 739, 30);
+		txtpnIdLabelTask.setBounds(5, 4, 623, 30);
 		tableDisplay.add(txtpnIdLabelTask);
 
 		JScrollPane scrollPaneTable = new JScrollPane(table_1);
@@ -340,17 +338,26 @@ public class GuiMain {
 		doneTaskTableDisplay.setLayout(null);
 		doneTaskTableDisplay.setBackground(Color.WHITE);
 		tabbedPane.addTab("Done", null, doneTaskTableDisplay, null);
-		
-		JTextPane txtpnIdLabelTask2 = new JTextPane();
-		txtpnIdLabelTask.setText("     ID     LABEL          TASK                        DESCRIPTION                                   DEADLINE");
+		txtpnIdLabelTask.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
 		txtpnIdLabelTask.setForeground(new Color(204, 0, 0));
 		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
 		txtpnIdLabelTask.setEditable(false);
 		txtpnIdLabelTask.setBounds(5, 4, 739, 30);
-		doneTaskTableDisplay.add(txtpnIdLabelTask2);
 		
-		
-		table_2 = new JTable(myData);
+		myDoneData = new DefaultTableModel(objects, tableHeaders){
+			public Class getColumnClass(int columnIndex) {
+			        int rowIndex = 0;
+			        Object o = getValueAt(rowIndex, columnIndex);
+			        if (o == null) {
+			          return Object.class;
+			        } else {
+			          return o.getClass();
+			        }
+				}
+			};
+			
+		table_2 = new JTable(myDoneData);
+		table_2.setEnabled(false);
 		table_2.setRequestFocusEnabled(false);
 		table_2.setFocusable(false);
 		table_2.setFocusTraversalKeysEnabled(false);
@@ -365,11 +372,20 @@ public class GuiMain {
 		table_2.getColumnModel().getColumn(0).setPreferredWidth(20);
 		table_2.getColumnModel().getColumn(1).setPreferredWidth(35);
 		table_2.getColumnModel().getColumn(2).setPreferredWidth(90);
-		table_2.getColumnModel().getColumn(3).setPreferredWidth(150);
+		table_2.getColumnModel().getColumn(3).setPreferredWidth(140);
 		table_2.getColumnModel().getColumn(4).setPreferredWidth(260);
 		table_2.getColumnModel().getColumn(5).setPreferredWidth(140);
 		table_2.getColumnModel().getColumn(6).setPreferredWidth(20);
-		table_2.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		txtpnIdLabelTask_1 = new JTextPane();
+		txtpnIdLabelTask_1.setBounds(5, 4, 739, 30);
+		doneTaskTableDisplay.add(txtpnIdLabelTask_1);
+		txtpnIdLabelTask_1.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		txtpnIdLabelTask_1.setForeground(new Color(204, 0, 0));
+		txtpnIdLabelTask_1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		txtpnIdLabelTask_1.setEditable(false);
+		txtpnIdLabelTask_1.setDisabledTextColor(new Color(204, 0, 51));
 		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		scrollPaneDoneTable = new JScrollPane(table_2);
@@ -386,7 +402,8 @@ public class GuiMain {
 		Calendar.createCalendar(calendarPane);
 		calendarPane.setLayout(null);
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.setMnemonicAt(2, KeyEvent.VK_2);
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 		colorPanel1 = new JPanel();
 		colorPanel1.setBounds(35, 508, 12, 76);

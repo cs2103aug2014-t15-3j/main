@@ -41,7 +41,7 @@ public class Notification  extends JDialog {
 	public Notification(String task, String desc, String dueDate, String s, String e){
 		taskName = task;
 		taskDesc = desc;
-		deadline = dueDate;
+		deadline = "Deadline: " + dueDate;
 		start = s;
 		end = e;
 	}
@@ -88,8 +88,8 @@ public class Notification  extends JDialog {
         //(assuming there is no deadline but a time slot instead)
     	if (!(start.isEmpty()) || !(end.isEmpty())) {
     		
-    		JLabel startlb = new JLabel(start);
-    		JLabel endlb = new JLabel(end);
+    		JLabel startlb = new JLabel("From: " + start);
+    		JLabel endlb = new JLabel("Till :" + end);
     		JPanel panel4 = new JPanel();
     		
     		this.add(panel4);

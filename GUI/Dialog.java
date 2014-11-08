@@ -21,24 +21,21 @@ public class Dialog extends JDialog {
 	public String title;
 	static String msg;
 	private JLabel label;
-	
-	public void setMyTitle(String title){
-		this.title = title;
-	}
-	public String getMyTitle (){
-		return title;
-	}
+	private String command;
+
 	public String getMyMsg(){
 		return msg;
 	}
 	
-	public void setMessage(String msg){
-		Dialog.msg = msg;
-		label.setText(msg);
-	}
-	
-	public Dialog(JFrame parent) {
+	public Dialog(JFrame parent, String dialogBoxTitle, String message, String cd){
 		super(parent, true);
+		title = dialogBoxTitle;
+		msg = message;
+		command = cd;
+		
+	}
+	public void displayDialog() {
+		
 		this.setLayout(new GridBagLayout());
 		setUndecorated(true);
 		AWTUtilities.setWindowOpaque(this, false);
@@ -69,7 +66,7 @@ public class Dialog extends JDialog {
 
 		getContentPane().add(panel);
 
-		DialogFX.createDialogBackPanel(this, parent.getContentPane());
+		DialogFX.createDialogBackPanel(this, GuiMain.frameRemembra.getContentPane(), command);
 		DialogFX.addEscapeToCloseSupport(this, true);
 	}
 }
