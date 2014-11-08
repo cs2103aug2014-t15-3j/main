@@ -63,10 +63,15 @@ public class DialogFX {
 			@Override
 			public void eventDispatched(AWTEvent e, JLayer<? extends Container> l) {
 				if (e instanceof KeyEvent && ((KeyEvent) e).getKeyCode() == KeyEvent.VK_ESCAPE) {
-					if (closing) return;
+					if (closing) {
+						return;
+					}
 					closing = true;
-					if (fadeOnClose) fadeOut(dialog);
-					else dialog.dispose();
+					if (fadeOnClose) {
+						fadeOut(dialog);
+					}else {
+						dialog.dispose();
+					}
 				}
 			}
 		};
@@ -78,7 +83,7 @@ public class DialogFX {
 	/**
 	 * Creates an animation to fade the dialog opacity from 0 to 1.
 	 */
-	static void fadeIn(final JDialog dialog) {
+	static void fadeIn(JDialog dialog) {
 		final Timer timer = new Timer(0, null);
 		timer.setRepeats(true);
 		timer.addActionListener(new ActionListener() {
@@ -100,7 +105,7 @@ public class DialogFX {
 	/**
 	 * Creates an animation to fade the dialog opacity from 1 to 0.
 	 */
-	static void fadeOut(final JDialog dialog) {
+	static void fadeOut(JDialog dialog) {
 		final Timer timer = new Timer(10, null);
 		timer.setRepeats(true);
 		timer.addActionListener(new ActionListener() {

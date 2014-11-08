@@ -314,7 +314,7 @@ public class GuiMain {
 		table_1.getColumnModel().getColumn(4).setPreferredWidth(260);
 		table_1.getColumnModel().getColumn(5).setPreferredWidth(140);
 		table_1.getColumnModel().getColumn(6).setPreferredWidth(20);
-		table_1.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+		
 		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JTextPane txtpnIdLabelTask = new JTextPane();

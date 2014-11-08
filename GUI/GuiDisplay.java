@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -31,9 +32,6 @@ public class GuiDisplay {
 		case "":
 			fileContent = readFile("media/HelpText.txt");
 			GuiMain.feedback.setText(fileContent);
-			//Something I am experimenting with for better GUI (for later)
-			//Dialog dialog = new Dialog(GuiMain.frameRemembra);
-			//DialogFX.fadeIn(dialog);
 			break;
 		case Operations.ADD_OPERATION:
 			fileContent = readFile("media/HelpAdd.txt");
@@ -59,7 +57,7 @@ public class GuiDisplay {
 		LinkedList<Item> tasks = logic.processInput(inputStr);
 
 
-		assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
+		//assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
 		if(!tasks.isEmpty()) {
 
 			Item firstItem = tasks.get(0);
@@ -71,10 +69,11 @@ public class GuiDisplay {
 						"The following task has been added:\n\n" + 
 								firstItem.toString());
 				updateTable();
-				//Dialog d = new Dialog(GuiMain.frameRemembra);
-				//d.setMyTitle("Following Task Added Successfully!");
-				//d.setMessage(firstItem.getName());
-				//DialogFX.fadeIn(d);
+//				Dialog d = new Dialog(GuiMain.frameRemembra);
+//				d.setMyTitle("Following Task Added Successfully!");
+//				d.setMessage(firstItem.getName());
+//				DialogFX.fadeIn(d);
+//				DialogFX.fadeOut((JDialog)d);
 				
 				break;
 
@@ -223,11 +222,13 @@ public class GuiDisplay {
 					}
 					data[3] = tempTask.getName();
 					data[4] = tempTask.getDescription();
+					
 					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + tempTask.getFormattedEnd();
+						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
 					}else {
 					data[5] = tempTask.getFormattedDeadline();
 					}
+					
 					data[6] = tempTask.getDone();
 					if(!(data[2].toString().isEmpty())){
 						Color color = LogicMain.getLabelColor(tempTask.getLabel());
@@ -237,16 +238,21 @@ public class GuiDisplay {
 						}
 					GuiMain.myData.addRow(data);
 					
-
+					
 				}
 			}
 			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 			centerRenderer.setHorizontalAlignment(JLabel.LEADING);
 			
 			GuiMain.table_1.setModel(GuiMain.myData);
+			GuiMain.table_1.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.table_1.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.table_1.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
 			GuiMain.table_1.setDefaultRenderer(Color.class, new CellColorRenderer());
 			GuiMain.table_1.setDefaultRenderer(String.class, centerRenderer);
 			GuiMain.table_1.setDefaultRenderer(Integer.class, centerRenderer);
+			
+			
 		}
 	}
 	
