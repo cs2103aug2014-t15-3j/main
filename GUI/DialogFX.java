@@ -21,8 +21,8 @@ import javax.swing.Timer;
 import javax.swing.plaf.LayerUI;
 
 /**
- * Collection of utility methods for various stuff with swing applications.
- * @author Aurelien Ribon | http://www.aurelienribon.com
+ * 
+ * A0116160W
  */
 public class DialogFX {
 	/**
@@ -32,16 +32,16 @@ public class DialogFX {
 	 * panel, and a rectangular shadow is placed behind the dialog.
 	 */
 	static void createDialogBackPanel(Dialog dialog, Component parent, String command) {
-		DialogBackPanel newContentPane = new DialogBackPanel(dialog, dialog.getTitle(), command);
+		DialogBackPanel newContentPane = new DialogBackPanel(dialog, command);
 		newContentPane.create();
 		dialog.setContentPane(newContentPane);
 		dialog.setSize(GuiMain.frameRemembra.getSize());
 		dialog.setLocation(GuiMain.frameRemembra.getLocationOnScreen());
-		}
+	}
 
 	/**
 	 * Adds a glass layer to the dialog to intercept all key events. If the
-	 * escpace key is pressed, the dialog is disposed (either with a fadeout
+	 * escape key is pressed, the dialog is disposed (either with a fadeout
 	 * animation, or directly).
 	 */
 	@SuppressWarnings("serial")
@@ -94,7 +94,7 @@ public class DialogFX {
 				dialog.setOpacity(Math.min(opacity, 1));
 				if (opacity >= 1) {
 					timer.stop();
-					}
+				}
 			}
 		});
 
@@ -112,79 +112,17 @@ public class DialogFX {
 		timer.addActionListener(new ActionListener() {
 			private float opacity = 1;
 			@Override public void actionPerformed(ActionEvent e) {
-				opacity -= 0.15f;
+				opacity -= 0.25f;
 				dialog.setOpacity(Math.max(opacity, 0));
 				if (opacity <= 0) {
 					timer.stop();
-					dialog.dispose();
+					dialog.setVisible(false);
 				}
 			}
 		});
 
 		dialog.setOpacity(1);
 		timer.start();
-		dialog.setVisible(false);
-	}
 
-	@SuppressWarnings("serial")
-	// -------------------------------------------------------------------------
-	// Helpers
-	// -------------------------------------------------------------------------
-
-	static class DialogBackPanel extends JPanel {
-		private final Paint fill = new Color(0x000000, true);
-		private final ImageIcon addImage = new ImageIcon(DialogFX.class.getResource("added.png"));
-		private final ImageIcon deleteImage = new ImageIcon(DialogFX.class.getResource("delete.png"));
-		private final ImageIcon editImage = new ImageIcon(DialogFX.class.getResource("edited.png"));
-		private final ImageIcon saveImage = new ImageIcon(DialogFX.class.getResource("save.png"));
-		private final JComponent cmp;
-		private final JLabel titlelb;
-		private final JLabel info = new JLabel("Hit 'ESC' to close the dialog");
-		private final Dialog d;
-		public DialogBackPanel(Dialog dialog, String t, String command){
-			d = dialog;
-			titlelb = new JLabel(t);
-			this.cmp = (JComponent) d.getContentPane();
-		}
-		public void create() {
-			
-			
-			setOpaque(false);
-			setLayout(null);
-			add(cmp);
-			add(titlelb);
-			add(info);
-
-			cmp.setBorder(BorderFactory.createLineBorder(new Color(204,0,51), 5));
-			titlelb.setFont(new Font("SquareFont", Font.PLAIN, 26));
-			titlelb.setForeground(Color.WHITE);
-			info.setForeground(Color.WHITE);
-			//String s = dialog.getMyTitle();
-			//System.out.print(s);
-			//titlelb.setText("Task Added!");
-			titlelb.setSize(titlelb.getPreferredSize());
-			info.setSize(info.getPreferredSize());
-			cmp.setSize(cmp.getPreferredSize());
-		}
-
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			int w = getWidth();
-			int h = getHeight();
-
-			int shadowX = -70;//31-50;
-			int shadowY = -70;//501-25;
-			cmp.setLocation(34, 501);
-			titlelb.setLocation(34, 501-titlelb.getHeight());
-			info.setLocation(34+cmp.getWidth()-info.getWidth(), 501-info.getHeight());
-
-			Graphics2D gg = (Graphics2D) g.create();
-			gg.setPaint(fill);
-			gg.fillRect(0, 0, w, h);
-			gg.drawImage(addImage.getImage(), shadowX, shadowY, GuiMain.frameRemembra.getSize().width+70, (int)GuiMain.frameRemembra.getSize().getHeight()+70 , null);
-			gg.dispose();
-		}
 	}
 }

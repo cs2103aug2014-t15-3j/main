@@ -170,11 +170,11 @@ public class GuiMain {
 
 
 				});
-				
+
 				// Here's a sample for notification, this seemed like the appropriate place to call it
-				
+
 				//new Notification("Sample Task", "Some Description", "12 November", "8 Dec, 9 PM", "9 Dec 9 PM").display();
-				
+
 			}
 		});
 	}
@@ -186,8 +186,8 @@ public class GuiMain {
 		new Splash();
 		initialize();
 		GuiDisplay.initialize();
-		
-		}
+
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -239,7 +239,7 @@ public class GuiMain {
 		frameRemembra.setBounds(100, 100, 1109, 704);
 		frameRemembra.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frameRemembra.getContentPane().setLayout(null);
-		
+
 
 		panel_7 = new JPanel();
 		panel_7.setBounds(31, 465, 752, 5);
@@ -282,15 +282,15 @@ public class GuiMain {
 
 		myData = new DefaultTableModel(objects, tableHeaders){
 			public Class getColumnClass(int columnIndex) {
-			        int rowIndex = 0;
-			        Object o = getValueAt(rowIndex, columnIndex);
-			        if (o == null) {
-			          return Object.class;
-			        } else {
-			          return o.getClass();
-			        }
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
 				}
-			};
+			}
+		};
 		table_1 = new JTable(myData);
 		table_1.setEnabled(false);
 		table_1.setRequestFocusEnabled(false);
@@ -311,9 +311,9 @@ public class GuiMain {
 		table_1.getColumnModel().getColumn(4).setPreferredWidth(260);
 		table_1.getColumnModel().getColumn(5).setPreferredWidth(140);
 		table_1.getColumnModel().getColumn(6).setPreferredWidth(20);
-		
+
 		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		txtpnIdLabelTask = new JTextPane();
 		txtpnIdLabelTask.setDisabledTextColor(new Color(204, 0, 51));
 		txtpnIdLabelTask.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
@@ -330,7 +330,7 @@ public class GuiMain {
 		scrollPaneTable.setBorder(null);
 		table_1.setFillsViewportHeight(true);
 		displayPanel.add(tabbedPane);
-		
+
 		doneTaskTableDisplay = new PanelWithShadow(5);
 		doneTaskTableDisplay.setForeground(Color.BLACK);
 		doneTaskTableDisplay.setPaintBorderInsets(true);
@@ -343,19 +343,19 @@ public class GuiMain {
 		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
 		txtpnIdLabelTask.setEditable(false);
 		txtpnIdLabelTask.setBounds(5, 4, 739, 30);
-		
+
 		myDoneData = new DefaultTableModel(objects, tableHeaders){
 			public Class getColumnClass(int columnIndex) {
-			        int rowIndex = 0;
-			        Object o = getValueAt(rowIndex, columnIndex);
-			        if (o == null) {
-			          return Object.class;
-			        } else {
-			          return o.getClass();
-			        }
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
 				}
-			};
-			
+			}
+		};
+
 		table_2 = new JTable(myDoneData);
 		table_2.setEnabled(false);
 		table_2.setRequestFocusEnabled(false);
@@ -377,7 +377,7 @@ public class GuiMain {
 		table_2.getColumnModel().getColumn(5).setPreferredWidth(140);
 		table_2.getColumnModel().getColumn(6).setPreferredWidth(20);
 		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		txtpnIdLabelTask_1 = new JTextPane();
 		txtpnIdLabelTask_1.setBounds(5, 4, 739, 30);
 		doneTaskTableDisplay.add(txtpnIdLabelTask_1);
@@ -395,7 +395,7 @@ public class GuiMain {
 		table_2.setFillsViewportHeight(true);
 		doneTaskTableDisplay.add(scrollPaneDoneTable);
 		scrollPaneDoneTable.setViewportView(table_2);
-		
+
 		calendarPane = new PanelWithShadow(5);
 		tabbedPane.addTab("Calendar", null, calendarPane, null);
 		calendarPane.setBorder(BorderFactory.createTitledBorder("Calendar"));
@@ -483,7 +483,7 @@ public class GuiMain {
 		feedback.setRows(4);
 		feedback.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
 		feedback.setEditable(false);
-		
+
 		JPanel panel_8 = new JPanel();
 		panel_8.setBackground(new Color(51, 51, 51));
 		panel_8.setBounds(5, 5, 244, 539);
@@ -521,7 +521,7 @@ public class GuiMain {
 		frameRemembra.getContentPane().add(panel_1);
 		SpringLayout sl_panel_1 = new SpringLayout();
 		panel_1.setLayout(sl_panel_1);
-		
+
 		JCheckBox chckbxStillIncomplete = new JCheckBox("Still Incomplete");
 		sl_panel_1.putConstraint(SpringLayout.NORTH, chckbxStillIncomplete, 465, SpringLayout.NORTH, panel_1);
 		sl_panel_1.putConstraint(SpringLayout.WEST, chckbxStillIncomplete, 547, SpringLayout.WEST, panel_1);
@@ -533,7 +533,7 @@ public class GuiMain {
 		chckbxStillIncomplete.setEnabled(false);
 		chckbxStillIncomplete.setBackground(SystemColor.controlHighlight);
 		panel_1.add(chckbxStillIncomplete);
-		
+
 		JCheckBox chckbxTasksDone = new JCheckBox("Tasks Done!");
 		sl_panel_1.putConstraint(SpringLayout.NORTH, chckbxTasksDone, 465, SpringLayout.NORTH, panel_1);
 		sl_panel_1.putConstraint(SpringLayout.WEST, chckbxTasksDone, 673, SpringLayout.WEST, panel_1);
@@ -546,7 +546,7 @@ public class GuiMain {
 		chckbxTasksDone.setBackground(SystemColor.controlHighlight);
 		chckbxTasksDone.setSelected(true);
 		chckbxTasksDone.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		//To prevent autoscrolling
 		DefaultCaret caret1 = (DefaultCaret) feedback.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -578,7 +578,7 @@ public class GuiMain {
 		frameRemembra.setLocation(dim.width/2-frameRemembra.getSize().width/2, dim.height/2-frameRemembra.getSize().height/2);
 
 	}
-	
+
 
 	//@author A0112898U
 	/**
