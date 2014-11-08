@@ -81,7 +81,7 @@ public class LogicReminder {
 	 * 
 	 * @param tasks The list of tasks to refresh the system with.
 	 */
-	public static void regenReminderList(LinkedList<Task> tasks) {
+	public void regenReminderList(LinkedList<Task> tasks) {
 		//Loop through all tasks & add only tasks with today's reminder date
 		for (Task t:tasks) {
 			//Checks for today's task and add task.
@@ -172,7 +172,9 @@ public class LogicReminder {
 
 	//A0112898U
 	/**
-	 * Stops the scheduled alarm for the input task
+	 * API function that is to be called when new tasks are deleted from
+	 * the Logic System buffered tasks list. This function will then 
+	 * stops the scheduled alarm for the input(deleted) task.
 	 * 
 	 * @param taskToStop Task that alarm should be stop.
 	 */
@@ -188,6 +190,21 @@ public class LogicReminder {
 		}
 	}
 
+	
+	//A0112898U
+	/**
+	 * Getter method to get the collated ReminderTasks
+	 *  
+	 * @return tempList Returns a newList popuplate with
+	 * the collated tasks from the Singleton.
+	 */
+	public LinkedList<ReminderTask> getReminderList() {
+		LinkedList<ReminderTask> tempList = 
+				new LinkedList<ReminderTask>(taskToBeReminded);
+		return tempList;
+	}
+	
+		
 	/**************************************************************************/
 	/**************************************************************************/
 	/***********************      PRIVATEs      *******************************/
@@ -235,8 +252,6 @@ public class LogicReminder {
 	}
 	
 
-	
-	
 	//@author A0112898U
 	/**
 	 * Checks if the task to be added is same as the existed task.
@@ -255,54 +270,6 @@ public class LogicReminder {
 		}
 		return false;
 	}
-	
-	
-	
-	public static void main(String[] args) throws ParseException {
-	
-		/*																//2359 format
-		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-		Date date1 = isoFormat.parse("2014-11-03T16:13:30");
-		Task t1 = new Task("hi 1", "lalal", 123123, date1.getTime() ,date1.getTime());
-		
-		Date date2 = isoFormat.parse("2014-11-04T02:53:00");
-		Task t2 = new Task("hi 2", "lalal", 123123, date2.getTime() ,date2.getTime());
-
-		Date date3 = isoFormat.parse("2014-11-03T15:08:00");
-		Task t3 = new Task("hi 3", "lalal", 123123, date3.getTime() ,date3.getTime());
-		
-		Date date4 = isoFormat.parse("2014-11-04T03:33:40");
-		Task t4 = new Task("hi 4", "lalal", 123123, date4.getTime() ,date4.getTime());		
-			
-		
-		LinkedList<Task> isTasks = new LinkedList<Task>();
-		isTasks.add(t1);
-		isTasks.add(t2);
-		isTasks.add(t3);
-		isTasks.add(t4);
-		
-		regenReminderList(isTasks);
-		*/
-		
-		//START ADDING HERE!
-		LogicMain logicMain = new LogicMain();
-		logicMain.processInput(";add Samuel is awesome ;i lalalalal ;deadline 4 nov ;remind 04 11 2014 7 11 pm");
-		
-		regenReminderList(logicMain.getAllTasks());
-		
-		LinkedList<Task> listTasks = new LinkedList<Task>(logicMain.getAllTasks());
-		
-		for(Task t:listTasks){
-
-			
-			Date d = new Date(t.getReminder());
-			
-			System.out.println(d.toString());
-		}
-		
-	}
-
 }
 
 

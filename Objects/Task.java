@@ -275,17 +275,6 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public void setIsReminded(){
 		isReminded = true;
 	}
-	
-	@Override
-	public boolean equals(Object object) {
-
-		if (object instanceof Task) {
-			Task task = (Task) object;
-			return timeStamp == task.getTimeStamp();
-		} else {
-			return false;
-		}
-	}
 
 	@Override
 	public String toString() {

@@ -55,9 +55,11 @@ class ReminderTask extends TimerTask {
 	 * * scheduled into timer.schedule.
 	 */
 	public void run() {		
-		new Notification("Here's your reminder for : \n" + taskToRemind.getName(),
-			taskToRemind.getDescription(), 
-			"Due on " + taskToRemind.getFormattedDeadline(), "", "").display();
+		//new Notification("Here's your reminder for : \n" + taskToRemind.getName(),d
+		//	taskToRemind.getDescription(), 
+		//	"Due on " + taskToRemind.getFormattedDeadline(), "", "").display();
+		
+		System.out.println("Remind!");
 	}
 	
 	
