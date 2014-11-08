@@ -1,9 +1,13 @@
 Commands:
 
-;add - Add tasks	         
+;add - Add tasks
 ;view - View Tasks
-;delete - Delete Tasks     
+;delete - Delete Tasks
 ;edit - Edit Tasks
+;undo - Undo last action
+;save - To save manually
+;label - To work on labels
+
 
 If you want an in-depth help, 
 simply type <help XXX> where 

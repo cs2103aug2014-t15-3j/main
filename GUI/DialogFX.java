@@ -31,8 +31,9 @@ public class DialogFX {
 	 * The title of the dialog is displayed in a custom fashion over the dialog
 	 * panel, and a rectangular shadow is placed behind the dialog.
 	 */
-	static void createDialogBackPanel(Dialog dialog, Component parent) {
-		DialogBackPanel newContentPane = new DialogBackPanel(dialog);
+	static void createDialogBackPanel(Dialog dialog, Component parent, String command) {
+		DialogBackPanel newContentPane = new DialogBackPanel(dialog, dialog.getTitle(), command);
+		newContentPane.create();
 		dialog.setContentPane(newContentPane);
 		dialog.setSize(GuiMain.frameRemembra.getSize());
 		dialog.setLocation(GuiMain.frameRemembra.getLocationOnScreen());
@@ -40,7 +41,7 @@ public class DialogFX {
 
 	/**
 	 * Adds a glass layer to the dialog to intercept all key events. If the
-	 * espace key is pressed, the dialog is disposed (either with a fadeout
+	 * escpace key is pressed, the dialog is disposed (either with a fadeout
 	 * animation, or directly).
 	 */
 	@SuppressWarnings("serial")
@@ -122,6 +123,7 @@ public class DialogFX {
 
 		dialog.setOpacity(1);
 		timer.start();
+		dialog.setVisible(false);
 	}
 
 	@SuppressWarnings("serial")
@@ -131,29 +133,36 @@ public class DialogFX {
 
 	static class DialogBackPanel extends JPanel {
 		private final Paint fill = new Color(0x000000, true);
-		private final ImageIcon shadowImage = new ImageIcon(DialogFX.class.getResource("dialogShadow.png"));
+		private final ImageIcon addImage = new ImageIcon(DialogFX.class.getResource("added.png"));
+		private final ImageIcon deleteImage = new ImageIcon(DialogFX.class.getResource("delete.png"));
+		private final ImageIcon editImage = new ImageIcon(DialogFX.class.getResource("edited.png"));
+		private final ImageIcon saveImage = new ImageIcon(DialogFX.class.getResource("save.png"));
 		private final JComponent cmp;
-		private final JLabel title = new JLabel();
+		private final JLabel titlelb;
 		private final JLabel info = new JLabel("Hit 'ESC' to close the dialog");
-
-
-		public DialogBackPanel(Dialog dialog) {
-			this.cmp = (JComponent) dialog.getContentPane();
-
+		private final Dialog d;
+		public DialogBackPanel(Dialog dialog, String t, String command){
+			d = dialog;
+			titlelb = new JLabel(t);
+			this.cmp = (JComponent) d.getContentPane();
+		}
+		public void create() {
+			
+			
 			setOpaque(false);
 			setLayout(null);
 			add(cmp);
-			add(title);
+			add(titlelb);
 			add(info);
 
 			cmp.setBorder(BorderFactory.createLineBorder(new Color(204,0,51), 5));
-			title.setFont(new Font("SquareFont", Font.PLAIN, 26));
-			title.setForeground(Color.WHITE);
+			titlelb.setFont(new Font("SquareFont", Font.PLAIN, 26));
+			titlelb.setForeground(Color.WHITE);
 			info.setForeground(Color.WHITE);
 			//String s = dialog.getMyTitle();
 			//System.out.print(s);
-			title.setText("Task Added!");
-			title.setSize(title.getPreferredSize());
+			//titlelb.setText("Task Added!");
+			titlelb.setSize(titlelb.getPreferredSize());
 			info.setSize(info.getPreferredSize());
 			cmp.setSize(cmp.getPreferredSize());
 		}
@@ -168,13 +177,13 @@ public class DialogFX {
 			int shadowX = -70;//31-50;
 			int shadowY = -70;//501-25;
 			cmp.setLocation(34, 501);
-			title.setLocation(34, 501-title.getHeight());
+			titlelb.setLocation(34, 501-titlelb.getHeight());
 			info.setLocation(34+cmp.getWidth()-info.getWidth(), 501-info.getHeight());
 
 			Graphics2D gg = (Graphics2D) g.create();
 			gg.setPaint(fill);
 			gg.fillRect(0, 0, w, h);
-			gg.drawImage(shadowImage.getImage(), shadowX, shadowY, GuiMain.frameRemembra.getSize().width+70, (int)GuiMain.frameRemembra.getSize().getHeight()+70 , null);
+			gg.drawImage(addImage.getImage(), shadowX, shadowY, GuiMain.frameRemembra.getSize().width+70, (int)GuiMain.frameRemembra.getSize().getHeight()+70 , null);
 			gg.dispose();
 		}
 	}

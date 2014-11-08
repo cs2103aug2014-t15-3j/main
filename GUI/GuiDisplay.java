@@ -62,25 +62,24 @@ public class GuiDisplay {
 
 			Item firstItem = tasks.get(0);
 			String state = firstItem.getState();
-			System.out.print(state);
+			System.out.print(state); //For testing
 			switch (state){
 			case Operations.ADD_OPERATION:
 				GuiMain.feedback.setText(
 						"The following task has been added:\n\n" + 
 								firstItem.toString());
 				updateTable();
-//				Dialog d = new Dialog(GuiMain.frameRemembra);
-//				d.setMyTitle("Following Task Added Successfully!");
-//				d.setMessage(firstItem.getName());
+//				Dialog d = new Dialog(GuiMain.frameRemembra, "Following Task Added Successfully!", firstItem.getName());
+//				d.displayDialog();
 //				DialogFX.fadeIn(d);
-//				DialogFX.fadeOut((JDialog)d);
+//				DialogFX.fadeOut(d);
 				
 				break;
 
 			case Operations.EDIT_OPERATION:
 				GuiMain.feedback.setText(
 						"The following task has been edited:\n\n" + 
-								firstItem.toString());
+								firstItem.toString() + "\n\n\nEnter ; to view all tasks.");
 				updateTable();
 				break;
 			case Operations.VIEW_OPERATION:
@@ -91,25 +90,38 @@ public class GuiDisplay {
 				updateSearchTable(tasks, firstItem);
 				findOperation(tasks, inputStr);
 				break;
+			case Operations.FIND_ERROR:
+				//System.out.print("why not working!!");
+				updateSearchTable(tasks, firstItem);
+				findOperation(tasks, inputStr);
+				break;
 			case Operations.DELETE_OPERATION:	
-				System.out.print("WHY");
 				deleteOperation(firstItem);
 				updateTable();
 				break;
 			case Operations.DONE_OPERATION:
+				GuiMain.feedback.setText("The task has been marked done!\nCongratulations on completing it!\n:)" 
+						+ "\n\n\n\n\n\nEnter ; to view all tasks.");
+				updateTable();
+				break;
+			case Operations.UNDO_OPERATION:
+				GuiMain.feedback.setText("Undo successful!\n" + "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				updateTable();
 				break;
 			case Operations.SAVE_OPERATION:
-				GuiMain.feedback.setText("The save is successful!\n");
+				GuiMain.feedback.setText("Everything saved successfully!\n"+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.ADD_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Added:\n\n" + firstItem.toString());
+				GuiMain.feedback.setText("The Following Label Has Been Added:\n\n" + firstItem.toString() 
+						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.DELETE_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Deleted:\n\n" + firstItem.toString());
+				GuiMain.feedback.setText("The Following Label Has Been Deleted:\n\n" + firstItem.toString() 
+						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.EDIT_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Edited:\n\n" + firstItem.toString());
+				GuiMain.feedback.setText("The Following Label Has Been Edited:\n\n" + firstItem.toString() 
+						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.VIEW_LABEL_OPERATION:
 				viewLabelsOperation(tasks, firstItem);
@@ -133,6 +145,7 @@ public class GuiDisplay {
 							(i+1) + ".\n" + tempTask + "--------------------x-------------------\n");
 					
 				}
+				GuiMain.feedback.setText(GuiMain.feedback.getText() + "\n\n\nEnter ; to view all tasks.");
 			}
 			else {
 				GuiMain.feedback.setText("No Tasks Found containing that keyword!\n");
@@ -203,11 +216,14 @@ public class GuiDisplay {
 		
 		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.table_1.getModel();
 		tableModel.setRowCount(0);
+		DefaultTableModel tableModel2= (DefaultTableModel) GuiMain.table_2.getModel();
+		tableModel2.setRowCount(0);
 		LinkedList<Task> allTasks= LogicMain.getAllTasks();
 		if (!(allTasks.size()==0)){
 			Item firstTask = allTasks.get(0);
 
 			GuiMain.myData = (DefaultTableModel) GuiMain.table_1.getModel();
+			GuiMain.myDoneData = (DefaultTableModel) GuiMain.table_2.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 				for(int i=0; i<allTasks.size(); i++) {
 					Task tempTask = allTasks.get(i);
@@ -237,12 +253,17 @@ public class GuiDisplay {
 							data[0] = Color.WHITE;
 						}
 					GuiMain.myData.addRow(data);
+					if (tempTask.getDone()) {
+						GuiMain.myDoneData.addRow(data);
+					} else {
+						//GuiMain.myData.addRow(data);
+					}
 					
 					
 				}
 			}
 			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-			centerRenderer.setHorizontalAlignment(JLabel.LEADING);
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 			
 			GuiMain.table_1.setModel(GuiMain.myData);
 			GuiMain.table_1.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
@@ -252,6 +273,13 @@ public class GuiDisplay {
 			GuiMain.table_1.setDefaultRenderer(String.class, centerRenderer);
 			GuiMain.table_1.setDefaultRenderer(Integer.class, centerRenderer);
 			
+			GuiMain.table_2.setModel(GuiMain.myDoneData);
+			GuiMain.table_2.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.table_2.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.table_2.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.table_2.setDefaultRenderer(Color.class, new CellColorRenderer());
+			GuiMain.table_2.setDefaultRenderer(String.class, centerRenderer);
+			GuiMain.table_2.setDefaultRenderer(Integer.class, centerRenderer);
 			
 		}
 	}
@@ -263,27 +291,54 @@ public class GuiDisplay {
 		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.table_1.getModel();
 		tableModel.setRowCount(0);
 		GuiMain.myData = (DefaultTableModel) GuiMain.table_1.getModel();
-		if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 
 			for(int i=0; i<items.size(); i++) {
 				Task tempTask = (Task) items.get(i);
-				Object[] data = new Object[6];
-
+				Object[] data = new Object[7];
+				
 				data[1] = i+1;
-				data[2] = tempTask.getLabelName();
+				if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+					data[2] = "";
+					
+				} else {
+					data[2] = tempTask.getLabelName();
+				}
 				data[3] = tempTask.getName();
 				data[4] = tempTask.getDescription();
+				
+				if (!(tempTask.getFormattedStart().isEmpty())){
+					data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+				}else {
 				data[5] = tempTask.getFormattedDeadline();
-
+				}
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+				data[6] = tempTask.getDone();
+				if(!(data[2].toString().isEmpty())){
+					Color color = LogicMain.getLabelColor(tempTask.getLabel());
+					data[0] = color;//will b the color function
+					} else {
+						data[0] = Color.WHITE;
+					}
 				GuiMain.myData.addRow(data);
 			}
 		} else{
-			Object[] data = new Object[1];
-			data[1] = "No task found conatining the keyword.";
+			Object[] data = new Object[7];
+			data[3] = "No task found conatining the keyword.";
 			GuiMain.myData.addRow(data);
 		}
 
 		GuiMain.table_1.setModel(GuiMain.myData);
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+		
+		GuiMain.table_1.setModel(GuiMain.myData);
+		GuiMain.table_1.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+		GuiMain.table_1.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+		GuiMain.table_1.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+		GuiMain.table_1.setDefaultRenderer(Color.class, new CellColorRenderer());
+		GuiMain.table_1.setDefaultRenderer(String.class, centerRenderer);
+		GuiMain.table_1.setDefaultRenderer(Integer.class, centerRenderer);
 
 	}
 	static void initialize(){
