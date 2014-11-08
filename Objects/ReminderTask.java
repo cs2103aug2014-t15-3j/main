@@ -1,4 +1,3 @@
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,10 +52,10 @@ class ReminderTask extends TimerTask {
 	 * for the scheduled reminder for this task
 	 * 
 	 * * This is a default function to have in order to be 
-	 * * scheduled.
+	 * * scheduled into timer.schedule.
 	 */
 	public void run() {		
-    	new Notification("Here's your reminder for : \n" + taskToRemind.getName(), 
+    	new Notification("Here's your reminder for : \n" + taskToRemind.getName(),
     			taskToRemind.getDescription(), 
     			"Due on " + taskToRemind.getFormattedDeadline(), "", "").display();
 	}
@@ -74,11 +73,9 @@ class ReminderTask extends TimerTask {
 	//@author A0112898U
 	/**
 	 * Schedules the alarm time for the task.
-	 * 
-	 * @throws ParseException Throws exception if task can't be scheduled.
 	 */
-	public void scheduleAlarm () throws ParseException{
+	public void scheduleAlarm() {
 		taskAlarm = new Timer();
-		taskAlarm.schedule(new ReminderTask(taskToRemind,alarmTime), alarmTime);
+		taskAlarm.schedule(new ReminderTask(taskToRemind, alarmTime), alarmTime);
 	}
 }

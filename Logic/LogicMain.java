@@ -120,17 +120,7 @@ public class LogicMain {
 	 * This method initialize the reminder system.
 	 */
 	private void intializeReminder() {
-		
-		//Initiates the Reminder System
-		try {
-			
-			LogicReminder.initiateSingleton(bufferTasksList);
-			
-		} catch (ParseException e) {
-			
-			e.printStackTrace();
-			logger.log(Level.WARNING, "Unable to initiate Reminder System");
-		}
+		LogicReminder.initiateSingleton(bufferTasksList);
 	}
 	
 	//@author A0112898U
@@ -167,26 +157,14 @@ public class LogicMain {
 		Calendar cal = Calendar.getInstance();
 		
 	    public void run() {
-	    	
-	    	if(isInitialize) {
-
+	    	if (isInitialize) {
 	    		//Refresh the reminder system
-//	    		/timer.sc(LogicReminder.getInstance().regenReminderList(bufferTasksList),dailyResetTime,86400000);
-	    		try {
-				
-	    			LogicReminder.getInstance().regenReminderList(bufferTasksList);
-				
-	    		} catch (ParseException e) {
-					
-	    			e.printStackTrace();
-	    			logger.log(Level.WARNING, "Unable to reschedule Reminders");
-				}
+	    		LogicReminder.getInstance().regenReminderList(bufferTasksList);
 	    		
 	    		//Do Logging
 	    		storageLogger.log(Level.INFO, "Reminder System list refreshed" + cal.getTime());
 	    	}
 	    }
-	    
 	};
 	
 	// @author A0112898U
@@ -511,12 +489,7 @@ public class LogicMain {
 			// Include reminder to new task
 			if (reminder != -1) {
 				newTask.editReminder(reminder);
-
-				try {
-					LogicReminder.getInstance().addTaskTobeReminded(newTask);
-				} catch (ParseException e) {
-					logger.log(Level.WARNING, "Adding to reminder failed.");
-				}
+				LogicReminder.getInstance().addTaskTobeReminded(newTask);
 			}
 
 			newItem = newTask;

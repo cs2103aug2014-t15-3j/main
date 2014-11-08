@@ -1,23 +1,24 @@
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class LogicReminder {
-
 	
+	//Objects
 	static LinkedList<ReminderTask> taskToBeReminded =  new LinkedList<ReminderTask>();
-	private static LogicReminder logicReminderSingleton;
-	private static boolean isInitiated = false;
+	private static LogicReminder logicReminderInstance;
 	
+	//Variables
+	private final static String LOG_NAME = "Logic Reminder Logger";
+	private static boolean isInitiated = false;
+
+	// Logger: Use to troubleshoot problems
+	private static Logger logger = Logger.getLogger(LOG_NAME);
 	
 	/**************************************************************************/
 	/**************************************************************************/
@@ -27,141 +28,165 @@ public class LogicReminder {
 	
 	//@author A0112898U
 	/**
-	 * //Constructor fo Logic Reminder Object, should only have one instance!
-	 * Only generate reminder for daily task - Only add today's task!	
+	 * Constructor for Logic Reminder Singleton, should only have one instance!
+	 * Impt note - Only generate reminder for daily task - Only add today's task!	
 	 * 
-	 * @param tasks
-	 * @throws ParseException
+	 * @param tasks The list of tasks to initiate the system with.
 	 */
-	private LogicReminder(LinkedList<Task> tasks) throws ParseException{
-		
-		for(Task t:tasks){
-			
-			if (checkIsTodayTask(t)){
-				ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
+	private LogicReminder(LinkedList<Task> tasks) {		
+		//Loop through all tasks & add only tasks with today's reminder date
+		for (Task t:tasks) {
+			if (checkIsTodayTask(t)) {
+				ReminderTask rTask = new ReminderTask(t, 
+						new Date(t.getReminder()));
 				taskToBeReminded.add(rTask);				
 			}
-
-		}
-		
+		}		
+		//Acknowledges the initiation
 		isInitiated = true;
 	}
 	
 	
-	
 	//@author A0112898U
 	/**
-	 * @param tasks
+	 * API function to initiate the Logic Reminder System's Singleton
+	 * 
+	 * @param tasks The list of tasks to initiate the system with.
 	 * @throws ParseException
 	 */
-	public static void initiateSingleton (LinkedList<Task> tasks) throws ParseException{
-		
-		if (!isInitiated){
-			logicReminderSingleton = new LogicReminder(tasks);
+	public static void initiateSingleton (LinkedList<Task> tasks) {
+		//Initiated the Singleton only if not initiated
+		if (!isInitiated) {
+			logicReminderInstance = new LogicReminder(tasks);
 		}
 	}
 	
 	
 	//@author A0112898U
 	/**
-	 * 	The getInstance getter for this Singleton class!
-	 * @return the Singleton object LogicReminder
+	 * Getter to get the instance for this Singleton class.
+	 * 
+	 * @return LogicReminder returns the Singleton's Instance
 	 */
-	static public LogicReminder getInstance(){
-		return logicReminderSingleton;
+	public static LogicReminder getInstance() {
+		return logicReminderInstance;
 	}
-	
-	
+
 
 	//@author A0112898U
 	/**
-	 * Logic should call this every 0000 the task to be reminded should be re-generated
+	 * API function to refresh the Reminder System List.
+	 * To Implement - Logic should call this every 0000 the tasks 
+	 * to be reminded should be re-generated.
 	 * 
-	 * @param tasks
-	 * @throws ParseException
+	 * @param tasks The list of tasks to refresh the system with.
 	 */
-	public static void regenReminderList(LinkedList<Task> tasks) throws ParseException{
-		
-		for(Task t:tasks){
-		
-			//Checks for today's task and add reminder.
-			//Only set alarm for today! For efficiency
-		    if (checkIsTodayTask(t)){
-		    	
+	public static void regenReminderList(LinkedList<Task> tasks) {
+		//Loop through all tasks & add only tasks with today's reminder date
+		for (Task t:tasks) {
+			//Checks for today's task and add task.
+		    if (checkIsTodayTask(t)) {
 		    	//Create a reminder task and add to the list of reminders
-
-		    	ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
-				rTask.scheduleAlarm();
+		    	ReminderTask rTask = new ReminderTask(t, 
+		    			new Date(t.getReminder()));
+		    	
+				//Schedule an alarm for this task.
+		    	rTask.scheduleAlarm();
+		    	
+		    	//Add task to system's list.
 		    	taskToBeReminded.add(rTask);
 		    }
 		}
-		
-		//For testing purposes
-		for(ReminderTask rTsk:taskToBeReminded){
-			System.out.println(rTsk.getTask().getName());	
-		}	
 	}
 
 	
-	
-	//Add new task
-	//ask sam to check if reminder is for today, then add a reminder
 	//@author A0112898U
 	/**
 	 * Add new tasks or Updates the old task with the new task, and 
 	 * re-schedules/schedules the new reminder
 	 * 
-	 * @param t
-	 * @throws ParseException
+	 * @param newTask The new task that is to be changed to
+	 * @param oldTask The old task task that is to be changed.
 	 */
-	public void updateTaskTobeReminded(Task newTask, Task oldTask) throws ParseException{
-		
-		
+	public void updateTaskTobeReminded(Task newTask, Task oldTask) {
+		//Local Variable for 'updateTaskTobeReminded' function
 		boolean isTaskAdded = false;
 		boolean isTodayReminder = false;
 		
 		//check if the reminder for the new task is today
-		if (checkIsTodayTask(newTask)){
-			
+		if (checkIsTodayTask(newTask)) {
 			isTodayReminder = true;
 		}
 		
-		
-		//search for the old task
-		for (ReminderTask tempRtask:taskToBeReminded){
-				
-			//Update task if task exists
-			if (isTaskExist(tempRtask.getTask(),oldTask)){
-				
+		//Search for the old task (if any).
+		for (ReminderTask tempRtask:taskToBeReminded) {
+			//Update task if task exists.
+			if (isTaskExist(tempRtask.getTask(), oldTask)) {
+				//Stops the previous scheduled alarm.
 				tempRtask.stopAlarm();
 				
-				if (isTodayReminder){
-					
-					//Edit and reschedule task
+				if (isTodayReminder) {
+					//Edit and reschedule task.
 					tempRtask.editTask(newTask);
-					tempRtask.scheduleAlarm();
-				
-				}else {
-					
+					tempRtask.scheduleAlarm();			
+				} else {
+					//Remove reminder if if not for today.
 					taskToBeReminded.remove(oldTask);
-					
 				}
-				
+				//To indicate that task was present in the list.
 				isTaskAdded = true;
-				
+				//Break from the loop if task already found.
 				break;
 			}
 		}
 		
-		//If task doesn't exist in the current list
-		if (!isTaskAdded && isTodayReminder){
-			
+		//If task doesn't exist in the current list.
+		if (!isTaskAdded && isTodayReminder) {	
+			//Add new task!
 			addTaskTobeReminded(newTask);
 		}
 	}
 	
 	
+	//@author A0112898U
+	/**
+	 * API function that is to be called when new tasks are added to
+	 * the Logic System buffered tasks list. This function will then 
+	 * check if the task's indicated reminder time and date is for 
+	 * today before adding into the Reminder System.
+	 * 
+	 * @param newTask The newly added task.
+	 */
+	public void addTaskTobeReminded(Task newTask) {
+		//Creates a new ReminderTask Object with the new Task.
+		ReminderTask rTask = new ReminderTask(newTask, 
+				new Date(newTask.getReminder()));
+		
+		//Add the new ReminderTask to the Singleton's ReminderTask List.
+		taskToBeReminded.add(rTask);
+		
+		//Schedules an alarm for this new task.
+		rTask.scheduleAlarm();
+	}
 	
+
+	//A0112898U
+	/**
+	 * Stops the scheduled alarm for the input task
+	 * 
+	 * @param taskToStop Task that alarm should be stop.
+	 */
+	public void stopTask(Task taskToStop) {
+		//Loop through all collated tasks
+		for (ReminderTask rTsk:taskToBeReminded) {
+			if (isTaskExist(rTsk.getTask(), taskToStop)) {
+				//Stop the scheduled alarm.
+				rTsk.stopAlarm();
+				//break out of loop if task found.
+				break;
+			}
+		}
+	}
 
 	/**************************************************************************/
 	/**************************************************************************/
@@ -169,101 +194,65 @@ public class LogicReminder {
 	/**************************************************************************/
 	/**************************************************************************/
 	
-	//@author A0112898U
-	/**
-	 * 
-	 * @param t
-	 * @throws ParseException
-	 */
-	public void addTaskTobeReminded(Task t) throws ParseException{
-		
-		ReminderTask rTask = new ReminderTask(t,new Date(t.getReminder()));
-		taskToBeReminded.add(rTask);
-		rTask.scheduleAlarm();
-	}
-	
-	
 	
 	//@author A0112898U
 	/**
-	 * Check if the reminder for the task is today's task
+	 * Check if the reminder for the task is today's task.
 	 * 
-	 * @param t
-	 * @return
-	 * @throws ParseException
+	 * @param inTask The task to be passed in.
+	 * @return boolean True if Reminder is for today, false if otherwise.
 	 */
-	private static boolean checkIsTodayTask(Task t) throws ParseException{
-		
+	private static boolean checkIsTodayTask(Task inTask) {
+		//Create java calendar instance to get today's date
 		Calendar c = Calendar.getInstance();
+		
+		//Set all other possible time to 0, other then the day
 		c.set(Calendar.HOUR_OF_DAY, 0);
 	    c.set(Calendar.MINUTE, 0);
 	    c.set(Calendar.SECOND, 0);
 	    c.set(Calendar.MILLISECOND, 0);
 	    
-	    Date today = c.getTime();
-	    
-	    
+	    //Objects to help compare the dates
+	    Date date1 = null;
+		Date date2 = null;
+		Date today = c.getTime();
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 
+		//Format today's date and the task's reminder's date
+		try {
+			date1 = sdf.parse(sdf.format(inTask.getReminder()));
+			date2 = sdf.parse(sdf.format(today));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, "Unable to Parse the dates");
+		}
 		
-		Date date1 = sdf.parse(sdf.format(t.getReminder()));
-		Date date2 = sdf.parse(sdf.format(today));
-		
-		//Testing Purposes
-		System.out.println("today " + (date1.getTime() == date2.getTime()));		
-		System.out.println("today " + date2.toString());
-	    System.out.println("remind " + date1.toString());
-	    System.out.println();
-	    
-	    //Only set alarm for today!
-	    if (date1.getTime() == date2.getTime()){
+	    //Compare the dates, if same return true.
+	    if (date1.getTime() == date2.getTime()) {
 	    	return true;
 	    }
-	    
 	    return false;
 	}
 	
-	
 
-	//A0112898U
-	/**
-	 * 
-	 * @param taskToStop
-	 */
-	public void stopTask(Task taskToStop){
-		
-		for(ReminderTask rTsk:taskToBeReminded){
-			if(isTaskExist(rTsk.getTask(),taskToStop))
-			{
-				rTsk.stopAlarm();
-				break;
-			}
-		}
-				
-	}
-	
 	
 	
 	//@author A0112898U
 	/**
-	 * Checks if the task to be added is already in the collated list of matched task
-	 * **
-	 * @param currentCollatedTasks the added list of task to check with
-	 * @param tobeAddedTask task that is to be added to check if it already existed
+	 * Checks if the task to be added is same as the existed task.
 	 * 
-	 * @return returns true if task is already present in the collated task, and returns
-	 * 				   false if task hasn't been found in the collated task
+	 * @param existedTask The task to check with.
+	 * @param newTask Task that is to be added to check if it exists.
+	 * @return boolean True if task is same as existed Task, false otherwise.
 	 */
-	private boolean isTaskExist(Task taskToCheck, Task tobeAddedTask){
-		
-			if(taskToCheck.getName().equals(tobeAddedTask.getName()) 
-					&& taskToCheck.getDescription().equals(tobeAddedTask.getDescription())
-					&& (taskToCheck.getTimeStamp() == tobeAddedTask.getTimeStamp())
-					&& (taskToCheck.getLabel() == tobeAddedTask.getLabel())
-					){
-				
-				return true;
-			}
+	private boolean isTaskExist(Task existedTask, Task newTask) {
+		if (existedTask.getName().equals(newTask.getName()) 
+				&& existedTask.getDescription().equals(newTask.getDescription())
+				&& (existedTask.getTimeStamp() == newTask.getTimeStamp())
+				&& (existedTask.getLabel() == newTask.getLabel())
+				){
+			return true;
+		}
 		return false;
 	}
 	
