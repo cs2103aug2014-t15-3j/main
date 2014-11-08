@@ -123,7 +123,8 @@ public class LogicMain {
 		
 		//Initiates the Reminder System
 		try {
-			LogicReminder.getInstance().initiateSingleton(bufferTasksList);
+			
+			LogicReminder.initiateSingleton(bufferTasksList);
 			
 		} catch (ParseException e) {
 			
@@ -1524,6 +1525,7 @@ public class LogicMain {
 	 * For testing purposes...
 	 */
 	public static void main(String[] arg) {
+		/*
 		
 		LogicMain logic = new LogicMain();
 		
@@ -1533,6 +1535,6 @@ public class LogicMain {
 		System.out.println( logic.processDate("12 34 am") );
 		System.out.println( logic.processDate("9 12") );
 		System.out.println( logic.processDate("11 12 2041") );
-		
+		*/
 	}
 }

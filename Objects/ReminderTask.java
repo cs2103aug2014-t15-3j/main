@@ -59,6 +59,8 @@ class ReminderTask extends TimerTask{
     	System.out.println("Here's your reminder for : " 
     			+ taskToRemind.getName()+ "\n" 
     			+ taskToRemind.getDescription());
+    	
+    	//new Notification("Sample Task", taskToRemind.getDescription(), "Due on 12 November", "", "").display();
 	}
 	
 	

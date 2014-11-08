@@ -16,7 +16,7 @@ public class LogicReminder {
 	
 	static LinkedList<ReminderTask> taskToBeReminded =  new LinkedList<ReminderTask>();
 	private static LogicReminder logicReminderSingleton;
-	private boolean isInitiated = false;
+	private static boolean isInitiated = false;
 	
 	
 
@@ -55,7 +55,7 @@ public class LogicReminder {
 	 * @param tasks
 	 * @throws ParseException
 	 */
-	public void initiateSingleton (LinkedList<Task> tasks) throws ParseException{
+	public static void initiateSingleton (LinkedList<Task> tasks) throws ParseException{
 		
 		if (!isInitiated){
 			logicReminderSingleton = new LogicReminder(tasks);

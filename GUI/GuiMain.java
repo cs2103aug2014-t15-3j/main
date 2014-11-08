@@ -174,7 +174,7 @@ public class GuiMain {
 				
 				// Here's a sample for notification, this seemed like the appropriate place to call it
 				
-				new Notification("Sample Task", "Some Description", "Due on 12 November", "", "").display();
+				//new Notification("Sample Task", "Some Description", "Due on 12 November", "", "").display();
 				
 			}
 		});
