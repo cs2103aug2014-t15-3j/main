@@ -432,7 +432,8 @@ public final class LogicSearch {
 							
 							//Check against each word in the Description
 							for (String desTok:tokenizeDescription) {
-								if (chkStrSimilarity(tok,desTok) > PERCENT_TO_ADD) {
+								if (chkStrSimilarity(tok,desTok) 
+										> PERCENT_TO_ADD) {
 									if ((chkStrSimilarity(tok, desTok) 
 											> PERCENT_TO_SUGGEST)
 											&& (chkStrSimilarity(tok, desTok) 

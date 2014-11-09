@@ -75,9 +75,10 @@ public class LogicReminder {
 	//@author A0112898U
 	/**
 	 * Accessor for reminder tasks list
-	 * @return Reminder tasks list
+	 * 
+	 * @return LinkedList The reminder tasks list
 	 */
-	static public LinkedList<ReminderTask> getList(){
+	static public LinkedList<ReminderTask> getList() {
 		return taskToBeReminded;
 	}
 	
@@ -85,7 +86,7 @@ public class LogicReminder {
 	/**
 	 * Mutator for reminder tasks list
 	 */
-	static public void editList(LinkedList<ReminderTask> _taskToBeReminded){
+	static public void editList(LinkedList<ReminderTask> _taskToBeReminded) {
 		taskToBeReminded = _taskToBeReminded;
 	}
 
@@ -228,7 +229,6 @@ public class LogicReminder {
 	 * API function that stops all the existing tasks from sounding off
 	 */
 	public void stopAllTasksReminder() {
-
 		for ( ReminderTask rt : taskToBeReminded ) {
 			rt.stopAlarm();
 		}
@@ -291,7 +291,7 @@ public class LogicReminder {
 	 */
 	private boolean isReminderOver(Task task) {
 		//if reminder time is greater then current system time means not over
-		if ( task.getReminder() >= System.currentTimeMillis() ){
+		if (task.getReminder() >= System.currentTimeMillis()) {
 			return false;
 		}
 		return true;
@@ -311,7 +311,7 @@ public class LogicReminder {
 				&& existedTask.getDescription().equals(newTask.getDescription())
 				&& (existedTask.getTimeStamp() == newTask.getTimeStamp())
 				&& (existedTask.getLabel() == newTask.getLabel())
-				){
+				) {
 			return true;
 		}
 		return false;
