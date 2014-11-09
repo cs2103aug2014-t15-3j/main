@@ -127,7 +127,6 @@ public final class LogicSearch {
 	 * 
 	 * @return queryTasks returns a LinkedList with all task categorized with
 	 * the same 'searchType' & 'String' datatype variable
-	 * 
 	 */
 	public static LinkedList<Task> searchTasks( String queryString, 
 			LinkedList<Task> bufferedTaskList, 
@@ -411,7 +410,8 @@ public final class LogicSearch {
 		int PERCENT_TO_SUGGEST = 50;
 		int PERCENT_MATCHED_STR = 100;
 		
-		LinkedList<Task> tempCollatedList = new LinkedList(collatedMatchedTaskList);
+		LinkedList<Task> tempCollatedList = 
+				new LinkedList(collatedMatchedTaskList);
 		LinkedList<String> suggestedString = new LinkedList<String>();
 		
 		//Breaks the task via tokenization method and search through
@@ -602,13 +602,13 @@ public final class LogicSearch {
 	 * and returns false if task hasn't been found in the collated task
 	 */
 	public static boolean isTaskExist(LinkedList<Task> currentCollatedTasks, 
-			Task tobeAddedTask) {
+			Task taskToAdd) {
 		
 		for (Task t:currentCollatedTasks) {
-			if (t.getName().equals(tobeAddedTask.getName()) 
-					&& t.getDescription().equals(tobeAddedTask.getDescription())
-					&& (t.getTimeStamp() == tobeAddedTask.getTimeStamp())
-					&& (t.getLabel() == tobeAddedTask.getLabel())
+			if (t.getName().equals(taskToAdd.getName()) 
+					&& t.getDescription().equals(taskToAdd.getDescription())
+					&& (t.getTimeStamp() == taskToAdd.getTimeStamp())
+					&& (t.getLabel() == taskToAdd.getLabel())
 					) {
 				return true;
 			}
