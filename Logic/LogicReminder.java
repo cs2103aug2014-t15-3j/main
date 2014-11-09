@@ -223,6 +223,17 @@ public class LogicReminder {
 		return tempList;
 	}
 	
+	//@author A0111942N
+	/**
+	 * API function that stops all the existing tasks from sounding off
+	 */
+	public void stopAllTasksReminder() {
+
+		for ( ReminderTask rt : taskToBeReminded ) {
+			rt.stopAlarm();
+		}
+	}
+	
 		
 	/**************************************************************************/
 	/**************************************************************************/

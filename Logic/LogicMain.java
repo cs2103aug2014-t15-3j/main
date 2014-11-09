@@ -1162,9 +1162,10 @@ public class LogicMain {
 		bufferTasksList = undoTasks;
 		undoTasks = tempTasks;
 
-		LinkedList<ReminderTask> tempReminders = LogicReminder.getList();
-		LogicReminder.editList(undoReminders);
-		undoReminders = new LinkedList<ReminderTask>( tempReminders );
+		//		LinkedList<ReminderTask> tempReminders = LogicReminder.getList();
+		//		LogicReminder.editList(undoReminders);
+		//		undoReminders = new LinkedList<ReminderTask>( tempReminders );
+		LogicReminder.getInstance().stopAllTasksReminder();
 		LogicReminder.getInstance().regenReminderList(bufferTasksList);
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
@@ -1172,6 +1173,8 @@ public class LogicMain {
 		tempTask.editState(Operations.UNDO_OPERATION);
 
 		returningTasks.add(tempTask);
+		
+		System.out.println(LogicReminder.getInstance());
 
 		logger.log(Level.INFO, "Undo operation completed ");
 
