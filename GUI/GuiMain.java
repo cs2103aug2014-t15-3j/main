@@ -64,28 +64,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 import javax.swing.SpringLayout;
 
-/*********************************************************************/
-/******************* QA I - Refactor Code I***************************/
-/*********************************************************************/
-// @Sankalp - GuiMain.java
-//
-// 1. could you add in some comments into the code?
-// 2. for lines > 80 char do indent them to the next line 
-// 3. Do correct me if i'm seeing it wrongly, For initialize(), 
-//    is that a function in a function?
-//    If it is you might want to do something about the nested function 
-//    'windowClosing()'. Nested functions are strictly not allowed?
-//	  Do extract it out is possible.
-//
-// @Sankalp - GuiMain.java
-/*********************************************************************/
-/*********************************************************************/
 //@author A0116160W
-//GUIMain
-
-//@author A0112898U
-//System Tray
-
 
 public class GuiMain {
 
@@ -180,9 +159,9 @@ public class GuiMain {
 
 
 
-				inputField.addActionListener(new ActionListener(){
+				inputField.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent arg){
+					public void actionPerformed(ActionEvent arg) {
 						/*
 						 * Below is just an example of what will happen when user presses enter after 
 						 * typing something in the user input text field at the bottom of the GUI.
@@ -192,13 +171,13 @@ public class GuiMain {
 						//this clears the input field
 						inputField.setText("");
 
-						if (inputStr.startsWith("help")){
+						if (inputStr.startsWith("help")) {
 							try {
 								GuiDisplay.displayHelp(inputStr);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-						}else {
+						} else {
 							GuiDisplay.display(inputStr);
 							//GridLabel.createlabel();
 						}
@@ -207,11 +186,6 @@ public class GuiMain {
 
 
 				});
-
-				// Here's a sample for notification, this seemed like the appropriate place to call it
-
-				//new Notification("Sample Task", "Some Description", "12 November", "8 Dec, 9 PM", "9 Dec 9 PM").display();
-
 			}
 		});
 	}
@@ -247,16 +221,14 @@ public class GuiMain {
 		//timer.setInitialDelay(0);
 		timer.start();
 
-		try
-		{
+		try {
 			frameRemembra.setUndecorated(true);
 			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,30,0,0));
 			UIManager.put("RootPane.setupButtonVisible", false);		
 			AWTUtilities.setWindowOpaque(frameRemembra, false);
 		}
-		catch(Exception e)
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -264,8 +236,10 @@ public class GuiMain {
 			@Override
 			//this pops-up a confirmation dialog box when the user tries to exit the program
 			public void windowClosing(WindowEvent arg0) {
-				int option = JOptionPane.showConfirmDialog(frameRemembra, "Are you sure?", "Do you want to Exit?", JOptionPane.YES_NO_OPTION);
-				if (option == JOptionPane.YES_OPTION){
+				int option = JOptionPane.showConfirmDialog(frameRemembra, 
+						"Are you sure?", 
+						"Do you want to Exit?", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
 
@@ -317,7 +291,7 @@ public class GuiMain {
 		todoTab.setBackground(Color.WHITE);
 		tabbedPane.addTab("To-do", null, todoTab, null);
 
-		myData = new DefaultTableModel(objects, tableHeaders){
+		myData = new DefaultTableModel(objects, tableHeaders) {
 			public Class getColumnClass(int columnIndex) {
 				int rowIndex = 0;
 				Object o = getValueAt(rowIndex, columnIndex);
@@ -381,7 +355,7 @@ public class GuiMain {
 		tableHeading1.setEditable(false);
 		tableHeading1.setBounds(5, 4, 739, 30);
 
-		myDoneData = new DefaultTableModel(objects, tableHeaders){
+		myDoneData = new DefaultTableModel(objects, tableHeaders) {
 			public Class getColumnClass(int columnIndex) {
 				int rowIndex = 0;
 				Object o = getValueAt(rowIndex, columnIndex);
@@ -454,7 +428,7 @@ public class GuiMain {
 		allScroll.setBounds(5, 32, 739, 346);
 		allTab.add(allScroll);
 
-		allData = new DefaultTableModel(objects, tableHeaders){
+		allData = new DefaultTableModel(objects, tableHeaders) {
 			public Class getColumnClass(int columnIndex) {
 				int rowIndex = 0;
 				Object o = getValueAt(rowIndex, columnIndex);
@@ -613,7 +587,6 @@ public class GuiMain {
 		// Without this, cursor always leaves text field
 		inputField.setFocusTraversalKeysEnabled(false);
 
-
 		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
 
 		PanelWithShadow feedbackpanel = new PanelWithShadow(5);
@@ -719,14 +692,14 @@ public class GuiMain {
 		setFrameIcon();
 
 		//Check for system tray support before initializing system tray
-		if(checkSystemTraySupport()){
+		if (checkSystemTraySupport()) {
 			initSystemTray();
 		}
 
 		//Activate Jframe windowstate listener for hiding program into system tray
 		activateWindowStateListener();
 		frameRemembra.addWindowListener( new WindowAdapter() {
-			public void windowOpened( WindowEvent e ){
+			public void windowOpened( WindowEvent e ) {
 				inputField.requestFocus();
 			}
 		} );
@@ -737,33 +710,31 @@ public class GuiMain {
 	}
 
 
+	//Updates the label which displays the time
+	void updateTime() {
+		Date date = new Date();
+		String str = DateFormat.getDateTimeInstance().format(date);
+		timeLabel.setText(str);
+	}
+	
 	//@author A0112898U
 	/**
 	 * Sets the JFrame's top left programme displayIcon
-	 * 
 	 */
-	void setFrameIcon(){
-
+	void setFrameIcon() {
 		frameRemembra.setIconImage(Toolkit.getDefaultToolkit().getImage("media/logo.png"));	
 	}
-
 
 
 	//@author A0112898U
 	/**
 	 * Checks if the system supports system tray
-	 * 
 	 */
-	boolean checkSystemTraySupport(){
-
-		if(SystemTray.isSupported()){
-
-			System.out.println("system tray supported");
+	boolean checkSystemTraySupport() {
+		if (SystemTray.isSupported()) {
 			tray = SystemTray.getSystemTray();
 			return true;
 		}
-
-		System.out.println("system tray not supported, check taskbar when minimized");
 		return false;
 	}
 
@@ -776,34 +747,25 @@ public class GuiMain {
 	 * the action listeners for the options
 	 * 
 	 * For now it only supports 'Exit' and re'Open' of the programme.
-	 * 
 	 */
-	void initSystemTray(){
-
+	void initSystemTray() {
 		//Set image when program is in system tray
 		Image image = Toolkit.getDefaultToolkit().getImage("media/logo.png");
-
+		
 		//Action Listener to exit the programme ONLY when in system tray
 		ActionListener exitListener = new ActionListener() {
-
 			//If clicked on the exit option
 			public void actionPerformed(ActionEvent e) {
-
-				System.out.println("Exiting Remembra....");
 				System.exit(0);
-
 			}
 		};
 
 		//Action Listener to open the programme frame ONLY when in system tray
 		ActionListener openListener = new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
-
 				frameRemembra.setVisible(true);
 				frameRemembra.setExtendedState(JFrame.NORMAL);
 			}
-
 		};
 
 		/* Popup Menu @ system tray */
@@ -816,60 +778,40 @@ public class GuiMain {
 		popup.add(defaultItem);
 
 		//Added a 'Option' option to the menu when right clicked
+		
 		defaultItem = new MenuItem("Open");
 		defaultItem.addActionListener(openListener);
 		popup.add(defaultItem);
 
 		trayIcon = new TrayIcon(image, "Remembra", popup);
 		trayIcon.setImageAutoSize(true);
-
 	}
-
-	//Updates the label which displays the time
-	void updateTime(){
-		Date date = new Date();
-		String str = DateFormat.getDateTimeInstance().format(date);
-		timeLabel.setText(str);
-	}
-
 
 	//@author A0112898U
 	/**
-	 * activate Window State Listener for the JFrame, this is for the implementation to
+	 * Activate Window State Listener for the JFrame, this is for the implementation to
 	 * hide frame into system tray
-	 * 
 	 */
-	void activateWindowStateListener(){
-
+	void activateWindowStateListener() {
 		frameRemembra.addWindowStateListener(new WindowStateListener() {
-
 			public void windowStateChanged(WindowEvent e) {
 
 				//If click on the minimize icon on the window, this function will 
 				//detect the window new "ICONFIED" state and activate system tray
-				if(e.getNewState() == ICONIFIED){
-
+				if (e.getNewState() == ICONIFIED) {
 					try {
-
 						tray.add(trayIcon);
 						frameRemembra.setVisible(false);
-
-						System.out.println("added to SystemTray");
-
 					} catch (AWTException ex) {
-
 						System.out.println("unable to add to tray");
 					}
 				}
 
 				//If click on the 'open' open option to re-open the program,
 				//this call will reinstate the JFrame's visibility and remove trayicon
-				if(e.getNewState() == MAXIMIZED_BOTH || e.getNewState() == NORMAL){
-
+				if (e.getNewState() == MAXIMIZED_BOTH || e.getNewState() == NORMAL) {
 					tray.remove(trayIcon);
 					frameRemembra.setVisible(true);
-					System.out.println("Tray icon removed");
-
 				}
 			}
 		});
