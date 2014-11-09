@@ -59,7 +59,8 @@ public class GuiDisplay {
 	static void display(String inputStr) {
 		LogicMain logic = new LogicMain();
 		LinkedList<Item> tasks = logic.processInput(inputStr);
-		LinkedList<Item> allTasks = new  LinkedList<Item> (LogicMain.getAllTasks());
+		LinkedList<Item> allTasks = 
+				new  LinkedList<Item> (LogicMain.getAllTasks());
 
 		//assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
 		if(!tasks.isEmpty()) {
@@ -71,14 +72,18 @@ public class GuiDisplay {
 			switch (state){
 			case Operations.ADD_OPERATION:
 				Task firstTask = (Task) firstItem;
-				GuiMain.feedback.setText("The following task has been added:\n\n" + 
+				GuiMain.feedback.setText("The following task"
+						+ " has been added:\n\n" + 
 								firstItem.toString());
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
-				Dialog d = new Dialog(GuiMain.frameRemembra, "Following Task Added Successfully!", 
-						task + firstTask.getName(), desc + firstTask.getDescription(), label + 
-						firstTask.getLabelName(), deadline + firstTask.getFormattedDeadline(), "add");
+				Dialog d = new Dialog(GuiMain.frameRemembra,
+						"Following Task Added Successfully!", 
+						task + firstTask.getName(), desc + 
+						firstTask.getDescription(), label + 
+						firstTask.getLabelName(), deadline + 
+						firstTask.getFormattedDeadline(), "add");
 				d.displayDialog();
 				DialogFX.fadeIn(d);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
@@ -87,14 +92,19 @@ public class GuiDisplay {
 
 			case Operations.EDIT_OPERATION:
 				Task firstTask1 = (Task) firstItem;
-				GuiMain.feedback.setText("The following task has been edited:\n\n" + firstItem.toString() + 
+				GuiMain.feedback.setText("The following task "
+						+ "has been edited:\n\n" 
+						+ firstItem.toString() + 
 						"\n\n\nEnter ; to view all tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
-				Dialog d1 = new Dialog(GuiMain.frameRemembra, "Following Task Has Been Edited!", 
-						task + firstTask1.getName(), desc + firstTask1.getDescription(), 
-						label + firstTask1.getLabelName(), deadline+ firstTask1.getFormattedDeadline(), "edit");
+				Dialog d1 = new Dialog(GuiMain.frameRemembra, 
+						"Following Task Has Been Edited!", 
+						task + firstTask1.getName(), desc +
+						firstTask1.getDescription(), 
+						label + firstTask1.getLabelName(), 
+						deadline+ firstTask1.getFormattedDeadline(), "edit");
 				d1.displayDialog();
 				DialogFX.fadeIn(d1);
 				break;
@@ -143,14 +153,19 @@ public class GuiDisplay {
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
-				Dialog d3 = new Dialog(GuiMain.frameRemembra, "Following Task Deleted Successfully!", 
-						task + firstTask3.getName(), desc + firstTask3.getDescription(), 
-						label + firstTask3.getLabelName(), deadline + firstTask3.getFormattedDeadline(), "delete");
+				Dialog d3 = new Dialog(GuiMain.frameRemembra,
+						"Following Task Deleted Successfully!", 
+						task + firstTask3.getName(), desc + 
+						firstTask3.getDescription(), 
+						label + firstTask3.getLabelName(),
+						deadline + firstTask3.getFormattedDeadline(), 
+						"delete");
 				d3.displayDialog();
 				DialogFX.fadeIn(d3);
 				break;
 			case Operations.DONE_OPERATION:
-				GuiMain.feedback.setText("The task has been marked done!\nCongratulations on completing it!\n:)" 
+				GuiMain.feedback.setText("The task has been marked done!"
+						+ "\nCongratulations on completing it!\n:)" 
 						+ "\n\n\n\n\n\nEnter ; to view all tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
@@ -159,28 +174,33 @@ public class GuiDisplay {
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 			case Operations.UNDO_OPERATION:
-				GuiMain.feedback.setText("Undo successful!\n" + "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+				GuiMain.feedback.setText("Undo successful!\n" 
+						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
 				break;
 			case Operations.SAVE_OPERATION:
-				GuiMain.feedback.setText("Everything saved successfully!\n"+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+				GuiMain.feedback.setText("Everything saved successfully!\n"
+						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				Dialog d4 = new Dialog(GuiMain.frameRemembra, "Save Successful!", 
 						"", "", "", "", "save");
 				d4.displayDialog();
 				DialogFX.fadeIn(d4);
 				break;
 			case Operations.ADD_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Added:\n\n" + firstItem.toString() 
+				GuiMain.feedback.setText("The Following Label "
+						+ "Has Been Added:\n\n" + firstItem.toString() 
 						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.DELETE_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Deleted:\n\n" + firstItem.toString() 
+				GuiMain.feedback.setText("The Following Label "
+						+ "Has Been Deleted:\n\n" + firstItem.toString() 
 						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.EDIT_LABEL_OPERATION:
-				GuiMain.feedback.setText("The Following Label Has Been Edited:\n\n" + firstItem.toString() 
+				GuiMain.feedback.setText("The Following Label "
+						+ "Has Been Edited:\n\n" + firstItem.toString() 
 						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
 				break;
 			case Operations.VIEW_LABEL_OPERATION:
@@ -188,8 +208,8 @@ public class GuiDisplay {
 				break;
 			}
 		}else {
-
-			GuiMain.feedback.setText("Remembra doesn't understand your input!\n");
+			GuiMain.feedback.setText("Remembra doesn't "
+					+ "understand your input!\n");
 		}
 
 	}
@@ -198,18 +218,20 @@ public class GuiDisplay {
 
 	private static void updateDoneTable(LinkedList<Item> tasks) {
 		// TODO Auto-generated method stub
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.doneTable.getModel();
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.doneTable.getModel();
 		tableModel.setRowCount(0);
 		if (!(tasks.size()==0)){
 			Item firstTask = tasks.get(0);
-			GuiMain.myDoneData = (DefaultTableModel) GuiMain.doneTable.getModel();
+			GuiMain.myDoneData = 
+					(DefaultTableModel) GuiMain.doneTable.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 				for(int i=0; i<tasks.size(); i++) {
 					Task tempTask = (Task) tasks.get(i);
 					Object[] data = new Object[7];
 
 					data[1] = i+1;
-					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")) {
 						data[2] = "";
 
 					} else {
@@ -219,7 +241,8 @@ public class GuiDisplay {
 					data[4] = tempTask.getDescription();
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+						data[5] = tempTask.getFormattedStart() + 
+								" " + tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
 					}
@@ -236,26 +259,35 @@ public class GuiDisplay {
 					
 				}
 			}
-			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			DefaultTableCellRenderer centerRenderer = 
+					new DefaultTableCellRenderer();
 			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 			
 			GuiMain.doneTable.setModel(GuiMain.myDoneData);
-			GuiMain.doneTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.doneTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.doneTable.setDefaultRenderer(Integer.class, centerRenderer);
+			GuiMain.doneTable.getColumnModel().
+			getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().
+			getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().
+			getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.doneTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.doneTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
 		}
 	}
 
 	private static void updateAllTable(LinkedList<Item> tasks) {
 		// TODO Auto-generated method stub
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.allTable.getModel();
+		DefaultTableModel tableModel =
+				(DefaultTableModel) GuiMain.allTable.getModel();
 		tableModel.setRowCount(0);
 		if (!(tasks.size()==0)){
 			Item firstTask = tasks.get(0);
-			GuiMain.allData = (DefaultTableModel) GuiMain.allTable.getModel();
+			GuiMain.allData = 
+					(DefaultTableModel) GuiMain.allTable.getModel();
 			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
 				for(int i=0; i<tasks.size(); i++) {
 					Task tempTask = (Task) tasks.get(i);
@@ -272,14 +304,16 @@ public class GuiDisplay {
 					data[4] = tempTask.getDescription();
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+						data[5] = tempTask.getFormattedStart() + " " 
+								+ tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
 					}
 
 					data[6] = tempTask.getDone();
 					if(!(data[2].toString().isEmpty())){
-						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						Color color = 
+								LogicMain.getLabelColor(tempTask.getLabel());
 						data[0] = color;//will b the color function
 					} else {
 						data[0] = Color.WHITE;
@@ -293,18 +327,25 @@ public class GuiDisplay {
 			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 			
 			GuiMain.allTable.setModel(GuiMain.allData);
-			GuiMain.allTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.allTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.allTable.setDefaultRenderer(Integer.class, centerRenderer);
+			GuiMain.allTable.getColumnModel().getColumn(3).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(4).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(5).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.allTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.allTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
 		}
 	}
 
 	private static void updateTodoTable(LinkedList<Item> tasks) {
 		// TODO Auto-generated method stub
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.todoTable.getModel();
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
 		tableModel.setRowCount(0);
 		if (!(tasks.size()==0)){
 			Item firstTask = tasks.get(0);
@@ -327,14 +368,16 @@ public class GuiDisplay {
 					data[4] = tempTask.getDescription();
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+						data[5] = tempTask.getFormattedStart() +
+								" " + tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
 					}
 
 					data[6] = tempTask.getDone();
 					if(!(data[2].toString().isEmpty())){
-						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						Color color = 
+								LogicMain.getLabelColor(tempTask.getLabel());
 						data[0] = color;//will b the color function
 					} else {
 						data[0] = Color.WHITE;
@@ -348,22 +391,31 @@ public class GuiDisplay {
 			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 
 			GuiMain.todoTable.setModel(GuiMain.myData);
-			GuiMain.todoTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.todoTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.todoTable.setDefaultRenderer(Integer.class, centerRenderer);
+			GuiMain.todoTable.getColumnModel().getColumn(3).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(4).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(5).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.todoTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.todoTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
 		}
 	}
 
-	private static void displayFloatingTasksTable(LinkedList<Item> items, Item firstTask) {
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.todoTable.getModel();
+	private static void displayFloatingTasksTable(LinkedList<Item> items, 
+			Item firstTask) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
 		tableModel.setRowCount(0);
-		GuiMain.myData = (DefaultTableModel) GuiMain.todoTable.getModel();
-		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+		GuiMain.myData = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
+		if (!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 
-			for(int i=0; i<items.size(); i++) {
+			for (int i=0; i<items.size(); i++) {
 				Task tempTask = (Task) items.get(i);
 				Object[] data = new Object[7];
 
@@ -378,7 +430,8 @@ public class GuiDisplay {
 				data[4] = tempTask.getDescription();
 
 				if (!(tempTask.getFormattedStart().isEmpty())){
-					data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+					data[5] = tempTask.getFormattedStart() 
+							+ " " + tempTask.getFormattedEnd();
 				}else {
 					data[5] = tempTask.getFormattedDeadline();
 				}
@@ -399,34 +452,45 @@ public class GuiDisplay {
 		}
 
 		GuiMain.todoTable.setModel(GuiMain.myData);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		DefaultTableCellRenderer centerRenderer =
+				new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 
 		GuiMain.todoTable.setModel(GuiMain.myData);
-		GuiMain.todoTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-		GuiMain.todoTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-		GuiMain.todoTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-		GuiMain.todoTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-		GuiMain.todoTable.setDefaultRenderer(String.class, centerRenderer);
-		GuiMain.todoTable.setDefaultRenderer(Integer.class, centerRenderer);
+		GuiMain.todoTable.getColumnModel().getColumn(3).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.getColumnModel().getColumn(4).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.getColumnModel().getColumn(5).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.setDefaultRenderer(Color.class, 
+				new CellColorRenderer());
+		GuiMain.todoTable.setDefaultRenderer(String.class, 
+				centerRenderer);
+		GuiMain.todoTable.setDefaultRenderer(Integer.class, 
+				centerRenderer);
 		
 	}
 
 	private static void findOperation(LinkedList<Item> tasks, String str) {
 		String[] s = str.split(" ");
 		Item item = tasks.get(0);
-		GuiMain.feedback.setText("Search results for \"" + s[s.length-1] + "\":\n");
+		GuiMain.feedback.setText("Search results for \"" 
+		+ s[s.length-1] + "\":\n");
 		if(!(item.getName().equals(Operations.EMPTY_MESSAGE))) {
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempTask + "--------------------x-------------------\n");
+						(i+1) + ".\n" + tempTask 
+						+ "--------------------x-------------------\n");
 
 			}
-			GuiMain.feedback.setText(GuiMain.feedback.getText() + "\n\n\nEnter ; to view all tasks.");
+			GuiMain.feedback.setText(GuiMain.feedback.getText() 
+					+ "\n\n\nEnter ; to view all tasks.");
 		}
 		else {
-			GuiMain.feedback.setText("No Tasks Found containing that keyword!\n");
+			GuiMain.feedback.setText("No Tasks Found "
+					+ "containing that keyword!\n");
 		}
 
 	}
@@ -439,7 +503,8 @@ public class GuiDisplay {
 			GuiMain.feedback.setText("Task deleted successfully!");
 		}
 		else {
-			GuiMain.feedback.setText("You have specified an invalid task to delete\n");
+			GuiMain.feedback.setText("You have specified an"
+					+ " invalid task to delete\n");
 		}
 	}
 
@@ -455,7 +520,8 @@ public class GuiDisplay {
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempTask  + "--------------------x-------------------\n");
+						(i+1) + ".\n" + tempTask  
+						+ "--------------------x-------------------\n");
 			}
 			GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 			GuiMain.tabbedPane.getSelectedComponent();
@@ -464,13 +530,15 @@ public class GuiDisplay {
 			GuiMain.feedback.setText("Sorry, No Tasks Found!\n");
 		}
 	}
-	private static void viewLabelsOperation(LinkedList<Item> labels, Item firstLabel) {
+	private static void viewLabelsOperation(LinkedList<Item> labels, 
+			Item firstLabel) {
 		GuiMain.feedback.setText("All Labels Displayed Below:\n");
 		if(!(firstLabel.getName().equals(Operations.EMPTY_MESSAGE))) {
 			for(int i=0; i<labels.size(); i++) {
 				Item tempLabel = labels.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempLabel  + "--------------------x-------------------\n");
+						(i+1) + ".\n" + tempLabel  
+						+ "--------------------x-------------------\n");
 			}
 		}
 		else {
@@ -499,8 +567,9 @@ public class GuiDisplay {
 	/**
 	 * Updates the table after search, showing the search results.
 	 */
-	public static void updateSearchTable(LinkedList<Item> items, Item firstTask){
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.searchTable.getModel();
+	public static void updateSearchTable(LinkedList<Item> items, Item firstTask) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.searchTable.getModel();
 		tableModel.setRowCount(0);
 		GuiMain.searchData = (DefaultTableModel) GuiMain.searchTable.getModel();
 		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
@@ -520,7 +589,8 @@ public class GuiDisplay {
 				data[4] = tempTask.getDescription();
 
 				if (!(tempTask.getFormattedStart().isEmpty())){
-					data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+					data[5] = tempTask.getFormattedStart() 
+							+ " " + tempTask.getFormattedEnd();
 				}else {
 					data[5] = tempTask.getFormattedDeadline();
 				}
@@ -545,19 +615,29 @@ public class GuiDisplay {
 		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
 
 		GuiMain.searchTable.setModel(GuiMain.searchData);
-		GuiMain.searchTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-		GuiMain.searchTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-		GuiMain.searchTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-		GuiMain.searchTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-		GuiMain.searchTable.setDefaultRenderer(String.class, centerRenderer);
-		GuiMain.searchTable.setDefaultRenderer(Integer.class, centerRenderer);
+		GuiMain.searchTable.getColumnModel().getColumn(3).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.getColumnModel().getColumn(4).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.getColumnModel().getColumn(5).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.setDefaultRenderer(Color.class, 
+				new CellColorRenderer());
+		GuiMain.searchTable.setDefaultRenderer(String.class, 
+				centerRenderer);
+		GuiMain.searchTable.setDefaultRenderer(Integer.class, 
+				centerRenderer);
 		
 
 	}
 	static void initialize(){
 		LogicMain logic = new LogicMain();
 		logic.processInput(";");
-		GuiMain.feedback.setText("Hi, there!\nThis is your feedback display.\n\nFor a quick guide, type help and\npress enter.\n\n\nAll of your tasks, if any, are displayed on the left.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo change tabs, press Alt+X\nwhere X is the tab no.");
+		GuiMain.feedback.setText("Hi, there!\nThis is your "
+				+ "feedback display.\n\nFor a quick guide, type help "
+				+ "and\npress enter.\n\n\nAll of your tasks, if any, are"
+				+ " displayed on the left.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				+ "To change tabs, press Alt+X\nwhere X is the tab no.");
 		updateDoneTable(logic.processInput(";view ;done"));
 		updateAllTable(logic.processInput(";view ;all"));
 		updateTodoTable(logic.processInput(";view ;!done"));
