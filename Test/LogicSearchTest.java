@@ -21,8 +21,8 @@ public class LogicSearchTest {
 	//@author A0112898U
 	/**
 	 * Test cases for Remembra's LogicSearch - due to the nature of the search 
-	 * being a static class, the search will only return the latest return values, 
-	 * thus do uncomment searches one by one to test the Search. 
+	 * being a static class, the search will only return the latest 
+	 * return values, thus do uncomment searches one by one to test the Search.
 	 */	
 	@Test
 	public void testExecuteCommand() throws IOException {
@@ -153,7 +153,7 @@ public class LogicSearchTest {
 	 * Test cases/senarios for 'matchWordSearch' function
 	 */	
 	public void testCases_matchWordSearch() {
-	
+		//Define search type
 		LogicSearch.SEARCH_TYPES searchAlgoType = 
 				LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD;
 		
@@ -162,7 +162,8 @@ public class LogicSearchTest {
 		LinkedList<Task> testType1 = new LinkedList<Task>();
 		
 		for (int i = 0; i < 4; i++) {
-			testType1.add(new Task("t" + i , "task " + i + " match Word test"));
+			testType1.add(new Task("t" + i , "task " + i 
+					+ " match Word test"));
 		}
 		
 		//predicted test results for testType 1
@@ -280,7 +281,7 @@ public class LogicSearchTest {
 				LogicSearch.SEARCH_TYPES.TYPE_ALL, 
 				searchAlgoType);
 		
-		if(collatedTask.equals(predictedResult)){
+		if (collatedTask.equals(predictedResult)) {
 			return true;
 		}
 		return false;
