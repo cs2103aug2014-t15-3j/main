@@ -17,6 +17,7 @@ public class Operations {
 	protected final static String VIEW_DONE_OPERATION = "view-done";
 	protected final static String VIEW_FLOAT_OPERATION = "view-float";
 	protected final static String VIEW_ALL_OPERATION = "view-all";
+	protected final static String VIEW_TASK_OPERATION = "view-task";
 	protected final static String FIND_OPERATION = "find";
 	protected final static String UNDO_OPERATION = "undo";
 	protected final static String DELETE_OPERATION = "delete";

@@ -17,9 +17,9 @@ public class LogicTest {
 	private final String TASK_DESCRIPTION = "Cause she is forever lost...";
 	private final String TASK_DESCRIPTION_2 = "Money is like water, it will never be enough.";
 	private final String TASK_DATE = "25 Dec 2015 9 34 am";
-	private final String EXPECTED_DATE = "25 December 2015 9:34 AM";
+	private final String EXPECTED_DATE = "25 Dec 2015, 9:34 AM";
 	private final String TASK_DATE_2 = "14 Mar 2016 2 12 pm";
-	private final String EXPECTED_DATE_2 = "14 March 2016 2:12 PM";
+	private final String EXPECTED_DATE_2 = "14 Mar 2016, 2:12 PM";
 	
 	
 	@Before
@@ -157,6 +157,7 @@ public class LogicTest {
 		returnTasks = logic.processInput(";edit 1 ;on " + TASK_DATE);
 		editedTask = (Task) returnTasks.get(0);
 		
+		System.out.println(editedTask.getFormattedDeadline());
 		assertTrue(editedTask.getFormattedDeadline().contains(EXPECTED_DATE));
 		
 		// 2d: Task with reminder

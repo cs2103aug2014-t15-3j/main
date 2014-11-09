@@ -841,6 +841,8 @@ public class LogicMain {
 		String state = Operations.VIEW_OPERATION;
 
 		LogicInputPair viewOperation = inputList.get(0);
+		
+		System.out.println(">>>>>"+viewOperation);
 
 		if (!isLabel) {
 			
@@ -853,17 +855,19 @@ public class LogicMain {
 				state = Operations.VIEW_OPERATION;
 
 			} else if (inputList.size() == 1 && bufferTasksList.size() != 0) {
-
+				
 				try {
-
-					int amountDisplayTasks = Integer.parseInt(viewOperation
-							.getContent());
-
-					amountDisplayTasks = Math.min(bufferTasksList.size(),
-							amountDisplayTasks);
-
-					for (int i = 0; i < amountDisplayTasks; i++) {
-						Task tempTask = bufferTasksList.get(i);
+					
+					int taskId = Integer.parseInt(viewOperation
+							.getContent()) - 1;
+					
+					Task tempTask;
+					
+					if(tempList.size() != 0 && tempList.size() > taskId) {
+						tempTask = (Task) tempList.get(taskId);
+						returningItems.add(tempTask);
+					} else if(bufferTasksList.size() > taskId) {
+						tempTask = bufferTasksList.get(taskId);
 						returningItems.add(tempTask);
 					}
 					
