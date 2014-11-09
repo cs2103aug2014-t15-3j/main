@@ -351,7 +351,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 
 		// Include deadline into message
 		if(deadline != NOT_VALID) {
-			message += "Deadline: " + getFormattedDeadline();
+			message += "Deadline: " + getFormattedDeadline() + "\n";
 		}
 		
 		// Include reminder into message
