@@ -19,6 +19,8 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -785,6 +787,15 @@ public class GuiMain {
 
 		trayIcon = new TrayIcon(image, "Remembra", popup);
 		trayIcon.setImageAutoSize(true);
+		trayIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                	frameRemembra.setVisible(true);
+    				frameRemembra.setExtendedState(JFrame.NORMAL);
+                }
+            }
+        });
 	}
 
 	//@author A0112898U
