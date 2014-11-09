@@ -32,6 +32,7 @@ public abstract class StorageBase {
 	abstract public void storeObject(Object obj);
 	abstract protected Object retrieveObject();
 	
+	
 	//@author A0112898U
 	/**
 	 * Serializes the object to be save and stores in a .ser file
@@ -41,14 +42,10 @@ public abstract class StorageBase {
 	 * @param obj - object to be serialized and stored
 	 */
 	void serializeObject (String filename, Object obj) {
-		
 		try {
 			fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
-			
 		} catch (FileNotFoundException e) {
-			
-			System.out.println("File not found! from serializeObject()"); 
-			
+			System.out.println("File not found! from serializeObject()");
 		}
 		
 		try {
@@ -56,17 +53,13 @@ public abstract class StorageBase {
 			objectOut.writeObject(obj);
 			objectOut.close();
 			fileOut.close();
-			
 		} catch (IOException e) {
 			logger.log(Level.WARNING, 
 					"StorageBase: Error with IO in serializeObject()");
 		}
-		
-				
 	}
 	
 
-	
 	//@author A0112898U
 	/**
 	 * Deserializes the file to retrieved stored object from a .ser file
@@ -74,9 +67,8 @@ public abstract class StorageBase {
 	 * @param filename - name of the file to be created i.e testfile.ser
 	 * @return obj - returns a object (which is the deserialized list)
 	 */
-	Object deSerializeObject (String filename){
+	Object deSerializeObject (String filename) {
 		Object obj = null;	
-		
 		//returns a null immediately if file is empty //Boundary case!
 		if (isEmptyFile(filename)) {			
 			return null;
@@ -87,8 +79,7 @@ public abstract class StorageBase {
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
-			fileIn.close();
-			
+			fileIn.close();	
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			logger.log(Level.WARNING, 
@@ -113,13 +104,12 @@ public abstract class StorageBase {
 	 */
 	private boolean isEmptyFile(String filename) {
 		File storageFile = new File(filename + FILENAME_EXTENSION);
-			
+		
 		if (storageFile.length() <= 0) {	
 			return true;
 		}
 		return false;
 	}
-	
 	
 	
 	//@author A0112898U
@@ -142,4 +132,5 @@ public abstract class StorageBase {
 			}
 		}
 	}
+	
 }
