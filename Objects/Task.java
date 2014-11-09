@@ -83,8 +83,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 */
 	public Task(String name, String description, long label, long deadline, long reminder) {
 
-		this.name = name;
-		this.description = description;
+		this.name = shortenText(name,30);
+		this.description = shortenText(description,80);
 		this.label = label;
 		this.timeStamp = System.currentTimeMillis();
 		this.deadline = deadline;
@@ -138,12 +138,24 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	
 	public String getFormattedDeadline() {
 		
-		return getFormattedDate(deadline);
+		String dateString = getFormattedDate(deadline);
+		
+		if(deadline != NOT_VALID) {
+			dateString += getOverdue(deadline);
+		}
+		
+		return dateString;
 	}
 	
 	public String getFormattedReminder() {
 
-		return getFormattedDate(reminder);
+		String dateString = getFormattedDate(reminder);
+
+		if(reminder != NOT_VALID) {
+			dateString += getOverdue(reminder);
+		}
+
+		return dateString;
 	}
 	
 	public String getFormattedDate(long dateMs) {
@@ -167,6 +179,28 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		
 		return dateOutput;
 	}
+	
+	public String getOverdue(long dateMs) {
+		
+		long nowMs = System.currentTimeMillis();
+		
+		if(dateMs < nowMs) {
+			
+			long overdue = nowMs - dateMs;
+			int daysOverdue = (int) (overdue / DAY_MILLISECOND);
+			
+			if (daysOverdue == 0) {
+				return "\n[Just overdue]\n"; 
+			} else if (daysOverdue  == 1) {
+				return "\n["+daysOverdue+" day overdue]\n";
+			} else {
+				return "\n["+daysOverdue+" day(s) overdue]\n";
+			}
+			
+		}
+		
+		return "";
+	}
 
 	public String getState() {
 		return state;
@@ -177,12 +211,12 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	}
 
 	public String editName(String name) {
-		this.name = name;
+		this.name = shortenText(name,30);
 		return name;
 	}
 
 	public String editDescription(String description) {
-		this.description = description;
+		this.description = shortenText(description,80);
 		return description;
 	}
 
@@ -275,6 +309,17 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	public void setIsReminded(){
 		isReminded = true;
 	}
+	
+	private String shortenText(String text, int length) {
+		
+		int orginalLength = text.length();
+		
+		if (orginalLength > length) {
+			text = text.substring(0, length) + "...";
+		}
+		
+		return text;
+	}
 
 	@Override
 	public String toString() {
@@ -305,23 +350,13 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		}
 
 		// Include deadline into message
-		message += "Deadline: " + getFormattedDeadline() + "\n";
+		if(deadline != NOT_VALID) {
+			message += "Deadline: " + getFormattedDeadline();
+		}
 		
 		// Include reminder into message
 		if(reminder != NOT_VALID) {
-			
-			message += "Remind at: " + getFormattedReminder();
-			
-			if(reminder >= System.currentTimeMillis()) {
-				message += "\n";
-			} else {
-				
-				long overdue = System.currentTimeMillis() - reminder;
-				int daysOverdue = (int) (overdue / DAY_MILLISECOND);
-				
-				message += " ["+daysOverdue+" day(s) overdue]\n";
-			}
-			
+			message += "Remind at: " + getFormattedReminder() + "\n";
 		}
 
 		// Include label into message

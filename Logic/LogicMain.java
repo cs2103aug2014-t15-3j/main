@@ -838,6 +838,7 @@ public class LogicMain {
 
 		LinkedList<Item> returningItems = new LinkedList<Item>();
 		Task returnTask;
+		String state = Operations.VIEW_OPERATION;
 
 		LogicInputPair viewOperation = inputList.get(0);
 
@@ -848,6 +849,8 @@ public class LogicMain {
 
 				returningItems = new LinkedList<Item>( getNotDoneTasks() );
 				tempList = new LinkedList<Item>( getNotDoneTasks() );
+				
+				state = Operations.VIEW_OPERATION;
 
 			} else if (inputList.size() == 1 && bufferTasksList.size() != 0) {
 
@@ -863,6 +866,8 @@ public class LogicMain {
 						Task tempTask = bufferTasksList.get(i);
 						returningItems.add(tempTask);
 					}
+					
+					state = Operations.VIEW_OPERATION;
 
 				} catch (NumberFormatException e) {
 
@@ -879,20 +884,28 @@ public class LogicMain {
 					returningItems = new LinkedList<Item>( getDoneTasks() );
 					tempList = new LinkedList<Item>( getDoneTasks() );
 					
+					state = Operations.VIEW_DONE_OPERATION;
+					
 				} else if (Operations.notDoneOperations.contains(inputPair.getOperation())) {
 
 					returningItems = new LinkedList<Item>( getNotDoneTasks() );
 					tempList = new LinkedList<Item>( getNotDoneTasks() );
+					
+					state = Operations.VIEW_OPERATION;
 
 				} else if (Operations.allOperations.contains(inputPair.getOperation())) {
 
 					returningItems = new LinkedList<Item>( getAllTasks() );
 					tempList = new LinkedList<Item>( getAllTasks() );
 					
+					state = Operations.VIEW_ALL_OPERATION;
+					
 				} else if (Operations.floatOperations.contains(inputPair.getOperation())) {
 
 					returningItems = new LinkedList<Item>( getFloatingTasks() );
 					tempList = new LinkedList<Item>( getFloatingTasks() );
+					
+					state = Operations.VIEW_FLOAT_OPERATION;
 				}
 
 			}
@@ -908,7 +921,7 @@ public class LogicMain {
 			}
 
 			returnTask = new Task((Task) returningItems.get(0));
-			returnTask.editState(Operations.VIEW_OPERATION);
+			returnTask.editState(state);
 			returningItems.set(0, returnTask);
 
 			//tempList = new LinkedList<Item>();
@@ -1152,6 +1165,7 @@ public class LogicMain {
 		LinkedList<ReminderTask> tempReminders = LogicReminder.getList();
 		LogicReminder.editList(undoReminders);
 		undoReminders = new LinkedList<ReminderTask>( tempReminders );
+		LogicReminder.getInstance().regenReminderList(bufferTasksList);
 
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		Task tempTask = new Task(Operations.NOT_EMPTY_MESSAGE);
@@ -1390,6 +1404,7 @@ public class LogicMain {
 		
 		tempCal.set(Calendar.HOUR_OF_DAY, hour);
 		tempCal.set(Calendar.MINUTE, minute);
+		tempCal.set(Calendar.SECOND, 0);
 		tempCal.set(Calendar.MILLISECOND, 0);
 	}
 
