@@ -71,6 +71,23 @@ public class LogicReminder {
 	public static LogicReminder getInstance() {
 		return logicReminderInstance;
 	}
+	
+	//@author A0112898U
+	/**
+	 * Accessor for reminder tasks list
+	 * @return Reminder tasks list
+	 */
+	static public LinkedList<ReminderTask> getList(){
+		return taskToBeReminded;
+	}
+	
+	//@author A0112898U
+	/**
+	 * Mutator for reminder tasks list
+	 */
+	static public void editList(LinkedList<ReminderTask> _taskToBeReminded){
+		taskToBeReminded = _taskToBeReminded;
+	}
 
 
 	//@author A0112898U

@@ -1,23 +1,19 @@
 import java.awt.Color;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import sun.util.calendar.BaseCalendar.Date;
-
-
 public class LogicMain {
 
 	// Constant variables
 	private final static int ONE_DAY = 1;
-	private final static String LOG_NAME = "LogicMain";
+	private final static long DAY_MS = 86400000;
+	private final static String LOG_NAME = "LogicLog";
 	private final static String LOG_NAME_STORAGE_SAVE = "StorageSaveLog";
 
 	// Flag to check if the program has initialized.
@@ -34,6 +30,7 @@ public class LogicMain {
 	static LinkedList<Task> bufferTasksList = new LinkedList<Task>();
 	private static LinkedList<Label> bufferLabelsList = new LinkedList<Label>();
 	private static LinkedList<Task> undoTasks = new LinkedList<Task>();
+	private static LinkedList<ReminderTask> undoReminders = new LinkedList<ReminderTask>();
 	private static LinkedList<Item> tempList = new LinkedList<Item>();
 	private LinkedList<LogicInputPair> inputList;
 	private String[] inputArray;
@@ -61,7 +58,7 @@ public class LogicMain {
 
 			retrieveFromStorage();
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			
 			initializeSaveTimer();
 			intializeReminder();
@@ -75,6 +72,15 @@ public class LogicMain {
 			
 			logger.log(Level.INFO, "LogicMain has already been initiated");
 		}
+	}
+	
+	//@author A0111942N
+	/**
+	 * This method updates the list required for the undo.
+	 */
+	private void updateUndo() {
+		undoTasks = new LinkedList<Task>(bufferTasksList);
+		undoReminders = LogicReminder.getList();
 	}
 
 	//@author A0111942N
@@ -221,14 +227,14 @@ public class LogicMain {
 
 		if (Operations.addOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processAdd();
 			
 			hasChanged = true;
 
 		} else if (Operations.editOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processEdit();
 			
 			hasChanged = true;
@@ -250,25 +256,25 @@ public class LogicMain {
 
 		} else if (Operations.deleteOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processDelete();
 			
 			hasChanged = true;
 
 		} else if (Operations.saveOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processSave();
 
 		} else if (!isLabel && Operations.doneOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processDone(true);
 			hasChanged = true;
 
 		} else if (!isLabel && Operations.notDoneOperations.contains(mainOperation)) {
 
-			undoTasks = new LinkedList<Task>(bufferTasksList);
+			updateUndo();
 			returnTasks = processDone(false);
 			hasChanged = true;
 
@@ -695,8 +701,6 @@ public class LogicMain {
 
 		}
 		
-		System.out.println(">>>>>>"+isLabel);
-
 		Item editItem;
 
 		if (!isLabel) {
@@ -754,17 +758,36 @@ public class LogicMain {
 
 			}
 
-			// Check if deadline has been edited
-			if (reminderEdited) {
-
-				newTask.editReminder(reminder);
-
-			}
-
 			// Check if label has been edited
 			if (labelId != -1) {
 
 				newTask.editLabel(labelId);
+
+			}
+			
+			// Check if reminder has been edited
+			if (reminderEdited) {
+
+				newTask.editReminder(reminder);
+
+				if (editTask.gethasReminder()
+						&& reminder > System.currentTimeMillis()) {
+
+					// Edit task in reminder
+					LogicReminder.getInstance().updateTaskTobeReminded(newTask, editTask);
+
+				} else if (!editTask.gethasReminder()
+						&& reminder > System.currentTimeMillis()) {
+					
+					// Add task to be reminded
+					LogicReminder.getInstance().addTaskTobeReminded(newTask);
+
+				} else {
+
+					// Remove task from reminder
+					LogicReminder.getInstance().stopTask(editTask);
+
+				}
 
 			}
 
@@ -1126,6 +1149,10 @@ public class LogicMain {
 		bufferTasksList = undoTasks;
 		undoTasks = tempTasks;
 
+		LinkedList<ReminderTask> tempReminders = LogicReminder.getList();
+		LogicReminder.editList(undoReminders);
+		undoReminders = new LinkedList<ReminderTask>( tempReminders );
+
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		Task tempTask = new Task(Operations.NOT_EMPTY_MESSAGE);
 		tempTask.editState(Operations.UNDO_OPERATION);
@@ -1195,48 +1222,43 @@ public class LogicMain {
 	 * @return List containing an empty task with the "save" state
 	 */
 	private LinkedList<Item> processDone(boolean toggle) {
-		
+
 		LinkedList<Item> returningTasks = new LinkedList<Item>();
 		Task returningTask;
-		
-		LinkedList<Task> tempTasks = new LinkedList<Task>(bufferTasksList);
 
 		try {
-			
+
 			int doneId = Integer.parseInt( inputList.get(0).getContent() ) - 1;
 			Task doneTask;
-			
-			if(undoTasks.size() > 0) {
-				
-				doneTask = new Task( undoTasks.remove(doneId) );
-				bufferTasksList.remove(doneTask);
-				undoTasks.clear();
+
+			if(tempList.size() > 0) {
+				Task removed = (Task) tempList.remove(doneId);
+				doneTask = new Task(removed);
+				bufferTasksList.remove(removed);
+				tempList.clear();
 			} else {
-				
 				doneTask = new Task( bufferTasksList.remove(doneId) );
 			}
-			
+
 			doneTask.toggleDone(toggle);
 			
-			bufferTasksList.add(doneTask);
-						
+			bufferTasksList.add( doneTask );
+
 			returningTask = new Task(doneTask);
 			returningTask.editState(Operations.DONE_OPERATION);
-			
+
 			returningTasks.add(returningTask);
-			
-			undoTasks = tempTasks;
-			
+
+
 		} catch (Exception e) {
 			logger.log(Level.INFO, "DONE OPERATION: Invalid ID");
-			
+
 			returningTask = new Task(Operations.EMPTY_MESSAGE);
 			returningTask.editState(Operations.DONE_ERROR);
-			
+
 			returningTasks.add(returningTask);
 		}
-		
-		
+
 		return returningTasks;
 	}
 	
