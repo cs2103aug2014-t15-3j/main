@@ -1266,7 +1266,12 @@ public class LogicMain {
 			bufferTasksList.add( doneTask );
 
 			returningTask = new Task(doneTask);
-			returningTask.editState(Operations.DONE_OPERATION);
+			
+			if(toggle) {
+				returningTask.editState(Operations.DONE_OPERATION);
+			} else {
+				returningTask.editState(Operations.NOT_DONE_OPERATION);
+			}
 
 			returningTasks.add(returningTask);
 

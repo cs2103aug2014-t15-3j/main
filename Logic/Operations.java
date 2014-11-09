@@ -22,6 +22,7 @@ public class Operations {
 	protected final static String UNDO_OPERATION = "undo";
 	protected final static String DELETE_OPERATION = "delete";
 	protected final static String DONE_OPERATION = "done";
+	protected final static String NOT_DONE_OPERATION = "not-done";
 	protected final static String SAVE_OPERATION = "save";
 	protected final static String POWER_OPERATION = ";power";
 	
