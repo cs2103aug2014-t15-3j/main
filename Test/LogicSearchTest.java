@@ -241,27 +241,5 @@ public class LogicSearchTest {
 
 		return false;
 	}
-	
-	
-	//Used for debuggin purpsoe
-	public static void main (String[] args){
-		
-		LinkedList<Task> testTasks = new LinkedList<Task>();
-		
-		for(int i = 0; i < 4; i++){
-			Task tempTask = new Task("t" + i , "task" + i + " lalala test");
-			testTasks.add(tempTask);
-		}
-		
-		//predicted test results
-		LinkedList<Task> predictedResult = testTasks;
-		//testSearchAlgo("t",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER); //keep as sample
-		testSearchAlgo("s t match task",testTasks,predictedResult,LogicSearch.SEARCH_TYPES.TYPE_ALL); //keep as sample
-		
-				
-		System.out.println("hi");
-		
-	}
-	
-	
+
 }
