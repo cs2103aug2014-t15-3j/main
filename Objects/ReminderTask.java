@@ -55,12 +55,10 @@ class ReminderTask extends TimerTask {
 	 * * scheduled into timer.schedule.
 	 */
 	public void run() {
-		
-		if ( taskToRemind.getReminder() >= System.currentTimeMillis() ){
-			new Notification("Here's your reminder for : \n" + taskToRemind.getName(),
-					taskToRemind.getDescription(), 
-					"Due on " + taskToRemind.getFormattedDeadline(), "", "").display();
-		}
+		new Notification("Reminder: \n" + taskToRemind.getName(),
+				taskToRemind.getDescription(), 
+				"Due on " + taskToRemind.getFormattedDeadline(),
+				"", "").display();
 	}
 	
 	
@@ -79,6 +77,7 @@ class ReminderTask extends TimerTask {
 	 */
 	public void scheduleAlarm() {
 		taskAlarm = new Timer();
-		taskAlarm.schedule(new ReminderTask(taskToRemind, alarmTime), alarmTime);
+		taskAlarm.schedule(new ReminderTask(taskToRemind, alarmTime),
+				           alarmTime);
 	}
 }

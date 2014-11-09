@@ -36,7 +36,7 @@ public class LogicReminder {
 	private LogicReminder(LinkedList<Task> tasks) {		
 		//Loop through all tasks & add only tasks with today's reminder date
 		for (Task t:tasks) {
-			if (checkIsTodayTask(t)) {
+			if (checkIsTodayTask(t) && !isReminderOver(t)) {
 				ReminderTask rTask = new ReminderTask(t, 
 						new Date(t.getReminder()));
 				taskToBeReminded.add(rTask);				
@@ -101,8 +101,8 @@ public class LogicReminder {
 	public void regenReminderList(LinkedList<Task> tasks) {
 		//Loop through all tasks & add only tasks with today's reminder date
 		for (Task t:tasks) {
-			//Checks for today's task and add task.
-		    if (checkIsTodayTask(t)) {
+			//Checks for today's task and not over task then add task.
+		    if (checkIsTodayTask(t) && !(isReminderOver(t))) {
 		    	//Create a reminder task and add to the list of reminders
 		    	ReminderTask rTask = new ReminderTask(t, 
 		    			new Date(t.getReminder()));
@@ -142,12 +142,12 @@ public class LogicReminder {
 				//Stops the previous scheduled alarm.
 				tempRtask.stopAlarm();
 				
-				if (isTodayReminder) {
+				if (isTodayReminder && !isReminderOver(newTask)) {
 					//Edit and reschedule task.
 					tempRtask.editTask(newTask);
 					tempRtask.scheduleAlarm();			
 				} else {
-					//Remove reminder if if not for today.
+					//Remove reminder if if not for today or over.
 					taskToBeReminded.remove(oldTask);
 				}
 				//To indicate that task was present in the list.
@@ -175,15 +175,17 @@ public class LogicReminder {
 	 * @param newTask The newly added task.
 	 */
 	public void addTaskTobeReminded(Task newTask) {
-		//Creates a new ReminderTask Object with the new Task.
-		ReminderTask rTask = new ReminderTask(newTask, 
-				new Date(newTask.getReminder()));
-		
-		//Add the new ReminderTask to the Singleton's ReminderTask List.
-		taskToBeReminded.add(rTask);
-		
-		//Schedules an alarm for this new task.
-		rTask.scheduleAlarm();
+		if (checkIsTodayTask(newTask) && !isReminderOver(newTask)) {
+			//Creates a new ReminderTask Object with the new Task.
+			ReminderTask rTask = new ReminderTask(newTask, 
+					new Date(newTask.getReminder()));
+			
+			//Add the new ReminderTask to the Singleton's ReminderTask List.
+			taskToBeReminded.add(rTask);
+			
+			//Schedules an alarm for this new task.
+			rTask.scheduleAlarm();
+		}
 	}
 	
 
@@ -258,7 +260,8 @@ public class LogicReminder {
 			date2 = sdf.parse(sdf.format(today));
 		} catch (ParseException e) {
 			e.printStackTrace();
-			logger.log(Level.WARNING, "Unable to Parse the dates");
+			logger.log(Level.WARNING, 
+					   "LogicReminder - Unable to Parse the dates");
 		}
 		
 	    //Compare the dates, if same return true.
@@ -266,6 +269,21 @@ public class LogicReminder {
 	    	return true;
 	    }
 	    return false;
+	}
+	
+	//@author A0112898U
+	/**
+	 * Checks if task's reminder time is already over
+	 * 
+	 * @param task The task to check with
+	 * @return boolean True if reminder time indication is over, False otherwise.
+	 */
+	private boolean isReminderOver(Task task) {
+		//if reminder time is greater then current system time means not over
+		if ( task.getReminder() >= System.currentTimeMillis() ){
+			return false;
+		}
+		return true;
 	}
 	
 

@@ -42,8 +42,9 @@ public class LogicReminderTest {
 	 */
 	public static void testCase_testRegenFunc() {
 		
+		int offsetTime = 100;
 		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
+		
 		Date date1 = null;
 		Date date2 = null;
 		Date date3 = null;
@@ -71,9 +72,9 @@ public class LogicReminderTest {
 		t4.editReminder(date4.getTime());
 		
 		//Create java calendar instance to get today's date
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance();		
 		Date date5 = calendar.getTime();
-		Task t5 = new Task("hi 5", "lalal", 123123, date5.getTime() ,date5.getTime());		
+		Task t5 = new Task("hi 5", "lalal", 123123, date5.getTime() + offsetTime ,date5.getTime() + offsetTime);		
 		t5.editReminder(date5.getTime());
 		
 		
