@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 /*********************************************************************/
 /*********************************************************************/
 
+//@author A0116160W
 
 public class GuiDisplay {
 	private final static String task = "Task :";
@@ -58,44 +59,49 @@ public class GuiDisplay {
 	static void display(String inputStr) {
 		LogicMain logic = new LogicMain();
 		LinkedList<Item> tasks = logic.processInput(inputStr);
-
+		LinkedList<Item> allTasks = new  LinkedList<Item> (LogicMain.getAllTasks());
 
 		//assert(!inputStr.isEmpty()): "Input String was empty! Therefore Assertion Error!";
 		if(!tasks.isEmpty()) {
 
 			Item firstItem = tasks.get(0);
-			Task firstTask = (Task) firstItem;
+			
 			String state = firstItem.getState();
 			System.out.print(state); //For testing
 			switch (state){
 			case Operations.ADD_OPERATION:
+				Task firstTask = (Task) firstItem;
 				GuiMain.feedback.setText("The following task has been added:\n\n" + 
 								firstItem.toString());
-				updateTable();
+				updateTodoTable(logic.processInput(";view ;!done"));
+				updateDoneTable(logic.processInput(";view ;done"));
+				updateAllTable(allTasks);
 				Dialog d = new Dialog(GuiMain.frameRemembra, "Following Task Added Successfully!", 
 						task + firstTask.getName(), desc + firstTask.getDescription(), label + 
 						firstTask.getLabelName(), deadline + firstTask.getFormattedDeadline(), "add");
 				d.displayDialog();
 				DialogFX.fadeIn(d);
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 
 			case Operations.EDIT_OPERATION:
+				Task firstTask1 = (Task) firstItem;
 				GuiMain.feedback.setText("The following task has been edited:\n\n" + firstItem.toString() + 
 						"\n\n\nEnter ; to view all tasks.");
-				updateTable();
+				updateTodoTable(logic.processInput(";view ;!done"));
+				updateDoneTable(logic.processInput(";view ;done"));
+				updateAllTable(allTasks);
 				Dialog d1 = new Dialog(GuiMain.frameRemembra, "Following Task Has Been Edited!", 
-						task + firstTask.getName(), desc + firstTask.getDescription(), 
-						label + firstTask.getLabelName(), deadline+ firstTask.getFormattedDeadline(), "edit");
+						task + firstTask1.getName(), desc + firstTask1.getDescription(), 
+						label + firstTask1.getLabelName(), deadline+ firstTask1.getFormattedDeadline(), "edit");
 				d1.displayDialog();
 				DialogFX.fadeIn(d1);
 				break;
 				
 			case Operations.VIEW_OPERATION:
-				GuiMain.feedback.setText("All tasks displayed below:\n");
+				
 				viewOperation(tasks, firstItem);
-				updateTable();
-				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
-				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 				
 			case Operations.VIEW_FLOAT_OPERATION:
@@ -108,13 +114,13 @@ public class GuiDisplay {
 				
 			case Operations.VIEW_ALL_OPERATION:
 				GuiMain.feedback.setText("All tasks displayed in the 'All Tasks' Tab!");
-				updateTable();
+				updateAllTable(tasks);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.allTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 				
 			case Operations.VIEW_DONE_OPERATION:
-				updateTable();
+				updateDoneTable(tasks);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
@@ -132,24 +138,31 @@ public class GuiDisplay {
 				findOperation(tasks, inputStr);
 				break;
 			case Operations.DELETE_OPERATION:	
+				Task firstTask3 = (Task) firstItem;
 				deleteOperation(firstItem);
-				updateTable();
+				updateTodoTable(logic.processInput(";view ;!done"));
+				updateDoneTable(logic.processInput(";view ;done"));
+				updateAllTable(allTasks);
 				Dialog d3 = new Dialog(GuiMain.frameRemembra, "Following Task Deleted Successfully!", 
-						task + firstTask.getName(), desc + firstTask.getDescription(), 
-						label + firstTask.getLabelName(), deadline + firstTask.getFormattedDeadline(), "delete");
+						task + firstTask3.getName(), desc + firstTask3.getDescription(), 
+						label + firstTask3.getLabelName(), deadline + firstTask3.getFormattedDeadline(), "delete");
 				d3.displayDialog();
 				DialogFX.fadeIn(d3);
 				break;
 			case Operations.DONE_OPERATION:
 				GuiMain.feedback.setText("The task has been marked done!\nCongratulations on completing it!\n:)" 
 						+ "\n\n\n\n\n\nEnter ; to view all tasks.");
-				updateTable();
+				updateTodoTable(logic.processInput(";view ;!done"));
+				updateDoneTable(logic.processInput(";view ;done"));
+				updateAllTable(allTasks);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 			case Operations.UNDO_OPERATION:
 				GuiMain.feedback.setText("Undo successful!\n" + "\n\n\n\n\n\n\nEnter ; to view all tasks.");
-				updateTable();
+				updateTodoTable(logic.processInput(";view ;!done"));
+				updateDoneTable(logic.processInput(";view ;done"));
+				updateAllTable(allTasks);
 				break;
 			case Operations.SAVE_OPERATION:
 				GuiMain.feedback.setText("Everything saved successfully!\n"+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
@@ -182,6 +195,167 @@ public class GuiDisplay {
 	}
 
 
+
+	private static void updateDoneTable(LinkedList<Item> tasks) {
+		// TODO Auto-generated method stub
+		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.doneTable.getModel();
+		tableModel.setRowCount(0);
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+			GuiMain.myDoneData = (DefaultTableModel) GuiMain.doneTable.getModel();
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;//will b the color function
+					} else {
+						data[0] = Color.WHITE;
+					}
+					
+					GuiMain.myDoneData.addRow(data);
+					
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+			
+			GuiMain.doneTable.setModel(GuiMain.myDoneData);
+			GuiMain.doneTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.setDefaultRenderer(Color.class, new CellColorRenderer());
+			GuiMain.doneTable.setDefaultRenderer(String.class, centerRenderer);
+			GuiMain.doneTable.setDefaultRenderer(Integer.class, centerRenderer);
+		}
+	}
+
+	private static void updateAllTable(LinkedList<Item> tasks) {
+		// TODO Auto-generated method stub
+		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.allTable.getModel();
+		tableModel.setRowCount(0);
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+			GuiMain.allData = (DefaultTableModel) GuiMain.allTable.getModel();
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;//will b the color function
+					} else {
+						data[0] = Color.WHITE;
+					}
+
+					GuiMain.allData.addRow(data);
+					
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+			
+			GuiMain.allTable.setModel(GuiMain.allData);
+			GuiMain.allTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.setDefaultRenderer(Color.class, new CellColorRenderer());
+			GuiMain.allTable.setDefaultRenderer(String.class, centerRenderer);
+			GuiMain.allTable.setDefaultRenderer(Integer.class, centerRenderer);
+		}
+	}
+
+	private static void updateTodoTable(LinkedList<Item> tasks) {
+		// TODO Auto-generated method stub
+		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.todoTable.getModel();
+		tableModel.setRowCount(0);
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+
+			GuiMain.myData = (DefaultTableModel) GuiMain.todoTable.getModel();
+			
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;//will b the color function
+					} else {
+						data[0] = Color.WHITE;
+					}
+
+					GuiMain.myData.addRow(data);
+					
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+			GuiMain.todoTable.setModel(GuiMain.myData);
+			GuiMain.todoTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.setDefaultRenderer(Color.class, new CellColorRenderer());
+			GuiMain.todoTable.setDefaultRenderer(String.class, centerRenderer);
+			GuiMain.todoTable.setDefaultRenderer(Integer.class, centerRenderer);
+		}
+	}
 
 	private static void displayFloatingTasksTable(LinkedList<Item> items, Item firstTask) {
 		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.todoTable.getModel();
@@ -270,12 +444,21 @@ public class GuiDisplay {
 	}
 
 	private static void viewOperation(LinkedList<Item> tasks, Item firstTask) {
-		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+		if (tasks.size()==1){
+			GuiMain.feedback.setText("The task is displayed below:\n");
+			Item tempTask = tasks.get(0);
+			GuiMain.feedback.setText(GuiMain.feedback.getText() + "\n\n" +
+					 tempTask  + "--------------------x-------------------\n");
+		}else if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+			updateTodoTable(tasks);
+			GuiMain.feedback.setText("All tasks displayed below:\n");
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
 						(i+1) + ".\n" + tempTask  + "--------------------x-------------------\n");
 			}
+			GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+			GuiMain.tabbedPane.getSelectedComponent();
 		}
 		else {
 			GuiMain.feedback.setText("Sorry, No Tasks Found!\n");
@@ -312,92 +495,6 @@ public class GuiDisplay {
 		}
 	}
 
-	/**
-	 * Updates and displays the table.
-	 */
-	public static void updateTable() {
-
-		DefaultTableModel tableModel = (DefaultTableModel) GuiMain.todoTable.getModel();
-		tableModel.setRowCount(0);
-		DefaultTableModel tableModel2= (DefaultTableModel) GuiMain.doneTable.getModel();
-		tableModel2.setRowCount(0);
-		DefaultTableModel tableModel3= (DefaultTableModel) GuiMain.allTable.getModel();
-		tableModel3.setRowCount(0);
-		
-		LinkedList<Task> allTasks= LogicMain.getAllTasks();
-		if (!(allTasks.size()==0)){
-			Item firstTask = allTasks.get(0);
-
-			GuiMain.myData = (DefaultTableModel) GuiMain.todoTable.getModel();
-			GuiMain.myDoneData = (DefaultTableModel) GuiMain.doneTable.getModel();
-			GuiMain.allData = (DefaultTableModel) GuiMain.allTable.getModel();
-			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
-				for(int i=0; i<allTasks.size(); i++) {
-					Task tempTask = allTasks.get(i);
-					Object[] data = new Object[7];
-
-					data[1] = i+1;
-					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
-						data[2] = "";
-
-					} else {
-						data[2] = tempTask.getLabelName();
-					}
-					data[3] = tempTask.getName();
-					data[4] = tempTask.getDescription();
-
-					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + " " + tempTask.getFormattedEnd();
-					}else {
-						data[5] = tempTask.getFormattedDeadline();
-					}
-
-					data[6] = tempTask.getDone();
-					if(!(data[2].toString().isEmpty())){
-						Color color = LogicMain.getLabelColor(tempTask.getLabel());
-						data[0] = color;//will b the color function
-					} else {
-						data[0] = Color.WHITE;
-					}
-					GuiMain.allData.addRow(data);
-					if (tempTask.getDone()) {
-						GuiMain.myDoneData.addRow(data);
-					} else {
-						GuiMain.myData.addRow(data);
-					}
-
-
-				}
-			}
-			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
-
-			GuiMain.todoTable.setModel(GuiMain.myData);
-			GuiMain.todoTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.todoTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.todoTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.todoTable.setDefaultRenderer(Integer.class, centerRenderer);
-
-			GuiMain.doneTable.setModel(GuiMain.myDoneData);
-			GuiMain.doneTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.doneTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.doneTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.doneTable.setDefaultRenderer(Integer.class, centerRenderer);
-			
-			GuiMain.allTable.setModel(GuiMain.allData);
-			GuiMain.allTable.getColumnModel().getColumn(3).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.getColumnModel().getColumn(4).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.getColumnModel().getColumn(5).setCellRenderer(new MyCellRenderer());
-			GuiMain.allTable.setDefaultRenderer(Color.class, new CellColorRenderer());
-			GuiMain.allTable.setDefaultRenderer(String.class, centerRenderer);
-			GuiMain.allTable.setDefaultRenderer(Integer.class, centerRenderer);
-
-		}
-	}
 
 	/**
 	 * Updates the table after search, showing the search results.
@@ -461,6 +558,8 @@ public class GuiDisplay {
 		LogicMain logic = new LogicMain();
 		logic.processInput(";");
 		GuiMain.feedback.setText("Hi, there!\nThis is your feedback display.\n\nFor a quick guide, type help and\npress enter.\n\n\nAll of your tasks, if any, are displayed on the left.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTo change tabs, press Alt+X\nwhere X is the tab no.");
-		updateTable();
+		updateDoneTable(logic.processInput(";view ;done"));
+		updateAllTable(logic.processInput(";view ;all"));
+		updateTodoTable(logic.processInput(";view ;!done"));
 	}
 }

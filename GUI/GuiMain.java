@@ -44,6 +44,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
@@ -78,6 +80,12 @@ import javax.swing.SpringLayout;
 // @Sankalp - GuiMain.java
 /*********************************************************************/
 /*********************************************************************/
+//@author A0116160W
+//GUIMain
+
+//@author A0112898U
+//System Tray
+
 
 public class GuiMain {
 
@@ -152,6 +160,25 @@ public class GuiMain {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				//To update system on which list to work on, whenever tab is changed
+				ChangeListener changeListener = new ChangeListener() {
+					public void stateChanged(ChangeEvent e) {
+						JTabbedPane p = (JTabbedPane)e.getSource();
+						int idx = p.getSelectedIndex(); 
+						LogicMain logic = new LogicMain();
+						if (idx == 0){
+							logic.processInput(";view ;!done");
+						} else if (idx == 1){
+							logic.processInput(";view ;done");
+						} else if (idx == 2){
+							logic.processInput(";view ;all");
+						}
+					}
+				};
+				tabbedPane.addChangeListener(changeListener);
+
+
 
 				inputField.addActionListener(new ActionListener(){
 					@Override
@@ -462,6 +489,8 @@ public class GuiMain {
 		allTable.getColumnModel().getColumn(6).setPreferredWidth(20);
 		allTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+
+
 		searchTab = new PanelWithShadow(5);
 		searchTab.setLayout(null);
 		searchTab.setPaintBorderInsets(true);
@@ -470,7 +499,7 @@ public class GuiMain {
 		searchTab.setBackground(Color.WHITE);
 		tabbedPane.addTab("Search", null, searchTab, null);
 
-		
+
 		tableHeading4 = new JTextPane();
 		tableHeading4.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
 		tableHeading4.setForeground(new Color(204, 0, 0));
