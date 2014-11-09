@@ -101,8 +101,8 @@ public class GuiMain {
 	static JTextArea feedback;
 	private JScrollPane scrollPane_1;
 
-	private JTabbedPane tabbedPane;
-	static JTable table_1;
+	static JTabbedPane tabbedPane;
+	static JTable todoTable;
 	private JPanel colorPanel1;
 	private ArrayList<String> keywords = new ArrayList<String>(5);
 
@@ -115,20 +115,30 @@ public class GuiMain {
 	static Object[][] objects = new Object[9][7];
 
 	private static final String COMMIT_ACTION = "commit";
-	static PanelWithShadow calendarPane;
+	static PanelWithShadow calendarTab;
 	private JPanel panel_2;
-	private JPanel tableDisplay;
+	static PanelWithShadow todoTab;
 	private JLabel timeLabel = new JLabel();
 	private JPanel panel_7;
 	private JPanel panel_3;
 	private JPanel panel_4;
 	private JPanel panel_5;
 	private JPanel panel_6;
-	private PanelWithShadow doneTaskTableDisplay;
-	private JScrollPane scrollPaneDoneTable;
-	static JTable table_2;
-	private JTextPane txtpnIdLabelTask_1;
-	private JTextPane txtpnIdLabelTask;
+	static PanelWithShadow doneTab;
+	private JScrollPane doneScroll;
+	static JTable doneTable;
+	private JTextPane tableHeading2;
+	private JTextPane tableHeading1;
+	static PanelWithShadow searchTab;
+	private JTextPane tableHeading4;
+	static JTable searchTable;
+	private JScrollPane searchScroll;
+	static DefaultTableModel searchData;
+	static PanelWithShadow allTab;
+	private JTextPane tableHeading3;
+	static JTable allTable;
+	private JScrollPane allScroll;
+	static DefaultTableModel allData;
 
 	/**
 	 * Launch the application.
@@ -275,10 +285,10 @@ public class GuiMain {
 		tabbedPane.setFont(new Font("Levenim MT", Font.PLAIN, 13));
 		displayPanel.setLayout(null);
 
-		tableDisplay = new PanelWithShadow(5);
-		tableDisplay.setForeground(Color.BLACK);
-		tableDisplay.setBackground(Color.WHITE);
-		tabbedPane.addTab("To-do", null, tableDisplay, null);
+		todoTab = new PanelWithShadow(5);
+		todoTab.setForeground(Color.BLACK);
+		todoTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("To-do", null, todoTab, null);
 
 		myData = new DefaultTableModel(objects, tableHeaders){
 			public Class getColumnClass(int columnIndex) {
@@ -291,58 +301,58 @@ public class GuiMain {
 				}
 			}
 		};
-		table_1 = new JTable(myData);
-		table_1.setEnabled(false);
-		table_1.setRequestFocusEnabled(false);
-		table_1.setFocusable(false);
-		table_1.setFocusTraversalKeysEnabled(false);
-		table_1.setRowSelectionAllowed(false);
-		table_1.setForeground(new Color(0, 0, 0));
-		table_1.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		table_1.setShowHorizontalLines(false);
-		table_1.setBorder(null);
+		todoTable = new JTable(myData);
+		todoTable.setEnabled(false);
+		todoTable.setRequestFocusEnabled(false);
+		todoTable.setFocusable(false);
+		todoTable.setFocusTraversalKeysEnabled(false);
+		todoTable.setRowSelectionAllowed(false);
+		todoTable.setForeground(new Color(0, 0, 0));
+		todoTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		todoTable.setShowHorizontalLines(false);
+		todoTable.setBorder(null);
 
-		table_1.setTableHeader(null);
-		tableDisplay.setLayout(null);
-		table_1.getColumnModel().getColumn(0).setPreferredWidth(20);
-		table_1.getColumnModel().getColumn(1).setPreferredWidth(35);
-		table_1.getColumnModel().getColumn(2).setPreferredWidth(90);
-		table_1.getColumnModel().getColumn(3).setPreferredWidth(140);
-		table_1.getColumnModel().getColumn(4).setPreferredWidth(260);
-		table_1.getColumnModel().getColumn(5).setPreferredWidth(140);
-		table_1.getColumnModel().getColumn(6).setPreferredWidth(20);
+		todoTable.setTableHeader(null);
+		todoTab.setLayout(null);
+		todoTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		todoTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		todoTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		todoTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		todoTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		todoTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		todoTable.getColumnModel().getColumn(6).setPreferredWidth(20);
 
-		table_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		todoTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		txtpnIdLabelTask = new JTextPane();
-		txtpnIdLabelTask.setDisabledTextColor(new Color(204, 0, 51));
-		txtpnIdLabelTask.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
-		txtpnIdLabelTask.setForeground(new Color(204, 0, 0));
-		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
-		txtpnIdLabelTask.setEditable(false);
-		txtpnIdLabelTask.setBounds(5, 4, 623, 30);
-		tableDisplay.add(txtpnIdLabelTask);
+		tableHeading1 = new JTextPane();
+		tableHeading1.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading1.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
+		tableHeading1.setForeground(new Color(204, 0, 0));
+		tableHeading1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading1.setEditable(false);
+		tableHeading1.setBounds(5, 4, 623, 30);
+		todoTab.add(tableHeading1);
 
-		JScrollPane scrollPaneTable = new JScrollPane(table_1);
-		scrollPaneTable.setBounds(5, 32, 739, 346);
-		tableDisplay.add(scrollPaneTable);
-		scrollPaneTable.setBackground(new Color(255, 255, 255));
-		scrollPaneTable.setBorder(null);
-		table_1.setFillsViewportHeight(true);
+		JScrollPane todoScroll = new JScrollPane(todoTable);
+		todoScroll.setBounds(5, 32, 739, 346);
+		todoTab.add(todoScroll);
+		todoScroll.setBackground(new Color(255, 255, 255));
+		todoScroll.setBorder(null);
+		todoTable.setFillsViewportHeight(true);
 		displayPanel.add(tabbedPane);
 
-		doneTaskTableDisplay = new PanelWithShadow(5);
-		doneTaskTableDisplay.setForeground(Color.BLACK);
-		doneTaskTableDisplay.setPaintBorderInsets(true);
-		doneTaskTableDisplay.setInheritAlpha(true);
-		doneTaskTableDisplay.setLayout(null);
-		doneTaskTableDisplay.setBackground(Color.WHITE);
-		tabbedPane.addTab("Done", null, doneTaskTableDisplay, null);
-		txtpnIdLabelTask.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
-		txtpnIdLabelTask.setForeground(new Color(204, 0, 0));
-		txtpnIdLabelTask.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
-		txtpnIdLabelTask.setEditable(false);
-		txtpnIdLabelTask.setBounds(5, 4, 739, 30);
+		doneTab = new PanelWithShadow(5);
+		doneTab.setForeground(Color.BLACK);
+		doneTab.setPaintBorderInsets(true);
+		doneTab.setInheritAlpha(true);
+		doneTab.setLayout(null);
+		doneTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("Done", null, doneTab, null);
+		tableHeading1.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading1.setForeground(new Color(204, 0, 0));
+		tableHeading1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading1.setEditable(false);
+		tableHeading1.setBounds(5, 4, 739, 30);
 
 		myDoneData = new DefaultTableModel(objects, tableHeaders){
 			public Class getColumnClass(int columnIndex) {
@@ -356,54 +366,172 @@ public class GuiMain {
 			}
 		};
 
-		table_2 = new JTable(myDoneData);
-		table_2.setEnabled(false);
-		table_2.setRequestFocusEnabled(false);
-		table_2.setFocusable(false);
-		table_2.setFocusTraversalKeysEnabled(false);
-		table_2.setRowSelectionAllowed(false);
-		table_2.setForeground(new Color(0, 0, 0));
-		table_2.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		table_2.setShowHorizontalLines(false);
-		table_2.setBorder(null);
+		doneTable = new JTable(myDoneData);
+		doneTable.setEnabled(false);
+		doneTable.setRequestFocusEnabled(false);
+		doneTable.setFocusable(false);
+		doneTable.setFocusTraversalKeysEnabled(false);
+		doneTable.setRowSelectionAllowed(false);
+		doneTable.setForeground(new Color(0, 0, 0));
+		doneTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		doneTable.setShowHorizontalLines(false);
+		doneTable.setBorder(null);
 
-		table_2.setTableHeader(null);
-		tableDisplay.setLayout(null);
-		table_2.getColumnModel().getColumn(0).setPreferredWidth(20);
-		table_2.getColumnModel().getColumn(1).setPreferredWidth(35);
-		table_2.getColumnModel().getColumn(2).setPreferredWidth(90);
-		table_2.getColumnModel().getColumn(3).setPreferredWidth(140);
-		table_2.getColumnModel().getColumn(4).setPreferredWidth(260);
-		table_2.getColumnModel().getColumn(5).setPreferredWidth(140);
-		table_2.getColumnModel().getColumn(6).setPreferredWidth(20);
-		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		doneTable.setTableHeader(null);
+		doneTab.setLayout(null);
+		doneTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		doneTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		doneTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		doneTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		doneTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		doneTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		doneTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		doneTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		txtpnIdLabelTask_1 = new JTextPane();
-		txtpnIdLabelTask_1.setBounds(5, 4, 739, 30);
-		doneTaskTableDisplay.add(txtpnIdLabelTask_1);
-		txtpnIdLabelTask_1.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
-		txtpnIdLabelTask_1.setForeground(new Color(204, 0, 0));
-		txtpnIdLabelTask_1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
-		txtpnIdLabelTask_1.setEditable(false);
-		txtpnIdLabelTask_1.setDisabledTextColor(new Color(204, 0, 51));
-		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tableHeading2 = new JTextPane();
+		tableHeading2.setBounds(5, 4, 739, 30);
+		doneTab.add(tableHeading2);
+		tableHeading2.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading2.setForeground(new Color(204, 0, 0));
+		tableHeading2.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading2.setEditable(false);
+		tableHeading2.setDisabledTextColor(new Color(204, 0, 51));
+		doneTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		scrollPaneDoneTable = new JScrollPane(table_2);
-		scrollPaneDoneTable.setBounds(5, 32, 739, 346);
-		scrollPaneDoneTable.setBackground(new Color(255, 255, 255));
-		scrollPaneDoneTable.setBorder(null);
-		table_2.setFillsViewportHeight(true);
-		doneTaskTableDisplay.add(scrollPaneDoneTable);
-		scrollPaneDoneTable.setViewportView(table_2);
+		doneScroll = new JScrollPane(doneTable);
+		doneScroll.setBounds(5, 32, 739, 346);
+		doneScroll.setBackground(new Color(255, 255, 255));
+		doneScroll.setBorder(null);
+		doneTable.setFillsViewportHeight(true);
+		doneTab.add(doneScroll);
+		doneScroll.setViewportView(doneTable);
 
-		calendarPane = new PanelWithShadow(5);
-		tabbedPane.addTab("Calendar", null, calendarPane, null);
-		calendarPane.setBorder(BorderFactory.createTitledBorder("Calendar"));
-		Calendar.createCalendar(calendarPane);
-		calendarPane.setLayout(null);
+		allTab = new PanelWithShadow(5);
+		allTab.setLayout(null);
+		allTab.setPaintBorderInsets(true);
+		allTab.setInheritAlpha(true);
+		allTab.setForeground(Color.BLACK);
+		allTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("All Tasks", null, allTab, null);
+
+		tableHeading3 = new JTextPane();
+		tableHeading3.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading3.setForeground(new Color(204, 0, 0));
+		tableHeading3.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading3.setEditable(false);
+		tableHeading3.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading3.setBounds(5, 4, 739, 30);
+		allTab.add(tableHeading3);
+
+		allScroll = new JScrollPane();
+		allScroll.setBounds(5, 32, 739, 346);
+		allTab.add(allScroll);
+
+		allData = new DefaultTableModel(objects, tableHeaders){
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+		allTable = new JTable(allData);
+		allTable.setFillsViewportHeight(true);
+		allScroll.setViewportView(allTable);
+		allTable.setEnabled(false);
+		allTable.setRequestFocusEnabled(false);
+		allTable.setFocusable(false);
+		allTable.setFocusTraversalKeysEnabled(false);
+		allTable.setRowSelectionAllowed(false);
+		allTable.setForeground(new Color(0, 0, 0));
+		allTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		allTable.setShowHorizontalLines(false);
+		allTable.setBorder(null);
+
+		allTable.setTableHeader(null);
+		allTab.setLayout(null);
+		allTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		allTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		allTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		allTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		allTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		allTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		allTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		allTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		searchTab = new PanelWithShadow(5);
+		searchTab.setLayout(null);
+		searchTab.setPaintBorderInsets(true);
+		searchTab.setInheritAlpha(true);
+		searchTab.setForeground(Color.BLACK);
+		searchTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("Search", null, searchTab, null);
+
+		
+		tableHeading4 = new JTextPane();
+		tableHeading4.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading4.setForeground(new Color(204, 0, 0));
+		tableHeading4.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading4.setEditable(false);
+		tableHeading4.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading4.setBounds(5, 4, 739, 30);
+		searchTab.add(tableHeading4);
+
+		searchScroll = new JScrollPane();
+		searchScroll.setBounds(5, 32, 739, 346);
+		searchTab.add(searchScroll);
+
+		searchData = new DefaultTableModel(objects, tableHeaders){
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+
+		searchTable = new JTable(searchData);
+		searchTable.setFillsViewportHeight(true);
+		searchScroll.setViewportView(searchTable);
+		searchTable.setEnabled(false);
+		searchTable.setRequestFocusEnabled(false);
+		searchTable.setFocusable(false);
+		searchTable.setFocusTraversalKeysEnabled(false);
+		searchTable.setRowSelectionAllowed(false);
+		searchTable.setForeground(new Color(0, 0, 0));
+		searchTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		searchTable.setShowHorizontalLines(false);
+		searchTable.setBorder(null);
+
+		searchTable.setTableHeader(null);
+		searchTab.setLayout(null);
+		searchTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		searchTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		searchTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		searchTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		searchTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		searchTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		searchTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		calendarTab = new PanelWithShadow(5);
+		tabbedPane.addTab("Calendar", null, calendarTab, null);
+		calendarTab.setBorder(BorderFactory.createTitledBorder("Calendar"));
+		Calendar.createCalendar(calendarTab);
+		calendarTab.setLayout(null);
+
+		//switch between tabs
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
 		colorPanel1 = new JPanel();
 		colorPanel1.setBounds(35, 508, 12, 76);
@@ -433,7 +561,7 @@ public class GuiMain {
 		inputField.setBackground(new Color(255, 255, 255));
 		inputPanel.add(inputField);
 		inputField.setColumns(49);
-		myData = new DefaultTableModel(objects, tableHeaders);
+		//myData = new DefaultTableModel(objects, tableHeaders);
 		//JLabel lblMonth = new JLabel("Task");
 		//lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
 		//calendar.add(lblMonth);

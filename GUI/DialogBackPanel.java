@@ -49,10 +49,10 @@ public class DialogBackPanel extends JPanel {
 
 		setOpaque(false);
 		setLayout(null);
-
+		if (Image != saveImage){
 		add(cmp);
-
 		cmp.setSize(300, 450);
+		}
 	}
 
 	@Override
