@@ -186,21 +186,23 @@ public final class LogicSearch {
 						
 						case TYPE_DESCRIPTION:
 							chkToks.add(tokenizeSearchInput(
-									t.getDescription()));
+									t.getDescription().toLowerCase()));
 							
 							if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION) {
 								break;
 							}
 							
 						case TYPE_NAME:
-							chkToks.add(tokenizeSearchInput(t.getName()));
+							chkToks.add(tokenizeSearchInput(
+									t.getName().toLowerCase()));
 							
 							if (searchType == SEARCH_TYPES.TYPE_NAME) {
 								break;
 							}
 							
 						case TYPE_LABEL:
-							chkToks.add(tokenizeSearchInput(t.getLabelName()));
+							chkToks.add(tokenizeSearchInput(
+									t.getLabelName().toLowerCase()));
 							
 							if (searchType == SEARCH_TYPES.TYPE_LABEL) {
 								break;
@@ -281,21 +283,21 @@ public final class LogicSearch {
 					case TYPE_ALL:
 						
 					case TYPE_DESCRIPTION:
-						chkString.add(t.getDescription());
+						chkString.add(t.getDescription().toLowerCase());
 						
 						if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION) {
 							break;
 						}
 						
 					case TYPE_NAME:
-						chkString.add(t.getName());
+						chkString.add(t.getName().toLowerCase());
 						
 						if (searchType == SEARCH_TYPES.TYPE_NAME) {
 							break;
 						}
 						
 					case TYPE_LABEL:
-						chkString.add(t.getLabelName());
+						chkString.add(t.getLabelName().toLowerCase());
 						
 						if (searchType == SEARCH_TYPES.TYPE_LABEL) {
 							break;
@@ -428,12 +430,14 @@ public final class LogicSearch {
 						//Double security to check if task has been added
 						if (!isTaskExist(collatedMatchedTaskList,t)) {
 							LinkedList<String> tokenizeDescription 
-									= tokenizeSearchInput(t.getDescription());
+									= tokenizeSearchInput(
+											t.getDescription().toLowerCase());
 							
 							//Check against each word in the Description
 							for (String desTok:tokenizeDescription) {
 								if (chkStrSimilarity(tok,desTok) 
 										> PERCENT_TO_ADD) {
+									//Check how similar the 2 strings are
 									if ((chkStrSimilarity(tok, desTok) 
 											> PERCENT_TO_SUGGEST)
 											&& (chkStrSimilarity(tok, desTok) 
@@ -454,7 +458,7 @@ public final class LogicSearch {
 						//Search Names
 						if (!isTaskExist(collatedMatchedTaskList,t)) {
 							LinkedList<String> tokenizeName
-							= tokenizeSearchInput(t.getName());
+							= tokenizeSearchInput(t.getName().toLowerCase());
 							
 							for (String nameTok:tokenizeName) {
 								//Check against names
@@ -481,7 +485,8 @@ public final class LogicSearch {
 						//Double security to check if task has been added
 						if (!isTaskExist(collatedMatchedTaskList, t)) {
 							LinkedList<String> tokenizeLabel
-									= tokenizeSearchInput(t.getLabelName());
+									= tokenizeSearchInput(
+											t.getLabelName().toLowerCase());
 							
 							//Check against each word in the label
 							for (String labelTok:tokenizeLabel) {

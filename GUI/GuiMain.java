@@ -780,13 +780,13 @@ public class GuiMain {
 		popup.add(defaultItem);
 
 		//Added a 'Option' option to the menu when right clicked
-		
 		defaultItem = new MenuItem("Open");
 		defaultItem.addActionListener(openListener);
 		popup.add(defaultItem);
 
 		trayIcon = new TrayIcon(image, "Remembra", popup);
 		trayIcon.setImageAutoSize(true);
+		//To open Remembra from system tray via left click
 		trayIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
