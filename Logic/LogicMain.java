@@ -1595,21 +1595,4 @@ public class LogicMain {
 		
 		return Color.WHITE;
 	}
-	
-	/**
-	 * For testing purposes...
-	 */
-	public static void main(String[] arg) {
-		/*
-		
-		LogicMain logic = new LogicMain();
-		
-		Label label = getAllLabels().get(0);
-		System.out.println( getLabelColor(label.getTimeStamp()) );
-
-		System.out.println( logic.processDate("12 34 am") );
-		System.out.println( logic.processDate("9 12") );
-		System.out.println( logic.processDate("11 12 2041") );
-		*/
-	}
 }

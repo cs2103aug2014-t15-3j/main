@@ -206,7 +206,7 @@ public class GuiMain {
 			@Override
 			public void actionPerformed(ActionEvent arg) {
 				
-				String inputStr = inputField.getText();
+				String inputStr = inputField.getText().toLowerCase();
 
 				inputField.setText("");
 
