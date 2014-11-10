@@ -53,7 +53,9 @@ public class Operations {
 	protected final static String DATE_INPUT_FORMAT = "d/M/yyyy h:m a";
 	protected final static String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
 	protected final static String DATE_OUTPUT_NO_YEAR_FORMAT = "d MMM, h:mm a";
+	protected final static String DATE_OUTPUT_TIME_FORMAT = "h:mm a";
 	protected final static String YEAR_FORMAT = "yyyy";
+	protected final static String DATE_FORMAT = "d MMM";
 	
 	// Manage program view state
 	protected final static int ALL_STATE = 0;

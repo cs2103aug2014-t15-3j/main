@@ -299,11 +299,20 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		
 		if (dateMs > 0) {
 			
+			// Get this year
 			dateFormat.applyLocalizedPattern(Operations.YEAR_FORMAT);
 			String year = dateFormat.format(dateMs);
 			String thisYear = dateFormat.format( System.currentTimeMillis() );
 			
-			if ( year.equals(thisYear) ) {
+			// Get this month
+			dateFormat.applyLocalizedPattern(Operations.DATE_FORMAT);
+			String date = dateFormat.format(dateMs);
+			String today = dateFormat.format( System.currentTimeMillis() );
+			
+			
+			if (date.equals(today)) {
+				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_TIME_FORMAT);
+			} else if ( year.equals(thisYear) ) {
 				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_NO_YEAR_FORMAT);
 			} else {
 				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_FORMAT);
@@ -508,7 +517,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		String message = "";
 		
 		// Include name into message
-		message += "Task:\n" + name;
+		message += "Name:\n" + name;
 		
 		// Include done or not
 		if (isDone) {
@@ -561,6 +570,17 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		
 		long currentTaskTime = Math.min(start,deadline);
 		long compareTaskTime = Math.min(compareTask.getStart(), compareTask.getDeadline());
+		
+		if (start == -1 && deadline == -1 && compareTask.getStart() == -1
+				&& compareTask.getDeadline()== -1) {
+			
+			return (int) ( timeStamp - compareTask.getTimeStamp() );
+			
+		} else if (start == -1 && deadline == -1) {
+			return 1;
+		} else if (compareTask.getStart() == -1 && compareTask.getDeadline()== -1) {
+			return -1;
+		}
 				
 		if (currentTaskTime == compareTaskTime) {
 			return (int) ( timeStamp - compareTask.getTimeStamp() );

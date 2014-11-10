@@ -134,6 +134,7 @@ public final class LogicSearch {
 		
 		LinkedList<Task> storedTasks = bufferedTaskList;
 		LinkedList<Task> tempCollatedList = new LinkedList();
+		queryString = queryString.toLowerCase();
 		
 		if (searchAlgoType.length > 0) {
 			tempCollatedList = smartSearch(queryString, 
