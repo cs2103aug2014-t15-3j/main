@@ -126,6 +126,7 @@ public abstract class StorageBase {
 		if (!storageFile.exists()) {
 			try {
 				//File not found, create a file
+				storageFile.mkdirs();
 				storageFile.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
