@@ -50,8 +50,10 @@ public class DialogBackPanel extends JPanel {
 		setOpaque(false);
 		setLayout(null);
 		if (Image != saveImage){
-		add(cmp);
-		cmp.setSize(300, 450);
+			add(cmp);
+			cmp.setSize(300, 450);
+			cmp.setOpaque(true);
+			cmp.setBackground(new Color(0x000000, true));
 		}
 	}
 
