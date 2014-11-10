@@ -120,13 +120,14 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 	
 	//@author A0111942N
 	/**
-	 * Compare itself with another label. Return if they're the same.
-	 *
-	 * @return Whether two labels are the same
+	 * Check if label contains the param _name
+	 * 
+	 * @param	_name	Search keyword of label name
+	 * @return	Whether two labels are the same
 	 */
 	public boolean isLabel(String _name) {
 		
-		if(_name.length() < 3) {
+		if (_name.length() < 3) {
 			return name.toLowerCase().equals(_name.toLowerCase());
 		} else {
 			return name.toLowerCase().contains(_name.toLowerCase());
@@ -149,16 +150,29 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 		}
 	}
 
+	//@author A0111942N
+	/**
+	 * Mutator:
+	 * Populate the variation of month lists with its keywords
+	 */
 	public String editState(String state) {
 		this.state = state;
 		return state;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * @return	String representation of label
+	 */
 	@Override
 	public String toString() {
 		return name;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Use to sort the label in a list
+	 */
 	@Override
 	public int compareTo(Label label) {
 		return name.compareTo(label.getName());

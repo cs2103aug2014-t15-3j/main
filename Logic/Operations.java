@@ -84,7 +84,7 @@ public class Operations {
 	protected static LinkedList<String> allOperations;
 	protected static LinkedList<String> floatOperations;
 	
-
+	// Month lists to contain its respective keywords
 	protected static LinkedList<String> january;
 	protected static LinkedList<String> febuary;
 	protected static LinkedList<String> march;
@@ -108,7 +108,7 @@ public class Operations {
 	 */
 	public Operations() {
 
-		if(!isInitialize) {
+		if (!isInitialize) {
 			labelOperations = populateLabel();
 			addOperations = populateAdd();
 			editOperations = populateEdit();
@@ -183,9 +183,9 @@ public class Operations {
 
 	//@author A0111942N
 	/**
-	 * Populate label list with its keywords
+	 * Populate reminder list with its keywords
 	 *
-	 * @return List of label keywords
+	 * @return List of reminder keywords
 	 */
 	private LinkedList<String> populateReminder() {
 
@@ -363,7 +363,7 @@ public class Operations {
 	/**
 	 * Populate not done list with its keywords
 	 *
-	 * @return List of done keywords
+	 * @return List of not done keywords
 	 */
 	private LinkedList<String> populateNotDone() {
 
@@ -372,6 +372,9 @@ public class Operations {
 		operations.add(";!complete");
 		operations.add(";!finish");
 		operations.add(";!kill");
+		
+		operations.add(";notDone");
+		operations.add(";notComplete");
 
 		return operations;
 	}
@@ -505,6 +508,12 @@ public class Operations {
 		december.add("12");
 	}
 	
+	//@author A0111942N
+	/**
+	 * Populate the variation of month lists with its keywords
+	 * 
+	 * @return Index of month (1 index based)
+	 */
 	public static int returnMonth(String month) {
 		
 		month = month.trim().toLowerCase(); // clean up string
