@@ -9,6 +9,9 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	private final static String TO_DO_LABEL = "To-Do";
 	private final static int NOT_VALID = -1;
 	private final static long DAY_MILLISECOND = 86400000;
+
+	private final static int NAME_MAX_LENGTH = 30;
+	private final static int DESCRIPTION_MAX_LENGTH = 80;
 	
 	private final static SimpleDateFormat dateFormat
 				= new SimpleDateFormat(Operations.DATE_OUTPUT_FORMAT);
@@ -71,7 +74,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.state = "";
 		this.isDone = oldTask.getDone();
 	}
-
+	
+	//@author A0111942N
 	/**
 	 * Constructor:
 	 * When specified with task's name and description only
@@ -83,8 +87,8 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 	 */
 	public Task(String name, String description, long label, long deadline, long reminder) {
 
-		this.name = shortenText(name,30);
-		this.description = shortenText(description,80);
+		this.name = shortenText(name,NAME_MAX_LENGTH);
+		this.description = shortenText(description,DESCRIPTION_MAX_LENGTH);
 		this.label = label;
 		this.timeStamp = System.currentTimeMillis();
 		this.deadline = deadline;
@@ -92,72 +96,203 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		this.state = "";
 		this.isDone = false;
 	}
-
-	// Accessor: Return name
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's name
+	 * 
+	 * @return	Task's name
+	 */
 	public String getName() {
 		return name;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's description
+	 * 
+	 * @return	Task's description
+	 */
 	public String getDescription() {
 		return description;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's label
+	 * 
+	 * @return	Task's label
+	 */
 	public long getLabel() {
 		return label;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's time stamp (ID)
+	 * 
+	 * @return	Task's time stamp (ID)
+	 */
 	public long getTimeStamp() {
 		return timeStamp;
 	}
+
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's state
+	 * 
+	 * @return	Task's state
+	 */
+	public String getState() {
+		return state;
+	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's label name
+	 * 
+	 * @return	Task's reminder (millisecond)
+	 */
+	public String getLabelName() {
+
+		String labelName = getLabelName(label);
+
+		return labelName;
+	}
+
+	//@author A0111942N
+	/**
+	 * Get label name by supplying its label's id
+	 * 
+	 * @return	Label name
+	 */
+	private String getLabelName(long _label) {
+		LinkedList<Label> bufferLabelsList = LogicMain.getAllLabels();
+
+		for (int j = 0; j < bufferLabelsList.size(); j++) {
+
+			if (bufferLabelsList.get(j).getTimeStamp() == _label) {
+				Label tempLabel = bufferLabelsList.get(j);
+				return tempLabel.getName();
+			}
+		}
+
+		return Operations.EMPTY_MESSAGE;
+	}
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's done status
+	 * 
+	 * @return	Task's done status
+	 */
+	public boolean getDone() {
+		return isDone;
+	}
+
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's start time (millisecond)
+	 * 
+	 * @return	Task's start time (millisecond)
+	 */
 	public long getStart() {
 		return start;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's end time (millisecond)
+	 * 
+	 * @return	Task's end time (millisecond)
+	 */
 	public long getEnd() {
 		return end;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's deadline (millisecond)
+	 * 
+	 * @return	Task's deadline (millisecond)
+	 */
 	public long getDeadline() {
 		return deadline;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's reminder (millisecond)
+	 * 
+	 * @return	Task's reminder (millisecond)
+	 */
 	public long getReminder() {
 		return reminder;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's start time (date format)
+	 * 
+	 * @return	Task's start time (date format)
+	 */
 	public String getFormattedStart() {
 
 		return getFormattedDate(start);
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's end time (date format)
+	 * 
+	 * @return	Task's end time (date format)
+	 */
 	public String getFormattedEnd() {
 
 		return getFormattedDate(end);
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's deadline (date format)
+	 * 
+	 * @return	Task's deadline (date format)
+	 */
 	public String getFormattedDeadline() {
 		
 		String dateString = getFormattedDate(deadline);
 		
-		if(deadline != NOT_VALID) {
+		if (deadline != NOT_VALID) {
 			dateString += getOverdue(deadline);
 		}
 		
 		return dateString;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Get task's reminder (date format)
+	 * 
+	 * @return	Task's reminder (date format)
+	 */
 	public String getFormattedReminder() {
 
 		String dateString = getFormattedDate(reminder);
 
-		if(reminder != NOT_VALID) {
+		if (reminder != NOT_VALID) {
 			dateString += getOverdue(reminder);
 		}
 
 		return dateString;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Accessor: Converts millisecond to date format
+	 * 
+	 * @return	Date format
+	 */
 	public String getFormattedDate(long dateMs) {
 		
 		String dateOutput = "";
@@ -168,7 +303,7 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 			String year = dateFormat.format(dateMs);
 			String thisYear = dateFormat.format( System.currentTimeMillis() );
 			
-			if( year.equals(thisYear) ) {
+			if ( year.equals(thisYear) ) {
 				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_NO_YEAR_FORMAT);
 			} else {
 				dateFormat.applyLocalizedPattern(Operations.DATE_OUTPUT_FORMAT);
@@ -180,11 +315,17 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return dateOutput;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Get the number of days the task is overdue.
+	 * 
+	 * @return	(String) Number of days the task is overdue
+	 */
 	public String getOverdue(long dateMs) {
 		
 		long nowMs = System.currentTimeMillis();
 		
-		if(dateMs < nowMs) {
+		if (dateMs < nowMs) {
 			
 			long overdue = nowMs - dateMs;
 			int daysOverdue = (int) (overdue / DAY_MILLISECOND);
@@ -201,83 +342,113 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		
 		return "";
 	}
-
-	public String getState() {
-		return state;
-	}
 	
-	public boolean getDone() {
-		return isDone;
-	}
-
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's name
+	 * 
+	 * @return	Task's name
+	 */
 	public String editName(String name) {
-		this.name = shortenText(name,30);
+		this.name = shortenText(name,NAME_MAX_LENGTH);
 		return name;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's description
+	 * 
+	 * @return	Task's description
+	 */
 	public String editDescription(String description) {
-		this.description = shortenText(description,80);
+		this.description = shortenText(description,DESCRIPTION_MAX_LENGTH);
 		return description;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's state
+	 * 
+	 * @return	Task's state
+	 */
 	public String editState(String state) {
 		this.state = state;
 		return state;
 	}
-	
+
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's label
+	 * 
+	 * @return	Task's label
+	 */
 	public long editLabel(long label) {
 		this.label = label;
 		return label;
 	}
 
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's label
+	 * 
+	 * @return	Task's label
+	 */
 	public long editStart(long start) {
 		this.start = start;
 		return start;
 	}
 
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's end
+	 * 
+	 * @return	Task's end (millisecond)
+	 */
 	public long editEnd(long end) {
 		this.end = end;
 		return end;
 	}
 
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's deadline
+	 * 
+	 * @return	Task's deadline (millisecond)
+	 */
 	public long editDeadline(long deadline) {
 		this.deadline = deadline;
 		return deadline;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's reminder
+	 * 
+	 * @return	Task's reminder (millisecond)
+	 */
 	public long editReminder(long reminder) {
 		this.reminder = reminder;
 		return reminder;
 	}
-	
+
+	//@author A0111942N
+	/**
+	 * Mutator: Edit task's time stamp
+	 * 
+	 * @return	Task's time stamp (millisecond)
+	 */
 	public long editTimestamp(long timestamp) {
 		this.timeStamp = timestamp;
 		return timeStamp;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Toggle task's done status from true to false
+	 * vice-vesa.
+	 */
 	public void toggleDone(boolean _isDone) {
 		isDone = _isDone;
-	}
-	
-	public String getLabelName() {
-		
-		String labelName = getLabelName(label);
-		
-		return labelName;
-	}
-
-	private String getLabelName(long _label) {
-		LinkedList<Label> bufferLabelsList = LogicMain.getAllLabels();
-		
-		for(int j = 0; j < bufferLabelsList.size(); j++) {
-
-			if(bufferLabelsList.get(j).getTimeStamp() == _label) {
-				Label tempLabel = bufferLabelsList.get(j);
-				return tempLabel.getName();
-			}
-		}
-		
-		return Operations.EMPTY_MESSAGE;
 	}
 	
 	//@author A0112898U
@@ -310,6 +481,12 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		isReminded = true;
 	}
 	
+	//@author A0111942N
+	/**
+	 * Short @param text to length of @param length
+	 * 
+	 * @return	(String) Shorten text
+	 */
 	private String shortenText(String text, int length) {
 		
 		int orginalLength = text.length();
@@ -321,6 +498,10 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		return text;
 	}
 
+	//@author A0111942N
+	/**
+	 * @return	String representation of the Task object
+	 */
 	@Override
 	public String toString() {
 		
@@ -350,39 +531,53 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		}
 
 		// Include deadline into message
-		if(deadline != NOT_VALID) {
+		if (deadline != NOT_VALID) {
 			message += "Deadline:\n" + getFormattedDeadline() + "\n\n";
 		}
 		
 		// Include reminder into message
-		if(reminder != NOT_VALID) {
+		if (reminder != NOT_VALID) {
 			message += "Reminder:\n" + getFormattedReminder() + "\n\n";
 		}
 
 		// Include label into message
 		String labelName = getLabelName();
 		
-		if(!labelName.equals(Operations.EMPTY_MESSAGE)) {
+		if (!labelName.equals(Operations.EMPTY_MESSAGE)) {
 			message += "Label:\n" + labelName + "\n";
 		}
 
 		return message + "\n";
 	}
 
+	//@author A0111942N
+	/**
+	 * Use to short task in a list by either it's deadline or start time
+	 * 
+	 * @return	(String) Shorten text
+	 */
 	@Override
 	public int compareTo(Task compareTask) {
 		
-		long compareDeadline = compareTask.getDeadline();
-		
-		if (deadline == compareDeadline) {
+		long currentTaskTime = Math.min(start,deadline);
+		long compareTaskTime = Math.min(compareTask.getStart(), compareTask.getDeadline());
+				
+		if (currentTaskTime == compareTaskTime) {
 			return (int) ( timeStamp - compareTask.getTimeStamp() );
-		} else if (deadline > compareDeadline) {
+		} else if (currentTaskTime > compareTaskTime) {
 			return 1;
 		} else {
 			return NOT_VALID;
 		}
 	}
 	
+	//@author A0111942N
+	/**
+	 * Check if keyword exist in task's
+	 * name or description.
+	 * 
+	 * @return	(Boolean) If it exist
+	 */
 	public boolean contains(String keyword) {
 		
 		if ( name.toLowerCase().contains(keyword) ) {
