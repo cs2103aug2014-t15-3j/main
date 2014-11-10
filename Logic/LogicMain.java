@@ -869,7 +869,7 @@ public class LogicMain {
 						returningItems.add(tempTask);
 					}
 					
-					state = Operations.VIEW_OPERATION;
+					state = Operations.VIEW_TASK_OPERATION;
 
 				} catch (NumberFormatException e) {
 

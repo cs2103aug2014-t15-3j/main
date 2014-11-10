@@ -96,7 +96,7 @@ public class GuiDisplay {
 				GuiMain.feedback.setText("The following task "
 						+ "has been edited:\n\n" 
 						+ firstItem.toString() + 
-						"\n\n\nEnter ; to view all tasks.");
+						"\n\n\nEnter ;view to view uncompleted tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
@@ -116,6 +116,10 @@ public class GuiDisplay {
 				displayFloatingTasksTable(tasks, firstItem);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+				
+			case Operations.VIEW_TASK_OPERATION:
+				GuiMain.feedback.setText(firstItem.toString());
 				break;
 				
 			case Operations.VIEW_FLOAT_OPERATION:
@@ -173,7 +177,7 @@ public class GuiDisplay {
 			case Operations.DONE_OPERATION:
 				GuiMain.feedback.setText("The task has been marked done!"
 						+ "\nCongratulations on completing it!\n:)" 
-						+ "\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\nEnter ;view to view uncompleted tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
@@ -182,14 +186,14 @@ public class GuiDisplay {
 				break;
 			case Operations.UNDO_OPERATION:
 				GuiMain.feedback.setText("Undo successful!\n" 
-						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\n\nEnter ;view to view all tasks.");
 				updateTodoTable(logic.processInput(";view ;!done"));
 				updateDoneTable(logic.processInput(";view ;done"));
 				updateAllTable(allTasks);
 				break;
 			case Operations.SAVE_OPERATION:
 				GuiMain.feedback.setText("Everything saved successfully!\n"
-						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\n\nEnter ;view to view uncompleted tasks.");
 				Dialog d4 = new Dialog(GuiMain.frameRemembra, "Save Successful!", 
 						"", "", "", "", "save");
 				d4.displayDialog();
@@ -198,17 +202,17 @@ public class GuiDisplay {
 			case Operations.ADD_LABEL_OPERATION:
 				GuiMain.feedback.setText("The Following Label "
 						+ "Has Been Added:\n\n" + firstItem.toString() 
-						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\n\nEnter ;view to view uncompleted tasks.");
 				break;
 			case Operations.DELETE_LABEL_OPERATION:
 				GuiMain.feedback.setText("The Following Label "
 						+ "Has Been Deleted:\n\n" + firstItem.toString() 
-						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\n\nEnter ;view to view uncompleted tasks.");
 				break;
 			case Operations.EDIT_LABEL_OPERATION:
 				GuiMain.feedback.setText("The Following Label "
 						+ "Has Been Edited:\n\n" + firstItem.toString() 
-						+ "\n\n\n\n\n\n\nEnter ; to view all tasks.");
+						+ "\n\n\n\n\n\n\nEnter ;view to view uncompleted tasks.");
 				break;
 			case Operations.VIEW_LABEL_OPERATION:
 				viewLabelsOperation(tasks, firstItem);
@@ -518,9 +522,9 @@ public class GuiDisplay {
 						(i+1) + ".\n" + tempTask 
 						+ "--------------------x-------------------\n");
 
-			}
+			}*/
 			GuiMain.feedback.setText(GuiMain.feedback.getText() 
-					+ "\n\n\nEnter ; to view all tasks.");*/
+					+ "\n\n\nEnter ;view to view uncompleted tasks.");
 		}
 		else {
 			GuiMain.feedback.setText("No Tasks Found "
