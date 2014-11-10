@@ -153,7 +153,7 @@ public class LogicMain {
 	}
 	
 	
-	// @author A0112898U
+	//@author A0112898U
 	/**
 	 * Periodic Reminder System refresh - refresh the reminder list
 	 * every day at 0000
@@ -173,7 +173,7 @@ public class LogicMain {
 	    }
 	};
 	
-	// @author A0112898U
+	//@author A0112898U
 	/**
 	 * Periodic Task Saving Functionality - saves the buffered input task
 	 * to storage every 5min
@@ -184,7 +184,7 @@ public class LogicMain {
 		
 	    public void run() {
 	    	
-	    	if(isInitialize) {
+	    	if (isInitialize) {
 
 	    		//Save the current buffered list
 	    		commitToStorage();
@@ -199,7 +199,7 @@ public class LogicMain {
 	//@author A0111942N
 	/**
 	 * This method will process the user's input and perform either add, edit,
-	 * view, delete or save based on the input.
+	 * view, delete, done, not done, undo or save based on the input.
 	 * 
 	 * @return LinkedList<Item> with corresponding items to operation
 	 */
@@ -347,7 +347,11 @@ public class LogicMain {
 			}
 		}
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING ADD =========================================
@@ -356,7 +360,7 @@ public class LogicMain {
 
 	//@author A0111942N
 	/**
-	 * Process post-adding operation to return to GUI
+	 * Process adding operation to return to GUI
 	 * 
 	 * @return List containing the added task with the "add" state
 	 */
@@ -520,7 +524,11 @@ public class LogicMain {
 
 		return newItem;
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING EDIT ========================================
@@ -529,7 +537,7 @@ public class LogicMain {
 
 	//@author A0111942N
 	/**
-	 * Process post-editing operation to return to GUI
+	 * Process editing operation to return to GUI
 	 * 
 	 * @return List containing the edited task with the "edit" state
 	 */
@@ -820,7 +828,11 @@ public class LogicMain {
 		logger.log(Level.INFO, "Task edited");
 		return editItem;
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING VIEW ========================================
@@ -861,10 +873,10 @@ public class LogicMain {
 					
 					Task tempTask;
 					
-					if(tempList.size() != 0 && tempList.size() > taskId) {
+					if (tempList.size() != 0 && tempList.size() > taskId) {
 						tempTask = (Task) tempList.get(taskId);
 						returningItems.add(tempTask);
-					} else if(bufferTasksList.size() > taskId) {
+					} else if (bufferTasksList.size() > taskId) {
 						tempTask = bufferTasksList.get(taskId);
 						returningItems.add(tempTask);
 					}
@@ -951,11 +963,21 @@ public class LogicMain {
 		
 		return returningItems;
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * This method checks if a supplied string is a number
+	 * 
+	 * @return true if it's a number
+	 */
 	public static boolean isNumeric(String str) {
 		return str.matches("-?\\d+(\\.\\d+)?");
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING DELETE ======================================
@@ -964,7 +986,7 @@ public class LogicMain {
 
 	//@author A0111942N
 	/**
-	 * Process post-delete operation to return to GUI
+	 * Process delete operation to return to GUI
 	 * 
 	 * @return List containing the deleted task with the "delete" state
 	 */
@@ -1040,7 +1062,11 @@ public class LogicMain {
 		
 		return null;
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING FIND ========================================
@@ -1081,7 +1107,7 @@ public class LogicMain {
 				
 				isPowerSearch = true;
 
-				if( inputList.size() == 2 ) {
+				if ( inputList.size() == 2 ) {
 					System.out.println(">>>"+keyword);
 					searchTasks = LogicSearch.searchTasks(keyword, bufferTasksList,
 							LogicSearch.SEARCH_TYPES.TYPE_ALL, LogicSearch.SEARCH_TYPES.SEARCH_POWER_SEARCH);
@@ -1145,7 +1171,11 @@ public class LogicMain {
 		return new LinkedList<Item>(searchTasks);
 
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING UNDO ========================================
@@ -1182,7 +1212,11 @@ public class LogicMain {
 
 		return returningTasks;
 	}
-
+	
+	
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== PROCESSING SAVE ========================================
@@ -1217,7 +1251,7 @@ public class LogicMain {
 	private void commitToStorage() {
 		
 		
-		if(isInitialize && hasChanged) {
+		if (isInitialize && hasChanged) {
 
 			StorageMain.getInstance().storeObject(StorageMain.OBJ_TYPES.TYPE_TASK,
 					bufferTasksList);
@@ -1227,6 +1261,10 @@ public class LogicMain {
 			hasChanged = false;
 		}
 	}
+	
+	
+	
+	
 	
 	/**
 	 * ========================================================================
@@ -1250,7 +1288,7 @@ public class LogicMain {
 			int doneId = Integer.parseInt( inputList.get(0).getContent() ) - 1;
 			Task doneTask;
 
-			if(tempList.size() > 0) {
+			if (tempList.size() > 0) {
 				Task removed = (Task) tempList.remove(doneId);
 				doneTask = new Task(removed);
 				bufferTasksList.remove(removed);
@@ -1265,7 +1303,7 @@ public class LogicMain {
 
 			returningTask = new Task(doneTask);
 			
-			if(toggle) {
+			if (toggle) {
 				returningTask.editState(Operations.DONE_OPERATION);
 			} else {
 				returningTask.editState(Operations.NOT_DONE_OPERATION);
@@ -1287,7 +1325,9 @@ public class LogicMain {
 	}
 	
 	
-
+	
+	
+	
 	/**
 	 * ========================================================================
 	 * =============== MISC. ==================================================
@@ -1388,7 +1428,7 @@ public class LogicMain {
 
 		} catch (Exception e) {
 			
-			if( !e.getMessage().equals(LOG_NAME) ) {
+			if ( !e.getMessage().equals(LOG_NAME) ) {
 				return -1;
 			}
 			
@@ -1397,7 +1437,14 @@ public class LogicMain {
 
 		return tempCal.getTimeInMillis();
 	}
-
+	
+	//@author A0111942N
+	/**
+	 * Process time into supplied calendar
+	 * 
+	 * @param inputArray	contains hour, minute, am/pm
+	 * @param tempCal		Calendar to modify time
+	 */
 	private void processTime(String[] inputArray, Calendar tempCal) {
 		int hour;
 		int minute;
@@ -1460,11 +1507,11 @@ public class LogicMain {
 
 		LinkedList<Task> returnTasks = new LinkedList<Task>();
 
-		for(int i = 0; i < bufferTasksList.size(); i++) {
+		for (int i = 0; i < bufferTasksList.size(); i++) {
 
 			Task tempTask = bufferTasksList.get(i);
 
-			if( !tempTask.getDone() ) {
+			if ( !tempTask.getDone() ) {
 				returnTasks.add(tempTask);
 			}
 		}
@@ -1483,11 +1530,11 @@ public class LogicMain {
 
 		LinkedList<Task> returnTasks = new LinkedList<Task>();
 
-		for(int i = 0; i < bufferTasksList.size(); i++) {
+		for (int i = 0; i < bufferTasksList.size(); i++) {
 
 			Task tempTask = bufferTasksList.get(i);
 
-			if( tempTask.getDone() ) {
+			if ( tempTask.getDone() ) {
 				returnTasks.add(tempTask);
 			}
 		}
@@ -1506,11 +1553,13 @@ public class LogicMain {
 
 		LinkedList<Task> returnTasks = new LinkedList<Task>();
 
-		for(int i = 0; i < bufferTasksList.size(); i++) {
+		for (int i = 0; i < bufferTasksList.size(); i++) {
 
 			Task tempTask = bufferTasksList.get(i);
 
-			if( tempTask.getDeadline() == -1 ) {
+			if ( tempTask.getDeadline() == -1
+					&& tempTask.getStart() == -1
+					&& tempTask.getEnd() == -1) {
 				returnTasks.add(tempTask);
 			}
 		}
