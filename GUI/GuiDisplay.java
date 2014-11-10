@@ -575,8 +575,7 @@ public class GuiDisplay {
 			for(int i=0; i<labels.size(); i++) {
 				Item tempLabel = labels.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempLabel  
-						+ "--------------------x-------------------\n");
+						"\n  " + (i+1) + ". "+ tempLabel + "\n");
 			}
 		}
 		else {

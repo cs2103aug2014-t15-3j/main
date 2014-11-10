@@ -156,7 +156,7 @@ public class Label implements Item, java.io.Serializable, Comparable<Label>{
 
 	@Override
 	public String toString() {
-		return "Label: " + name + "\nColor: " + color + "\n\n";
+		return name;
 	}
 
 	@Override
