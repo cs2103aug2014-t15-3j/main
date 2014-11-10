@@ -44,7 +44,7 @@ public abstract class StorageBase {
 	void serializeObject (String filename, Object obj) {
 		try {
 			fileOut = new FileOutputStream(FILENAME_PATH_FOLDER 
-					+ filename + FILENAME_EXTENSION);
+					+ filename + "\\" + FILENAME_EXTENSION);
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found! from serializeObject()");
 		}
@@ -77,7 +77,7 @@ public abstract class StorageBase {
 		
 		try {
 			fileIn = new FileInputStream(FILENAME_PATH_FOLDER 
-					+ filename + FILENAME_EXTENSION);			
+					+ filename + "\\" + FILENAME_EXTENSION);			
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
