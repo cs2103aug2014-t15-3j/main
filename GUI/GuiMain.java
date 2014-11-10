@@ -637,7 +637,7 @@ public class GuiMain {
 
 		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 15));
 		timeLabel.setForeground(new Color(255, 255, 255));
-		timeLabel.setBounds(876, 0, 181, 22);
+		timeLabel.setBounds(849, 0, 208, 22);
 		headerPanel.add(timeLabel);
 		timeLabel.setText("Time");
 
