@@ -70,7 +70,7 @@ public class GuiDisplay {
 	 */
 	static void displayHelp(String input) throws IOException {
 		String helpFunction = input.substring(4).trim();
-		GuiMain.feedback.setText(helpFunction);
+		GuiMain.feedback.setText("Try a valid help option next");
 		String fileContent;
 		switch (helpFunction){
 		case "":
