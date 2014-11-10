@@ -16,6 +16,7 @@ public abstract class StorageBase {
 	
 	//Constants
 	protected static final String FILENAME_EXTENSION = ".ser";
+	protected static final String FILENAME_PATH_FOLDER = "Remembra\\";
 	private final static String LOG_NAME = "Storage Base Logger";
 	
 	//Objects
@@ -43,7 +44,8 @@ public abstract class StorageBase {
 	 */
 	void serializeObject (String filename, Object obj) {
 		try {
-			fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
+			fileOut = new FileOutputStream(FILENAME_PATH_FOLDER 
+					+ filename + FILENAME_EXTENSION);
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found! from serializeObject()");
 		}
@@ -75,7 +77,8 @@ public abstract class StorageBase {
 		}
 		
 		try {
-			fileIn = new FileInputStream(filename + FILENAME_EXTENSION);			
+			fileIn = new FileInputStream(FILENAME_PATH_FOLDER 
+					+ filename + FILENAME_EXTENSION);			
 			objectIn = new ObjectInputStream(fileIn);
 			obj = (Object) objectIn.readObject();
 			objectIn.close();
