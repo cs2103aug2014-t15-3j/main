@@ -54,7 +54,15 @@ public class Operations {
 	protected final static String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
 	protected final static String DATE_OUTPUT_NO_YEAR_FORMAT = "d MMM, h:mm a";
 	protected final static String YEAR_FORMAT = "yyyy";
-
+	
+	// Manage program view state
+	protected final static int ALL_STATE = 0;
+	protected final static int TODO_STATE = 1;
+	protected final static int DONE_STATE = 2;
+	protected final static int FIND_STATE = 3;
+	public static int viewState = -1;
+	public static String lastSearch = "";
+	
 	// Lists to contain its respective keywords
 	protected static LinkedList<String> labelOperations;
 	protected static LinkedList<String> addOperations;

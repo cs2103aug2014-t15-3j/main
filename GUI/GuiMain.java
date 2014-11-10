@@ -148,12 +148,23 @@ public class GuiMain {
 						JTabbedPane p = (JTabbedPane)e.getSource();
 						int idx = p.getSelectedIndex(); 
 						LogicMain logic = new LogicMain();
+						LinkedList<Item> tasks;
 						if (idx == 0){
-							logic.processInput(";view ;!done");
+							tasks = logic.processInput(";view ;!done");
+							GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+							Operations.viewState = Operations.TODO_STATE;
 						} else if (idx == 1){
-							logic.processInput(";view ;done");
+							tasks = logic.processInput(";view ;done");
+							GuiDisplay.updateDoneTable(tasks);
+							Operations.viewState = Operations.DONE_STATE;
 						} else if (idx == 2){
-							logic.processInput(";view ;all");
+							tasks = logic.processInput(";view ;all");
+							GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+							Operations.viewState = Operations.ALL_STATE;
+						} else if (idx == 3 && !Operations.lastSearch.isEmpty()){
+							tasks = logic.processInput(Operations.lastSearch);
+							GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+							Operations.viewState = Operations.FIND_STATE;
 						}
 					}
 				};

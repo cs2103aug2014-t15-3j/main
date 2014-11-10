@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.swing.JDialog;
@@ -110,8 +111,11 @@ public class GuiDisplay {
 				break;
 				
 			case Operations.VIEW_OPERATION:
-				
+				GuiMain.feedback.setText("All uncompleted tasks displayed!");
 				viewOperation(tasks, firstItem);
+				displayFloatingTasksTable(tasks, firstItem);
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 				
 			case Operations.VIEW_FLOAT_OPERATION:
@@ -140,6 +144,9 @@ public class GuiDisplay {
 				findOperation(tasks, inputStr);
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.searchTab);
 				GuiMain.tabbedPane.getSelectedComponent();
+				
+				Operations.lastSearch = inputStr;
+				
 				break;
 				
 			case Operations.FIND_ERROR:
@@ -207,6 +214,29 @@ public class GuiDisplay {
 				viewLabelsOperation(tasks, firstItem);
 				break;
 			}
+			
+			System.out.println("---------------------\n"+Operations.viewState);
+			
+			// Reload view
+			switch (Operations.viewState) {
+			
+			case Operations.ALL_STATE:
+				tasks = logic.processInput(";view ;all");
+				displayFloatingTasksTable(tasks, firstItem);
+				break;
+			case Operations.TODO_STATE:
+				tasks = logic.processInput(";view");
+				displayFloatingTasksTable(tasks, firstItem);
+				break;
+			case Operations.DONE_STATE:
+				tasks = logic.processInput(";view ;done");
+				updateDoneTable(tasks);
+				break;
+			case Operations.FIND_STATE:
+				tasks = logic.processInput(Operations.lastSearch);
+				GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+			}
+			
 		}else {
 			GuiMain.feedback.setText("Remembra doesn't "
 					+ "understand your input!\n");
@@ -216,7 +246,7 @@ public class GuiDisplay {
 
 
 
-	private static void updateDoneTable(LinkedList<Item> tasks) {
+	protected static void updateDoneTable(LinkedList<Item> tasks) {
 		// TODO Auto-generated method stub
 		DefaultTableModel tableModel = 
 				(DefaultTableModel) GuiMain.doneTable.getModel();
@@ -406,7 +436,7 @@ public class GuiDisplay {
 		}
 	}
 
-	private static void displayFloatingTasksTable(LinkedList<Item> items, 
+	protected static void displayFloatingTasksTable(LinkedList<Item> items, 
 			Item firstTask) {
 		DefaultTableModel tableModel = 
 				(DefaultTableModel) GuiMain.todoTable.getModel();
@@ -478,7 +508,11 @@ public class GuiDisplay {
 		GuiMain.feedback.setText("Search results for \"" 
 		+ s[s.length-1] + "\":\n");
 		if(!(item.getName().equals(Operations.EMPTY_MESSAGE))) {
-			for(int i=0; i<tasks.size(); i++) {
+			
+			GuiMain.feedback.setText(GuiMain.feedback.getText() +
+					"  - " + tasks.size() + " found\n");
+			
+			/*for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
 						(i+1) + ".\n" + tempTask 
@@ -486,7 +520,7 @@ public class GuiDisplay {
 
 			}
 			GuiMain.feedback.setText(GuiMain.feedback.getText() 
-					+ "\n\n\nEnter ; to view all tasks.");
+					+ "\n\n\nEnter ; to view all tasks.");*/
 		}
 		else {
 			GuiMain.feedback.setText("No Tasks Found "
@@ -510,19 +544,19 @@ public class GuiDisplay {
 
 	private static void viewOperation(LinkedList<Item> tasks, Item firstTask) {
 		if (tasks.size()==1){
-			GuiMain.feedback.setText("The task is displayed below:\n");
+			/*GuiMain.feedback.setText("The task is displayed below:\n");
 			Item tempTask = tasks.get(0);
 			GuiMain.feedback.setText(GuiMain.feedback.getText() + "\n\n" +
-					 tempTask  + "--------------------x-------------------\n");
+					 tempTask  + "--------------------x-------------------\n");*/
 		}else if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 			updateTodoTable(tasks);
-			GuiMain.feedback.setText("All tasks displayed below:\n");
+			/*GuiMain.feedback.setText("All tasks displayed below:\n");
 			for(int i=0; i<tasks.size(); i++) {
 				Item tempTask = tasks.get(i);
 				GuiMain.feedback.setText(GuiMain.feedback.getText() +
 						(i+1) + ".\n" + tempTask  
 						+ "--------------------x-------------------\n");
-			}
+			}*/
 			GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 			GuiMain.tabbedPane.getSelectedComponent();
 		}
@@ -602,6 +636,7 @@ public class GuiDisplay {
 				} else {
 					data[0] = Color.WHITE;
 				}
+				
 				GuiMain.searchData.addRow(data);
 			}
 		} else{

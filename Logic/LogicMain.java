@@ -841,8 +841,6 @@ public class LogicMain {
 		String state = Operations.VIEW_OPERATION;
 
 		LogicInputPair viewOperation = inputList.get(0);
-		
-		System.out.println(">>>>>"+viewOperation);
 
 		if (!isLabel) {
 			
