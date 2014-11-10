@@ -218,27 +218,26 @@ public class GuiDisplay {
 				viewLabelsOperation(tasks, firstItem);
 				break;
 			}
-			
-			System.out.println("---------------------\n"+Operations.viewState);
-			
 			// Reload view
-			switch (Operations.viewState) {
-			
-			case Operations.ALL_STATE:
-				tasks = logic.processInput(";view ;all");
-				displayFloatingTasksTable(tasks, firstItem);
-				break;
-			case Operations.TODO_STATE:
-				tasks = logic.processInput(";view");
-				displayFloatingTasksTable(tasks, firstItem);
-				break;
-			case Operations.DONE_STATE:
-				tasks = logic.processInput(";view ;done");
-				updateDoneTable(tasks);
-				break;
-			case Operations.FIND_STATE:
-				tasks = logic.processInput(Operations.lastSearch);
-				GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+			if (state.equals(Operations.SAVE_OPERATION)) {
+				switch (Operations.viewState) {
+
+				case Operations.ALL_STATE:
+					tasks = logic.processInput(";view ;all");
+					displayFloatingTasksTable(tasks, firstItem);
+					break;
+				case Operations.TODO_STATE:
+					tasks = logic.processInput(";view");
+					displayFloatingTasksTable(tasks, firstItem);
+					break;
+				case Operations.DONE_STATE:
+					tasks = logic.processInput(";view ;done");
+					updateDoneTable(tasks);
+					break;
+				case Operations.FIND_STATE:
+					tasks = logic.processInput(Operations.lastSearch);
+					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+				}
 			}
 			
 		}else {
