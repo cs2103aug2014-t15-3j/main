@@ -7,13 +7,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-/**
- * 
- */
-
-/**
- * @author A0116160W
- *
+/*
+ * Class that creates a image backpanel for a dialog
  */
 public class DialogBackPanel extends JPanel {
 	private final Paint fill = new Color(0x000000, true);
@@ -45,18 +40,35 @@ public class DialogBackPanel extends JPanel {
 		}
 	}
 
-	public void create() {
+	//@author A0116160W
+	/**
+	 * Add the component to BackPanel to display dialog
+	 * 
+	 */
+	public void addComponent() {
 
 		setOpaque(false);
 		setLayout(null);
+		add(cmp);
+		
 		if (Image != saveImage){
-			add(cmp);
 			cmp.setSize(300, 450);
 			cmp.setOpaque(true);
 			cmp.setBackground(new Color(0x000000, true));
+		} else{
+			//Because do not need a display box. But created 
+			//inorder for escape key to work 
+			cmp.setSize(0,0);
 		}
 	}
 
+	//@author A0116160W
+	/**
+	 * To set the background as the Image and cover it in shadow
+	 * as well as position the text component onto it.
+	 * 
+	 * @param graphic
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

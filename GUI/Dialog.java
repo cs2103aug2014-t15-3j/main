@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-/**
- * @author A0116160W
+/*
+ * Creates a dialog box for acknowledgement
  */
 @SuppressWarnings("serial")
 public class Dialog extends JDialog {
@@ -34,7 +34,8 @@ public class Dialog extends JDialog {
 	private JLabel labelNameLabel;
 	private JLabel deadlineLabel;
 
-	public Dialog(JFrame parent, String dialogBoxTitle, String tN, String tD, String lb, String dl, String cd){
+	public Dialog(JFrame parent, String dialogBoxTitle, String tN, String tD, 
+			String lb, String dl, String cd){
 		super(parent, true);
 		title = dialogBoxTitle;
 		taskName = tN;
@@ -44,7 +45,12 @@ public class Dialog extends JDialog {
 		command = cd;
 
 	}
-	
+
+	//@author A0116160W
+	/**
+	 * Creates the dialog box
+	 * 
+	 */
 	public void displayDialog() {
 
 		this.setLayout(new GridBagLayout());
@@ -79,19 +85,26 @@ public class Dialog extends JDialog {
 
 		// the following two lines are only needed because there is no
 		// focusable component in here, and the "hit escape to close" requires
-		// the focus to be in the dialog. If you have a button, a textfield,
-		// or any focusable stuff, you don't need these lines.
+		// the focus to be in the dialog.
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
 
 		getContentPane().add(panel);
 
-		DialogFX.createDialogBackPanel(this, GuiMain.frameRemembra.getContentPane(), command);
+		DialogFX.createDialogBackPanel(this, GuiMain.frameRemembra.getContentPane(),
+				command);
 		DialogFX.addEscapeToCloseSupport(this, true);
-		disappear(this);
+		waitThenDisappear(this);
 
 	}
-	void disappear(JDialog d){
+
+	//@author A0116160W
+	/**
+	 * Waits for some time before fading out the dialog
+	 * 
+	 * @param Dialog
+	 */
+	void waitThenDisappear(JDialog d){
 		//current delay time 2.5 secs
 		Timer timer = new Timer(2500, new ActionListener() {
 			@Override

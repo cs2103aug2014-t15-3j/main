@@ -19,7 +19,11 @@ public class PanelWithShadow extends JXPanel{
         this.setBorder(BorderFactory.createCompoundBorder(this.getBorder(), border));
         this.setLayout(new BorderLayout());
     }
-
+    
+    //@author A0116160W
+    /**
+     * Create a shadow
+     */
     @Override
     protected void paintComponent(Graphics g) {
         int shade = 0;

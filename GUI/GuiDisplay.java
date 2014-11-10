@@ -7,7 +7,9 @@ import java.util.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
+/*
+ * Class to handle major display functionality
+ */
 public class GuiDisplay {
 
 	private static final String HELP_VIEW_TXT = "media/HelpView.txt";
@@ -15,7 +17,7 @@ public class GuiDisplay {
 	private static final String HELP_EDIT_TXT = "media/HelpEdit.txt";
 	private static final String HELP_ADD_TXT = "media/HelpAdd.txt";
 	private static final String HELP_TEXT = "media/HelpText.txt";
-	
+
 	private static final String WELCOME_MESSAGE = "Hi, there!\nThis is your "
 			+ "feedback display.\n\nFor a quick guide, type help "
 			+ "and\npress enter.\n\n\nAll of your tasks, if any, are"
@@ -33,7 +35,7 @@ public class GuiDisplay {
 	private static final String TASK_DELETED_SUCCESSFULLY = "Following Task Deleted Successfully!";
 	private static final String TASK_EDITED_SUCCESSFULLY = "Following Task Has Been Edited!";
 	private static final String TASK_ADDED_SUCCESSFULLY = "Following Task Added Successfully!";
-	
+
 	private final static String task = "Task :";
 	private final static String deadline = "Deadline :";
 	private final static String label = "Label :";
@@ -90,7 +92,7 @@ public class GuiDisplay {
 			break;
 		}
 	}
-	
+
 	//@author A0116160W
 	/**
 	 * Reads the input string and displays lists provided by LogicMain
@@ -105,7 +107,7 @@ public class GuiDisplay {
 				new  LinkedList<Item> (LogicMain.getAllTasks());
 
 		assert(!inputStr.isEmpty()): "Input String was empty! Assertion Error!";
-		
+
 		if(!tasks.isEmpty()) {
 
 			Item firstItem = tasks.get(0);
@@ -119,7 +121,7 @@ public class GuiDisplay {
 				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
 				updateDoneTable(logic.processInput(VIEW_DONE));
 				updateAllTable(allTasks);
-				
+
 				//Acknowledgement pop-up
 				Dialog d = new Dialog(GuiMain.frameRemembra,
 						TASK_ADDED_SUCCESSFULLY, 
@@ -129,7 +131,7 @@ public class GuiDisplay {
 						firstTask.getFormattedDeadline(), "add");
 				d.displayDialog();
 				DialogFX.fadeIn(d);
-				
+
 				//To display the tab where action happened
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 				GuiMain.tabbedPane.getSelectedComponent();
@@ -143,7 +145,7 @@ public class GuiDisplay {
 				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
 				updateDoneTable(logic.processInput(VIEW_DONE));
 				updateAllTable(allTasks);
-				
+
 				Dialog d1 = new Dialog(GuiMain.frameRemembra, 
 						TASK_EDITED_SUCCESSFULLY, 
 						task + firstTask1.getName(), desc +
@@ -156,10 +158,10 @@ public class GuiDisplay {
 
 			case Operations.VIEW_OPERATION:
 				GuiMain.feedback.setText("All uncompleted tasks displayed!");
-				
+
 				viewOperation(tasks, firstItem);
 				displayFloatingTasksTable(tasks, firstItem);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
@@ -170,26 +172,26 @@ public class GuiDisplay {
 
 			case Operations.VIEW_FLOAT_OPERATION:
 				GuiMain.feedback.setText("All floating tasks displayed below:\n");
-				
+
 				viewOperation(tasks, firstItem);
 				displayFloatingTasksTable(tasks, firstItem);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 
 			case Operations.VIEW_ALL_OPERATION:
 				GuiMain.feedback.setText("All tasks displayed in the 'All Tasks' Tab!");
-				
+
 				updateAllTable(tasks);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.allTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 
 			case Operations.VIEW_DONE_OPERATION:
 				updateDoneTable(tasks);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
@@ -197,7 +199,7 @@ public class GuiDisplay {
 			case Operations.FIND_OPERATION:
 				updateSearchTable(tasks, firstItem);
 				findOperation(tasks, inputStr);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.searchTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 
@@ -208,15 +210,15 @@ public class GuiDisplay {
 				updateSearchTable(tasks, firstItem);
 				findOperation(tasks, inputStr);
 				break;
-			
+
 			case Operations.DELETE_OPERATION:	
 				Task firstTask3 = (Task) firstItem;
-				
+
 				deleteOperation(firstItem);
 				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
 				updateDoneTable(logic.processInput(VIEW_DONE));
 				updateAllTable(allTasks);
-				
+
 				Dialog d3 = new Dialog(GuiMain.frameRemembra,
 						TASK_DELETED_SUCCESSFULLY, 
 						task + firstTask3.getName(), desc + 
@@ -229,18 +231,18 @@ public class GuiDisplay {
 				break;
 			case Operations.DONE_OPERATION:
 				GuiMain.feedback.setText(DONE_SUCCESSFULLY);
-				
+
 				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
 				updateDoneTable(logic.processInput(VIEW_DONE));
 				updateAllTable(allTasks);
-				
+
 				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
 				GuiMain.tabbedPane.getSelectedComponent();
 				break;
 			case Operations.UNDO_OPERATION:
 				GuiMain.feedback.setText("Undo successful!\n" 
 						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
-				
+
 				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
 				updateDoneTable(logic.processInput(VIEW_DONE));
 				updateAllTable(allTasks);
@@ -248,7 +250,7 @@ public class GuiDisplay {
 			case Operations.SAVE_OPERATION:
 				GuiMain.feedback.setText("Everything saved successfully!\n"
 						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
-				
+
 				Dialog d4 = new Dialog(GuiMain.frameRemembra, "Save Successful!", 
 						"", "", "", "", "save");
 				d4.displayDialog();
@@ -308,7 +310,7 @@ public class GuiDisplay {
 		DefaultTableModel tableModel = 
 				(DefaultTableModel) GuiMain.doneTable.getModel();
 		tableModel.setRowCount(0);
-		
+
 		if (!(tasks.size()==0)){
 			Item firstTask = tasks.get(0);
 			GuiMain.myDoneData = 
@@ -330,7 +332,7 @@ public class GuiDisplay {
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
 						data[5] = tempTask.getFormattedStart() + 
-								" " + tempTask.getFormattedEnd();
+								" to " + tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
 					}
@@ -397,7 +399,7 @@ public class GuiDisplay {
 					data[4] = tempTask.getDescription();
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
-						data[5] = tempTask.getFormattedStart() + " " 
+						data[5] = tempTask.getFormattedStart() + " to " 
 								+ tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
@@ -467,7 +469,7 @@ public class GuiDisplay {
 
 					if (!(tempTask.getFormattedStart().isEmpty())){
 						data[5] = tempTask.getFormattedStart() +
-								" " + tempTask.getFormattedEnd();
+								" to " + tempTask.getFormattedEnd();
 					}else {
 						data[5] = tempTask.getFormattedDeadline();
 					}
@@ -536,7 +538,7 @@ public class GuiDisplay {
 
 				if (!(tempTask.getFormattedStart().isEmpty())){
 					data[5] = tempTask.getFormattedStart() 
-							+ " " + tempTask.getFormattedEnd();
+							+ " to " + tempTask.getFormattedEnd();
 				}else {
 					data[5] = tempTask.getFormattedDeadline();
 				}
@@ -594,13 +596,6 @@ public class GuiDisplay {
 			GuiMain.feedback.setText(GuiMain.feedback.getText() +
 					"  - " + tasks.size() + " found\n");
 
-			/*for(int i=0; i<tasks.size(); i++) {
-				Item tempTask = tasks.get(i);
-				GuiMain.feedback.setText(GuiMain.feedback.getText() +
-						(i+1) + ".\n" + tempTask 
-						+ "--------------------x-------------------\n");
-
-			}*/
 			GuiMain.feedback.setText(GuiMain.feedback.getText() 
 					+ VIEW_UNCOMPLETED_TASKS);
 		}
@@ -639,7 +634,7 @@ public class GuiDisplay {
 	private static void viewOperation(LinkedList<Item> tasks, Item firstTask) {
 		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
 			updateTodoTable(tasks);
-			
+
 			GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
 			GuiMain.tabbedPane.getSelectedComponent();
 		}
@@ -647,7 +642,7 @@ public class GuiDisplay {
 			GuiMain.feedback.setText("Sorry, No Tasks Found!\n");
 		}
 	}
-	
+
 	//@author A0116160W
 	/**
 	 * Diplays all the labels at the feedback panel
@@ -726,7 +721,7 @@ public class GuiDisplay {
 
 				if (!(tempTask.getFormattedStart().isEmpty())){
 					data[5] = tempTask.getFormattedStart() 
-							+ " " + tempTask.getFormattedEnd();
+							+ " to " + tempTask.getFormattedEnd();
 				}else {
 					data[5] = tempTask.getFormattedDeadline();
 				}
@@ -767,7 +762,7 @@ public class GuiDisplay {
 
 
 	}
-	
+
 	//@author A0116160W
 	/**
 	 * Initializes Remembra by calling all update methods for 

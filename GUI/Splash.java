@@ -2,10 +2,12 @@
 import java.awt.*;
 
 public class Splash{
-	    public Splash() {
+	    private static final String NULL_MESSAGE = "SplashScreen.getSplashScreen() returned null";
+
+		public Splash() {
 	        final SplashScreen splash = SplashScreen.getSplashScreen();
 	        if (splash == null) {
-	            System.out.println("SplashScreen.getSplashScreen() returned null");
+	            System.out.println(NULL_MESSAGE);
 	            return;
 	        }
 	        for(int i=0; i<16; i++) {

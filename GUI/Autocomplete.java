@@ -8,7 +8,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-
+/*
+ * Autocompletion class helps to autocomplete words
+ */
 public class Autocomplete implements DocumentListener {
 
 	private static enum Mode {
@@ -21,7 +23,7 @@ public class Autocomplete implements DocumentListener {
 	private Mode mode = Mode.INSERT;
 	private String addHelp = "Suggestions:\n\n;add\n\n;+\n\n;insert";
 	private String deleteHelp = "Suggestions:\n\n;delete\n\n;-\n\n;remove\n\n;rm";
-	private String viewHelp = "Suggestions:\n\n;view\n\n;display\n\n;\n\n;v";
+	private String viewHelp = "Suggestions:\n\n;view\n\n;display\n\n;v";
 	private String descriptionHelp = "Suggestions:\n\n;description\n\n;i\n\n;information\n\n;info";
 	private String editHelp = "Suggestions:\n\n;edit\n\n;update\n\n;~";
 	private String undoHelp = "Suggestions:\n\n;undo\n\n;back";
@@ -42,6 +44,12 @@ public class Autocomplete implements DocumentListener {
 	@Override
 	public void removeUpdate(DocumentEvent ev) { }
 
+	//@author A0116160W
+	/**
+	 * Detect letters to get updated for autocomplete
+	 * 
+	 * @param Document Event
+	 */
 	@Override
 	public void insertUpdate(DocumentEvent ev) {
 		if (ev.getLength() != 1)
@@ -55,7 +63,7 @@ public class Autocomplete implements DocumentListener {
 			e.printStackTrace();
 		}
 
-		// Find where the word starts
+		//Find where the word starts
 		int w;
 		for (w = pos; w >= 0; w--) {
 			if (!Character.isLetter((content.charAt(w)))) {
@@ -63,7 +71,7 @@ public class Autocomplete implements DocumentListener {
 			}
 		}
 
-		// Too few chars
+		//Too few chars
 		if (pos - w < 1)
 			return;
 
@@ -74,17 +82,23 @@ public class Autocomplete implements DocumentListener {
 			if (match.startsWith(prefix)) {
 
 				String completion = match.substring(pos - w);
+				suggest(match);
 				// We cannot modify Document from within notification,
 				// so we submit a task that does the change later
-				suggest(match);
 				SwingUtilities.invokeLater(new CompletionTask(completion, pos + 1));
 			}
 		} else {
-			// Nothing found
+			//Found Nothing
 			mode = Mode.INSERT;
 		}
 	}
 
+	//@author A0116160W
+	/**
+	 * Displays suggestion on the feedback panel
+	 * 
+	 * @param matching String
+	 */
 	private void suggest(String match) {
 		switch (match) {
 		case "add":
@@ -126,6 +140,12 @@ public class Autocomplete implements DocumentListener {
 		 */
 		private static final long serialVersionUID = 5794543109646743416L;
 
+		//@author A0116160W
+		/**
+		 * Add space after completion text
+		 * 
+		 * @param ActionEvent
+		 */
 		@Override
 		public void actionPerformed(ActionEvent ev) {
 			if (mode == Mode.COMPLETION) {
@@ -149,7 +169,12 @@ public class Autocomplete implements DocumentListener {
 			this.completion = completion;
 			this.position = position;
 		}
-
+		
+		//@author A0116160W
+		/**
+		 * Perform autcompletion
+		 * 
+		 */
 		public void run() {
 			StringBuffer sb = new StringBuffer(textField.getText());
 			sb.insert(position, completion);

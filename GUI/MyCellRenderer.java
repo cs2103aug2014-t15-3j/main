@@ -5,6 +5,10 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
+/*
+ * Class to allow the text in a cell to affect the row height of a table and 
+ * create a new line for texts which are longer than cell width. 
+ */
 public class MyCellRenderer extends JTextArea implements TableCellRenderer
 {
 	public MyCellRenderer() {

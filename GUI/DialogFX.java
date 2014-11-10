@@ -22,30 +22,39 @@ import javax.swing.plaf.LayerUI;
 
 /**
  * 
- * A0116160W
+ * Provides effects for dialog box like fadeIn, fadeOut and create a transparent backpanel.
  */
 public class DialogFX {
+	
+	//@author A0116160W
 	/**
-	 * Centers the dialog over the given parent component. Also, creates a
-	 * semi-transparent panel behind the dialog to mask the parent content.
-	 * The title of the dialog is displayed in a custom fashion over the dialog
-	 * panel, and a rectangular shadow is placed behind the dialog.
+	 * Creates a semi-transparent panel behind the dialog to mask the parent content.
+	 * Creates the backpanel with the appropriate image.
+	 * 
+	 * @param Dialog
+	 * @param Parent window
+	 * @param command to detect which backpanel to create
+	 * 
 	 */
 	static void createDialogBackPanel(Dialog dialog, Component parent, String command) {
 		DialogBackPanel newContentPane = new DialogBackPanel(dialog, command);
-		newContentPane.create();
+		newContentPane.addComponent();
 		dialog.setContentPane(newContentPane);
 		dialog.setSize(GuiMain.frameRemembra.getSize());
 		dialog.setLocation(GuiMain.frameRemembra.getLocationOnScreen());
 	}
 
+	//@author A0116160W
 	/**
 	 * Adds a glass layer to the dialog to intercept all key events. If the
 	 * escape key is pressed, the dialog is disposed (either with a fadeout
 	 * animation, or directly).
+	 * 
+	 * @param Dialog
+	 * @param boolean
 	 */
 	@SuppressWarnings("serial")
-	static void addEscapeToCloseSupport(final JDialog dialog, final boolean fadeOnClose) {
+	static void addEscapeToCloseSupport(JDialog dialog, boolean fadeOnClose) {
 		LayerUI<Container> layerUI = new LayerUI<Container>() {
 			private boolean closing = false;
 
@@ -81,8 +90,11 @@ public class DialogFX {
 		dialog.setContentPane(layer);
 	}
 
+	//@author A0116160W
 	/**
 	 * Creates an animation to fade the dialog opacity from 0 to 1.
+	 * 
+	 * @param Dialog
 	 */
 	static void fadeIn(JDialog dialog) {
 		final Timer timer = new Timer(0, null);
@@ -99,12 +111,15 @@ public class DialogFX {
 		});
 
 		dialog.setOpacity(0);
-		//timer.start();
+
 		dialog.setVisible(true);
 	}
 
+	//@author A0116160W
 	/**
 	 * Creates an animation to fade the dialog opacity from 1 to 0.
+	 * 
+	 * @param Dialog
 	 */
 	static void fadeOut(JDialog dialog) {
 		final Timer timer = new Timer(10, null);

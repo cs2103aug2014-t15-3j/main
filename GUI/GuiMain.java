@@ -66,7 +66,6 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 import javax.swing.SpringLayout;
 
-//@author A0116160W
 
 public class GuiMain {
 
@@ -92,7 +91,7 @@ public class GuiMain {
 
 	static JTabbedPane tabbedPane;
 	static JTable todoTable;
-	private JPanel colorPanel1;
+	private JPanel inputBarColorPanel;
 	private ArrayList<String> keywords = new ArrayList<String>(5);
 
 	private static String[] tableHeaders = { "", 
@@ -105,14 +104,14 @@ public class GuiMain {
 
 	private static final String COMMIT_ACTION = "commit";
 	static PanelWithShadow calendarTab;
-	private JPanel panel_2;
+	private JPanel headerPanel;
 	static PanelWithShadow todoTab;
 	private JLabel timeLabel = new JLabel();
-	private JPanel panel_7;
-	private JPanel panel_3;
-	private JPanel panel_4;
-	private JPanel panel_5;
-	private JPanel panel_6;
+	private JPanel colorPanel4;
+	private JPanel headerColorPanel;
+	private JPanel colorPanel1;
+	private JPanel colorPanel3;
+	private JPanel coloarPanel2;
 	static PanelWithShadow doneTab;
 	private JScrollPane doneScroll;
 	static JTable doneTable;
@@ -129,11 +128,13 @@ public class GuiMain {
 	private JScrollPane allScroll;
 	static DefaultTableModel allData;
 
+	//@author A0116160W
 	/**
-	 * Launch the application.
+	 * Launch the GUI application and enable listeners.
 	 */
 	public void launch() {
 		EventQueue.invokeLater(new Runnable() {
+			@SuppressWarnings("static-access")
 			public void run() {
 				try {
 					GuiMain window = new GuiMain();
@@ -142,69 +143,19 @@ public class GuiMain {
 					e.printStackTrace();
 				}
 				
-				//To update system on which list to work on, whenever tab is changed
-				ChangeListener changeListener = new ChangeListener() {
-					public void stateChanged(ChangeEvent e) {
-						JTabbedPane p = (JTabbedPane)e.getSource();
-						int idx = p.getSelectedIndex(); 
-						LogicMain logic = new LogicMain();
-						LinkedList<Item> tasks;
-						if (idx == 0){
-							tasks = logic.processInput(";view ;!done");
-							GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
-							Operations.viewState = Operations.TODO_STATE;
-						} else if (idx == 1){
-							tasks = logic.processInput(";view ;done");
-							GuiDisplay.updateDoneTable(tasks);
-							Operations.viewState = Operations.DONE_STATE;
-						} else if (idx == 2){
-							tasks = logic.processInput(";view ;all");
-							GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
-							Operations.viewState = Operations.ALL_STATE;
-						} else if (idx == 3 && !Operations.lastSearch.isEmpty()){
-							tasks = logic.processInput(Operations.lastSearch);
-							GuiDisplay.updateSearchTable(tasks, tasks.get(0));
-							Operations.viewState = Operations.FIND_STATE;
-						}
-					}
-				};
-				tabbedPane.addChangeListener(changeListener);
+				//To update system to only work on the list that is displayed,
+				//whenever tab is changed
+				activateTabChangeListener();
 
 
-
-				inputField.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg) {
-						/*
-						 * Below is just an example of what will happen when user presses enter after 
-						 * typing something in the user input text field at the bottom of the GUI.
-						 */
-						String inputStr = inputField.getText(); //this is to get the user input text
-
-						//this clears the input field
-						inputField.setText("");
-
-						if (inputStr.startsWith("help")) {
-							try {
-								GuiDisplay.displayHelp(inputStr);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						} else {
-							GuiDisplay.display(inputStr);
-							//GridLabel.createlabel();
-						}
-
-					}
-
-
-				});
+				activateInputListner();
 			}
 		});
 	}
-
+	
+	//@author A0116160W
 	/**
-	 * Create the application.
+	 * Initialize the application.
 	 */
 	public GuiMain() {
 		new Splash();
@@ -212,7 +163,72 @@ public class GuiMain {
 		GuiDisplay.initialize();
 
 	}
+	
+	//@author A0116160W
+	/**
+	 * Activate listener to detect tab change and perform actions accordingly.
+	 */
+	private void activateTabChangeListener() {
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JTabbedPane p = (JTabbedPane)e.getSource();
+				int idx = p.getSelectedIndex(); 
+				LogicMain logic = new LogicMain();
+				LinkedList<Item> tasks;
+				if (idx == 0){
+					tasks = logic.processInput(";view ;!done");
+					GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.TODO_STATE;
+				} else if (idx == 1){
+					tasks = logic.processInput(";view ;done");
+					GuiDisplay.updateDoneTable(tasks);
+					Operations.viewState = Operations.DONE_STATE;
+				} else if (idx == 2){
+					tasks = logic.processInput(";view ;all");
+					GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.ALL_STATE;
+				} else if (idx == 3 && !Operations.lastSearch.isEmpty()){
+					tasks = logic.processInput(Operations.lastSearch);
+					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.FIND_STATE;
+				}
+			}
+		};
+		tabbedPane.addChangeListener(changeListener);
+	}
+	
+	//@author A0116160W
+	/**
+	 * Activate the input listener for any commands
+	 */
+	private void activateInputListner() {
+		inputField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg) {
+				
+				String inputStr = inputField.getText();
 
+				inputField.setText("");
+
+				//To identify if the user is asking for help or other commands
+				if (inputStr.startsWith("help")) {
+					try {
+						GuiDisplay.displayHelp(inputStr);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					GuiDisplay.display(inputStr);
+				}
+
+			}
+
+
+		});
+	}
+	
+	
+	//@author A0116160W
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -223,15 +239,16 @@ public class GuiMain {
 		frameRemembra.setFont(new Font("WhitneyBook", Font.PLAIN, 12));
 		frameRemembra.setForeground(new Color(0, 0, 0));
 		frameRemembra.setTitle("Remembra V0.4");
+		
+		//Creates the Time Display
 		Timer timer = new Timer(500, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateTime();
+				createTimeLabel();
 			}
 		});
 		timer.setRepeats(true);
 		timer.setCoalesce(true);
-		//timer.setInitialDelay(0);
 		timer.start();
 
 		try {
@@ -265,32 +282,33 @@ public class GuiMain {
 		frameRemembra.getContentPane().setLayout(null);
 
 
-		panel_7 = new JPanel();
-		panel_7.setBounds(31, 465, 752, 5);
-		frameRemembra.getContentPane().add(panel_7);
-		panel_7.setLayout(null);
-		panel_7.setBackground(SystemColor.controlHighlight);
+		colorPanel4 = new JPanel();
+		colorPanel4.setBounds(31, 465, 752, 5);
+		frameRemembra.getContentPane().add(colorPanel4);
+		colorPanel4.setLayout(null);
+		colorPanel4.setBackground(SystemColor.controlHighlight);
 
-		panel_5 = new JPanel();
-		panel_5.setBackground(new Color(204, 0, 51));
-		panel_5.setBounds(0, 80, 39, 30);
-		frameRemembra.getContentPane().add(panel_5);
+		colorPanel3 = new JPanel();
+		colorPanel3.setBackground(new Color(204, 0, 51));
+		colorPanel3.setBounds(0, 80, 39, 30);
+		frameRemembra.getContentPane().add(colorPanel3);
 
-		panel_6 = new JPanel();
-		panel_6.setBackground(new Color(204, 0, 51));
-		panel_6.setBounds(31, 80, 752, 5);
-		frameRemembra.getContentPane().add(panel_6);
+		coloarPanel2 = new JPanel();
+		coloarPanel2.setBackground(new Color(204, 0, 51));
+		coloarPanel2.setBounds(31, 80, 752, 5);
+		frameRemembra.getContentPane().add(coloarPanel2);
 
-		panel_4 = new JPanel();
-		panel_4.setBackground(new Color(204, 0, 51));
-		panel_4.setBounds(780, 80, 28, 30);
-		frameRemembra.getContentPane().add(panel_4);
+		colorPanel1 = new JPanel();
+		colorPanel1.setBackground(new Color(204, 0, 51));
+		colorPanel1.setBounds(780, 80, 28, 30);
+		frameRemembra.getContentPane().add(colorPanel1);
 
 		JLayeredPane displayPanel = new JLayeredPane();
 		displayPanel.setBackground(SystemColor.controlHighlight);
 		displayPanel.setBounds(34, 80, 749, 425);
 		frameRemembra.getContentPane().add(displayPanel);
-
+		
+		//Create a tabbed pane
 		tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
 		tabbedPane.setBounds(0, 0, 750, 425);
 
@@ -315,6 +333,8 @@ public class GuiMain {
 				}
 			}
 		};
+		
+		//Create a new table with myData as a model
 		todoTable = new JTable(myData);
 		todoTable.setEnabled(false);
 		todoTable.setRequestFocusEnabled(false);
@@ -325,7 +345,8 @@ public class GuiMain {
 		todoTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
 		todoTable.setShowHorizontalLines(false);
 		todoTable.setBorder(null);
-
+		
+		//To remove header and fix the column width 
 		todoTable.setTableHeader(null);
 		todoTab.setLayout(null);
 		todoTable.getColumnModel().getColumn(0).setPreferredWidth(20);
@@ -337,7 +358,8 @@ public class GuiMain {
 		todoTable.getColumnModel().getColumn(6).setPreferredWidth(20);
 
 		todoTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
+		
+		//Create own table header
 		tableHeading1 = new JTextPane();
 		tableHeading1.setDisabledTextColor(new Color(204, 0, 51));
 		tableHeading1.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
@@ -452,6 +474,7 @@ public class GuiMain {
 				}
 			}
 		};
+		
 		allTable = new JTable(allData);
 		allTable.setFillsViewportHeight(true);
 		allScroll.setViewportView(allTable);
@@ -475,8 +498,6 @@ public class GuiMain {
 		allTable.getColumnModel().getColumn(5).setPreferredWidth(140);
 		allTable.getColumnModel().getColumn(6).setPreferredWidth(20);
 		allTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-
 
 		searchTab = new PanelWithShadow(5);
 		searchTab.setLayout(null);
@@ -549,11 +570,11 @@ public class GuiMain {
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
-		colorPanel1 = new JPanel();
-		colorPanel1.setBounds(35, 508, 12, 76);
-		frameRemembra.getContentPane().add(colorPanel1);
-		colorPanel1.setBackground(new Color(51, 51, 51));
-		colorPanel1.setLayout(null);
+		inputBarColorPanel = new JPanel();
+		inputBarColorPanel.setBounds(35, 508, 12, 76);
+		frameRemembra.getContentPane().add(inputBarColorPanel);
+		inputBarColorPanel.setBackground(new Color(51, 51, 51));
+		inputBarColorPanel.setLayout(null);
 
 		PanelWithShadow inputPanel = new PanelWithShadow(5);
 		inputPanel.setBounds(34, 517, 749, 60);
@@ -565,42 +586,22 @@ public class GuiMain {
 		inputField.setMargin(new Insets(0, 0, 0, 0));
 		inputField.setCaretColor(new Color(0, 0, 0));
 		inputField.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		//inputField.putClientProperty("JTextField.variant", "search");
+
 		inputPanel.setLayout(null);
 
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.WHITE);
-		panel.setBounds(12, 0, 24, 55);
-		inputPanel.add(panel);
+		JPanel inputColorPanel = new JPanel();
+		inputColorPanel.setBackground(Color.WHITE);
+		inputColorPanel.setBounds(12, 0, 24, 55);
+		inputPanel.add(inputColorPanel);
 		inputField.setFont(new Font("Tahoma", Font.BOLD, 18));
 		inputField.setForeground(new Color(165, 42, 42));
 		inputField.setBackground(new Color(255, 255, 255));
 		inputPanel.add(inputField);
 		inputField.setColumns(49);
-		//myData = new DefaultTableModel(objects, tableHeaders);
-		//JLabel lblMonth = new JLabel("Task");
-		//lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
-		//calendar.add(lblMonth);
-
-		keywords.add("add");
-		keywords.add("view");
-		keywords.add("delete");
-		keywords.add("edit");
-		keywords.add("description");
-		keywords.add("undo");
-		keywords.add("find");
-		keywords.add("by");
-		keywords.add("remind");
-		keywords.add("label");
-		keywords.add("search");
-		keywords.add("power");
-		keywords.add("start");
-		keywords.add("end");
-
-		// Without this, cursor always leaves text field
+		
+		//To focus inputfield on start-up
 		inputField.setFocusTraversalKeysEnabled(false);
 
-		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
 
 		PanelWithShadow feedbackpanel = new PanelWithShadow(5);
 		feedbackpanel.setBounds(806, 80, 251, 545);
@@ -627,21 +628,21 @@ public class GuiMain {
 		feedback.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
 		feedback.setEditable(false);
 
-		JPanel panel_8 = new JPanel();
-		panel_8.setBackground(new Color(51, 51, 51));
-		panel_8.setBounds(5, 5, 244, 539);
-		feedbackpanel.add(panel_8);
+		JPanel feedbackColorPanel = new JPanel();
+		feedbackColorPanel.setBackground(new Color(51, 51, 51));
+		feedbackColorPanel.setBounds(5, 5, 244, 539);
+		feedbackpanel.add(feedbackColorPanel);
 
-		panel_2 = new PanelWithShadow(5);
-		panel_2.setLayout(null);
-		panel_2.setBackground(new Color(204, 0, 51));
-		panel_2.setBounds(0, 0, 1057, 114);
-		frameRemembra.getContentPane().add(panel_2);
+		headerPanel = new PanelWithShadow(5);
+		headerPanel.setLayout(null);
+		headerPanel.setBackground(new Color(204, 0, 51));
+		headerPanel.setBounds(0, 0, 1057, 114);
+		frameRemembra.getContentPane().add(headerPanel);
 
 		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 15));
 		timeLabel.setForeground(new Color(255, 255, 255));
 		timeLabel.setBounds(876, 0, 181, 22);
-		panel_2.add(timeLabel);
+		headerPanel.add(timeLabel);
 		timeLabel.setText("Time");
 
 		JTextPane txtpnRemembra = new JTextPane();
@@ -651,38 +652,38 @@ public class GuiMain {
 		txtpnRemembra.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 41));
 		txtpnRemembra.setText("REMEMBRA");
 		txtpnRemembra.setBounds(12, 22, 770, 66);
-		panel_2.add(txtpnRemembra);
+		headerPanel.add(txtpnRemembra);
 
-		panel_3 = new JPanel();
-		panel_3.setBounds(0, 0, 1057, 110);
-		panel_2.add(panel_3);
-		panel_3.setBackground(new Color(204, 0, 51));
+		headerColorPanel = new JPanel();
+		headerColorPanel.setBounds(0, 0, 1057, 110);
+		headerPanel.add(headerColorPanel);
+		headerColorPanel.setBackground(new Color(204, 0, 51));
 
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(SystemColor.controlHighlight);
-		panel_1.setBounds(0, 0, 1057, 625);
-		frameRemembra.getContentPane().add(panel_1);
-		SpringLayout sl_panel_1 = new SpringLayout();
-		panel_1.setLayout(sl_panel_1);
+		JPanel backgroundColorPanel = new JPanel();
+		backgroundColorPanel.setBackground(SystemColor.controlHighlight);
+		backgroundColorPanel.setBounds(0, 0, 1057, 625);
+		frameRemembra.getContentPane().add(backgroundColorPanel);
+		SpringLayout sl_backgroundColorPanel = new SpringLayout();
+		backgroundColorPanel.setLayout(sl_backgroundColorPanel);
 
 		JCheckBox chckbxStillIncomplete = new JCheckBox("Still Incomplete");
-		sl_panel_1.putConstraint(SpringLayout.NORTH, chckbxStillIncomplete, 465, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.WEST, chckbxStillIncomplete, 547, SpringLayout.WEST, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.SOUTH, chckbxStillIncomplete, 495, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.EAST, chckbxStillIncomplete, 678, SpringLayout.WEST, panel_1);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.NORTH, chckbxStillIncomplete, 465, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.WEST, chckbxStillIncomplete, 547, SpringLayout.WEST, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.SOUTH, chckbxStillIncomplete, 495, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.EAST, chckbxStillIncomplete, 678, SpringLayout.WEST, backgroundColorPanel);
 		chckbxStillIncomplete.setHorizontalAlignment(SwingConstants.RIGHT);
 		chckbxStillIncomplete.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
 		chckbxStillIncomplete.setFocusable(false);
 		chckbxStillIncomplete.setEnabled(false);
 		chckbxStillIncomplete.setBackground(SystemColor.controlHighlight);
-		panel_1.add(chckbxStillIncomplete);
+		backgroundColorPanel.add(chckbxStillIncomplete);
 
 		JCheckBox chckbxTasksDone = new JCheckBox("Tasks Done!");
-		sl_panel_1.putConstraint(SpringLayout.NORTH, chckbxTasksDone, 465, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.WEST, chckbxTasksDone, 673, SpringLayout.WEST, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.SOUTH, chckbxTasksDone, 495, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.EAST, chckbxTasksDone, 780, SpringLayout.WEST, panel_1);
-		panel_1.add(chckbxTasksDone);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.NORTH, chckbxTasksDone, 465, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.WEST, chckbxTasksDone, 673, SpringLayout.WEST, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.SOUTH, chckbxTasksDone, 495, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.EAST, chckbxTasksDone, 780, SpringLayout.WEST, backgroundColorPanel);
+		backgroundColorPanel.add(chckbxTasksDone);
 		chckbxTasksDone.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
 		chckbxTasksDone.setFocusable(false);
 		chckbxTasksDone.setEnabled(false);
@@ -694,6 +695,23 @@ public class GuiMain {
 		DefaultCaret caret1 = (DefaultCaret) feedback.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
+		//keywords for auto-complete to detect
+		keywords.add("add");
+		keywords.add("view");
+		keywords.add("delete");
+		keywords.add("edit");
+		keywords.add("description");
+		keywords.add("undo");
+		keywords.add("find");
+		keywords.add("by");
+		keywords.add("remind");
+		keywords.add("label");
+		keywords.add("search");
+		keywords.add("power");
+		keywords.add("start");
+		keywords.add("end");
+
+		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
 		inputField.getDocument().addDocumentListener(autoComplete);
 
 		// Maps the tab key to the commit action, which finishes the autocomplete
@@ -716,15 +734,19 @@ public class GuiMain {
 				inputField.requestFocus();
 			}
 		} );
-		//To center the frame on startup wrt device screen
+		
+		//To center the frame on startup w.r.t device screen
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frameRemembra.setLocation(dim.width/2-frameRemembra.getSize().width/2, dim.height/2-frameRemembra.getSize().height/2);
 
 	}
 
-
-	//Updates the label which displays the time
-	void updateTime() {
+	//@author A0116160W
+	/**
+	 * Updates the label which displays the time
+	 * 
+	 */
+	void createTimeLabel() {
 		Date date = new Date();
 		String str = DateFormat.getDateTimeInstance().format(date);
 		timeLabel.setText(str);
