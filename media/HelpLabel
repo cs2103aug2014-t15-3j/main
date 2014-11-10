@@ -1,0 +1,17 @@
+A label or tag is to help you organize your tasks. You can indicate them using
+;label
+;lb
+
+To add a label to a task, you need to create a label first. So,
+;label ;add Important
+
+would create a label called 'Important'.
+
+Then to add label to a task, simply mention label when creating a task.
+e.g.
+;add Buy eggs ;label Important
+
+You can also add label by editing details of a task. 
+e.g. For Task with ID = 2,
+;edit 2 ;label Extra
+(Make sure 'Extra' label is created beforehand.)

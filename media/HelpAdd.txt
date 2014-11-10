@@ -1,15 +1,18 @@
 A task can be added in numerous ways. Following are the command options available to add tasks.
 
-;add		e.g. ;add Sample task
+;add		
 ;+
 ;insert
+
+e.g. ;add Sample task
 
 Tasks descriptions can also be added using the following commands after your task name:
 
 ;description
 ;info
 ;information
-;i		e.g. ;add Sample task ;i Sample description
+;i		
+e.g. ;add Sample task ;i Sample description
 
 Task deadlines are added in the through the following commands:
 
@@ -18,4 +21,6 @@ Task deadlines are added in the through the following commands:
 ;when
 ;date
 
-*This is the end. Scroll up to the top*
+Task time slots can be added also by indicating 
+;start [time] ;end [time]
+for a task while adding or editing it.

@@ -16,8 +16,11 @@ public class GuiDisplay {
 	private static final String HELP_DELETE_TXT = "media/HelpDelete.txt";
 	private static final String HELP_EDIT_TXT = "media/HelpEdit.txt";
 	private static final String HELP_ADD_TXT = "media/HelpAdd.txt";
-	private static final String HELP_TEXT = "media/HelpText.txt";
-
+	private static final String HELP_TXT = "media/HelpText.txt";
+	private static final String HELP_SAVE_TXT = "media/HelpSave.txt";
+	private static final String HELP_REMIND_TXT = "media/HelpRemind.txt";
+	private static final String HELP_LABEL_TXT = "media/HelpLabel.txt";
+	
 	private static final String WELCOME_MESSAGE = "Hi, there!\nThis is your "
 			+ "feedback display.\n\nFor a quick guide, type help "
 			+ "and\npress enter.\n\n\nAll of your tasks, if any, are"
@@ -71,7 +74,7 @@ public class GuiDisplay {
 		String fileContent;
 		switch (helpFunction){
 		case "":
-			fileContent = readFile(HELP_TEXT);
+			fileContent = readFile(HELP_TXT);
 			GuiMain.feedback.setText(fileContent);
 			break;
 		case Operations.ADD_OPERATION:
@@ -88,6 +91,18 @@ public class GuiDisplay {
 			break;
 		case Operations.VIEW_OPERATION:
 			fileContent = readFile(HELP_VIEW_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "remind":
+			fileContent = readFile(HELP_REMIND_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "label":
+			fileContent = readFile(HELP_LABEL_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "save":
+			fileContent = readFile(HELP_SAVE_TXT);
 			GuiMain.feedback.setText(fileContent);
 			break;
 		}
@@ -293,8 +308,7 @@ public class GuiDisplay {
 				case Operations.FIND_STATE:
 					tasks = logic.processInput(Operations.lastSearch);
 					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
-				default:
-					GuiMain.feedback.setText(ERROR_MESSAGE);
+
 				}
 			}
 

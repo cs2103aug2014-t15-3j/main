@@ -5,8 +5,9 @@ Commands:
 ;delete - Delete Tasks
 ;edit - Edit Tasks
 ;undo - Undo last action
-;save - To save manually
-;label - To work on labels
+;remind - How to add a reminder
+;save - How to save manually
+;label - How to work on labels
 
 
 If you want an in-depth help, 

@@ -1,0 +1,13 @@
+To use remind, use the command:
+;remind
+
+To add a reminder for a task you can indicate it when you are adding a task.
+
+e.g. 
+;add Buy eggs ;remind DD MM YYYY HH mm am/pm
+
+You can add reminder to task which are already added.
+
+e.g. 
+To change reminder of a task with ID = 3
+;edit 3 ;remind DD MM YYYY HH mm am/pm

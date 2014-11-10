@@ -1,6 +1,8 @@
 A task can be deleted in numerous ways. Following are the command options available to delete tasks.
+Type delete command followed by task ID
 
-;delete		e.g. ;delete Sample task
+;delete		
+e.g. ;delete 4
 ;remove
 ;rm
 ;-
