@@ -191,17 +191,20 @@ public class LogicTest {
 		LinkedList<Task> allTasks = LogicMain.getAllTasks();
 		
 		// a: view all tasks		
-		returnTasks = logic.processInput(";view");
+		returnTasks = logic.processInput(";view ;all");
 		assertEquals(allTasks.size(), returnTasks.size());
+		
+		// b: view all uncompleted tasks
+		returnTasks = logic.processInput(";view");
+		assertEquals(LogicMain.getNotDoneTasks().size(), returnTasks.size());
 		
 		// b: view invalid command
 		returnTasks = logic.processInput(";view Something Invalid");
-		assertEquals(allTasks.size(), returnTasks.size());
+		assertEquals(LogicMain.getNotDoneTasks().size(), returnTasks.size());
 		
-		// c: view 10 tasks
-		returnTasks = logic.processInput(";view 10");
-		assertEquals( Math.min(allTasks.size(),10),
-				Math.min(allTasks.size(), returnTasks.size()) );
+		// c: view task id 2
+		returnTasks = logic.processInput(";view 2");
+		assertEquals(1, returnTasks.size());
 	}
 	
 	

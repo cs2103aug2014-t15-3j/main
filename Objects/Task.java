@@ -327,43 +327,43 @@ public class Task implements Item, java.io.Serializable, Comparable<Task> {
 		String message = "";
 		
 		// Include name into message
-		message += "Task: " + name;
+		message += "Task:\n" + name;
 		
 		// Include done or not
 		if (isDone) {
-			message += " [DONE]\n";
+			message += " [Done]\n\n";
 		} else {
-			message += "\n";
+			message += "\n\n";
 		}
 		
 		// Include description into message
 		if (!description.isEmpty()) {
-			message += "Description: " + description + "\n";
+			message += "Description:\n" + description + "\n\n";
 		}
 		
 		// Include start and end into message
 		if ( !getFormattedStart().isEmpty() ) {
-			message += "Start: " + getFormattedStart() + "\n";
+			message += "Starting Time:\n" + getFormattedStart() + "\n\n";
 		}
 		if ( !getFormattedEnd().isEmpty() ) {
-			message += "End: " + getFormattedEnd() + "\n";
+			message += "Ending Time:\n" + getFormattedEnd() + "\n\n";
 		}
 
 		// Include deadline into message
 		if(deadline != NOT_VALID) {
-			message += "Deadline: " + getFormattedDeadline() + "\n";
+			message += "Deadline:\n" + getFormattedDeadline() + "\n\n";
 		}
 		
 		// Include reminder into message
 		if(reminder != NOT_VALID) {
-			message += "Remind at: " + getFormattedReminder() + "\n";
+			message += "Reminder:\n" + getFormattedReminder() + "\n\n";
 		}
 
 		// Include label into message
 		String labelName = getLabelName();
 		
 		if(!labelName.equals(Operations.EMPTY_MESSAGE)) {
-			message += "Label: " + labelName + "\n";
+			message += "Label:\n" + labelName + "\n";
 		}
 
 		return message + "\n";
