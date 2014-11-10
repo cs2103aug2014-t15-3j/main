@@ -1,0 +1,2571 @@
+//@author: a0112898u
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Sets the JFrame's top left programme displayIcon
+	 */
+	void setFrameIcon() {
+		frameRemembra.setIconImage(Toolkit.getDefaultToolkit().getImage("media/logo.png"));	
+	}
+
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Checks if the system supports system tray
+	 */
+	boolean checkSystemTraySupport() {
+		if (SystemTray.isSupported()) {
+			tray = SystemTray.getSystemTray();
+			return true;
+		}
+		return false;
+	}
+
+
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Inits the system tray outlook, display name when hovering over and adding options 
+	 * to the popup menu when right clicked at the system tray. This functions also adds 
+	 * the action listeners for the options
+	 * 
+	 * For now it only supports 'Exit' and re'Open' of the programme.
+	 */
+	void initSystemTray() {
+		//Set image when program is in system tray
+		Image image = Toolkit.getDefaultToolkit().getImage("media/logo.png");
+		
+		//Action Listener to exit the programme ONLY when in system tray
+		ActionListener exitListener = new ActionListener() {
+			//If clicked on the exit option
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		};
+
+		//Action Listener to open the programme frame ONLY when in system tray
+		ActionListener openListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frameRemembra.setVisible(true);
+				frameRemembra.setExtendedState(JFrame.NORMAL);
+			}
+		};
+
+		/* Popup Menu @ system tray */
+		PopupMenu popup = new PopupMenu();
+		MenuItem defaultItem;
+
+		//Added a 'Exit' option to the menu when right clicked
+		defaultItem = new MenuItem("Exit");
+		defaultItem.addActionListener(exitListener);
+		popup.add(defaultItem);
+
+		//Added a 'Option' option to the menu when right clicked
+		defaultItem = new MenuItem("Open");
+		defaultItem.addActionListener(openListener);
+		popup.add(defaultItem);
+
+		trayIcon = new TrayIcon(image, "Remembra", popup);
+		trayIcon.setImageAutoSize(true);
+		//To open Remembra from system tray via left click
+		trayIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                	frameRemembra.setVisible(true);
+    				frameRemembra.setExtendedState(JFrame.NORMAL);
+                }
+            }
+        });
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Activate Window State Listener for the JFrame, this is for the implementation to
+	 * hide frame into system tray
+	 */
+	void activateWindowStateListener() {
+		frameRemembra.addWindowStateListener(new WindowStateListener() {
+			public void windowStateChanged(WindowEvent e) {
+
+				//If click on the minimize icon on the window, this function will 
+				//detect the window new "ICONFIED" state and activate system tray
+				if (e.getNewState() == ICONIFIED) {
+					try {
+						tray.add(trayIcon);
+						frameRemembra.setVisible(false);
+					} catch (AWTException ex) {
+						System.out.println("unable to add to tray");
+					}
+				}
+
+				//If click on the 'open' open option to re-open the program,
+				//this call will reinstate the JFrame's visibility and remove trayicon
+				if (e.getNewState() == MAXIMIZED_BOTH || e.getNewState() == NORMAL) {
+					tray.remove(trayIcon);
+					frameRemembra.setVisible(true);
+				}
+			}
+		});
+	}
+}
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+	 */
+
+	/**
+	 * This method initialize the timer for auto saving.
+	 */
+	private void initializeSaveTimer() {
+		
+		//Start Timer thread for saving file every 5 min
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(storageSaveScheduler, 0, 5, TimeUnit.MINUTES);
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+	 */
+
+	/**
+	 * This method initialize the reminder system.
+	 */
+	private void intializeReminder() {
+		LogicReminder.initiateSingleton(bufferTasksList);
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+	 */
+
+	/**
+	 * This method schedules the reminderSystem to refresh daily at 0000.
+	 */
+	private void scheduleReminderSystem() {
+	
+		Calendar todayDate = Calendar.getInstance();
+		todayDate.getTime();
+		
+		Calendar nextDayDate = Calendar.getInstance();
+		nextDayDate.setTime(todayDate.getTime());
+		nextDayDate.add(Calendar.DATE, ONE_DAY);
+		nextDayDate.set(Calendar.HOUR_OF_DAY, 00);
+		nextDayDate.set(Calendar.MINUTE, 00);
+		nextDayDate.set(Calendar.SECOND, 00);
+		
+		long initialDelay = nextDayDate.getTimeInMillis() - todayDate.getTimeInMillis();
+		
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(refreshReminderScheduler, initialDelay, 
+				86400000, TimeUnit.MILLISECONDS);
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+	 */
+
+	/**
+	 * Periodic Reminder System refresh - refresh the reminder list
+	 * every day at 0000
+	 */
+	Runnable refreshReminderScheduler = new Runnable() {
+		   
+		Calendar cal = Calendar.getInstance();
+		
+	    public void run() {
+	    	if (isInitialize) {
+	    		//Refresh the reminder system
+	    		LogicReminder.getInstance().regenReminderList(bufferTasksList);
+	    		
+	    		//Do Logging
+	    		storageLogger.log(Level.INFO, "Reminder System list refreshed" + cal.getTime());
+	    	}
+	    }
+	};
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+	 */
+
+	/**
+	 * Periodic Task Saving Functionality - saves the buffered input task
+	 * to storage every 5min
+	 */
+	Runnable storageSaveScheduler = new Runnable() {
+		   
+		Calendar cal = Calendar.getInstance();
+		
+	    public void run() {
+	    	
+	    	if (isInitialize) {
+
+	    		//Save the current buffered list
+	    		commitToStorage();
+
+	    		//Do Logging
+	    		storageLogger.log(Level.INFO, "BufferList Stored @ " + cal.getTime());
+	    	}
+	    }
+	    
+	};
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Constructor for Logic Reminder Singleton, should only have one instance!
+	 * Impt note - Only generate reminder for daily task - Only add today's task!	
+	 * 
+	 * @param tasks The list of tasks to initiate the system with.
+	 */
+	private LogicReminder(LinkedList<Task> tasks) {		
+		//Loop through all tasks & add only tasks with today's reminder date
+		for (Task t:tasks) {
+			if (checkIsTodayTask(t) && !isReminderOver(t)) {
+				ReminderTask rTask = new ReminderTask(t, 
+						new Date(t.getReminder()));
+				taskToBeReminded.add(rTask);				
+			}
+		}		
+		//Acknowledges the initiation
+		isInitiated = true;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * API function to initiate the Logic Reminder System's Singleton
+	 * 
+	 * @param tasks The list of tasks to initiate the system with.
+	 * @throws ParseException
+	 */
+	public static void initiateSingleton (LinkedList<Task> tasks) {
+		//Initiated the Singleton only if not initiated
+		if (!isInitiated) {
+			logicReminderInstance = new LogicReminder(tasks);
+		}
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Getter to get the instance for this Singleton class.
+	 * 
+	 * @return LogicReminder returns the Singleton's Instance
+	 */
+	public static LogicReminder getInstance() {
+		return logicReminderInstance;
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Accessor for reminder tasks list
+	 * 
+	 * @return LinkedList The reminder tasks list
+	 */
+	static public LinkedList<ReminderTask> getList() {
+		return taskToBeReminded;
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Mutator for reminder tasks list
+	 */
+	static public void editList(LinkedList<ReminderTask> _taskToBeReminded) {
+		taskToBeReminded = _taskToBeReminded;
+	}
+
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * API function to refresh the Reminder System List.
+	 * To Implement - Logic should call this every 0000 the tasks 
+	 * to be reminded should be re-generated.
+	 * 
+	 * @param tasks The list of tasks to refresh the system with.
+	 */
+	public void regenReminderList(LinkedList<Task> tasks) {
+		//Loop through all tasks & add only tasks with today's reminder date
+		for (Task t:tasks) {
+			//Checks for today's task and not over task then add task.
+		    if (checkIsTodayTask(t) && !(isReminderOver(t))) {
+		    	//Create a reminder task and add to the list of reminders
+		    	ReminderTask rTask = new ReminderTask(t, 
+		    			new Date(t.getReminder()));
+		    	
+				//Schedule an alarm for this task.
+		    	rTask.scheduleAlarm();
+		    	
+		    	//Add task to system's list.
+		    	taskToBeReminded.add(rTask);
+		    	assert(checkIsTodayTask(t) && !(isReminderOver(t))): "Not Today's task and is over! Assertion Error!";
+		    }
+		}
+	}
+
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Add new tasks or Updates the old task with the new task, and 
+	 * re-schedules/schedules the new reminder
+	 * 
+	 * @param newTask The new task that is to be changed to
+	 * @param oldTask The old task task that is to be changed.
+	 */
+	public void updateTaskTobeReminded(Task newTask, Task oldTask) {
+		//Local Variable for 'updateTaskTobeReminded' function
+		boolean isTaskAdded = false;
+		boolean isTodayReminder = false;
+		
+		//check if the reminder for the new task is today
+		if (checkIsTodayTask(newTask)) {
+			isTodayReminder = true;
+		}
+		
+		//Search for the old task (if any).
+		for (ReminderTask tempRtask:taskToBeReminded) {
+			//Update task if task exists.
+			if (isTaskExist(tempRtask.getTask(), oldTask)) {
+				//Stops the previous scheduled alarm.
+				tempRtask.stopAlarm();
+				
+				if (isTodayReminder && !isReminderOver(newTask)) {
+					//Edit and reschedule task.
+					tempRtask.editTask(newTask);
+					tempRtask.scheduleAlarm();			
+				} else {
+					//Remove reminder if if not for today or over.
+					taskToBeReminded.remove(oldTask);
+				}
+				//To indicate that task was present in the list.
+				isTaskAdded = true;
+				//Break from the loop if task already found.
+				break;
+			}
+		}
+		
+		//If task doesn't exist in the current list.
+		if (!isTaskAdded && isTodayReminder) {	
+			//Add new task!
+			addTaskTobeReminded(newTask);
+		}
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * API function that is to be called when new tasks are added to
+	 * the Logic System buffered tasks list. This function will then 
+	 * check if the task's indicated reminder time and date is for 
+	 * today before adding into the Reminder System.
+	 * 
+	 * @param newTask The newly added task.
+	 */
+	public void addTaskTobeReminded(Task newTask) {
+		if (checkIsTodayTask(newTask) && !isReminderOver(newTask)) {
+			//Creates a new ReminderTask Object with the new Task.
+			ReminderTask rTask = new ReminderTask(newTask, 
+					new Date(newTask.getReminder()));
+			
+			//Add the new ReminderTask to the Singleton's ReminderTask List.
+			taskToBeReminded.add(rTask);
+			
+			//Schedules an alarm for this new task.
+			rTask.scheduleAlarm();
+		}
+	}
+	
+
+	//A0112898U
+	/**
+	 * API function that is to be called when new tasks are deleted from
+	 * the Logic System buffered tasks list. This function will then 
+	 * stops the scheduled alarm for the input(deleted) task.
+	 * 
+	 * @param taskToStop Task that alarm should be stop.
+	 */
+	public void stopTask(Task taskToStop) {
+		//Loop through all collated tasks
+		for (ReminderTask rTsk:taskToBeReminded) {
+			if (isTaskExist(rTsk.getTask(), taskToStop)) {
+				//Stop the scheduled alarm.
+				rTsk.stopAlarm();
+				//break out of loop if task found.
+				break;
+			}
+		}
+	}
+
+	
+	//A0112898U
+	/**
+	 * Getter method to get the collated ReminderTasks
+	 *  
+	 * @return tempList Returns a newList popuplate with
+	 * the collated tasks from the Singleton.
+	 */
+	public LinkedList<ReminderTask> getReminderList() {
+		LinkedList<ReminderTask> tempList = 
+				new LinkedList<ReminderTask>(taskToBeReminded);
+		return tempList;
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Check if the reminder for the task is today's task.
+	 * 
+	 * @param inTask The task to be passed in.
+	 * @return boolean True if Reminder is for today, false if otherwise.
+	 */
+	private static boolean checkIsTodayTask(Task inTask) {
+		//Create java calendar instance to get today's date
+		Calendar c = Calendar.getInstance();
+		
+		//Set all other possible time to 0, other then the day
+		c.set(Calendar.HOUR_OF_DAY, 0);
+	    c.set(Calendar.MINUTE, 0);
+	    c.set(Calendar.SECOND, 0);
+	    c.set(Calendar.MILLISECOND, 0);
+	    
+	    //Objects to help compare the dates
+	    Date date1 = null;
+		Date date2 = null;
+		Date today = c.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+
+		//Format today's date and the task's reminder's date
+		try {
+			date1 = sdf.parse(sdf.format(inTask.getReminder()));
+			date2 = sdf.parse(sdf.format(today));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, 
+					   "LogicReminder - Unable to Parse the dates");
+		}
+		
+	    //Compare the dates, if same return true.
+	    if (date1.getTime() == date2.getTime()) {
+	    	return true;
+	    }
+	    return false;
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Checks if task's reminder time is already over
+	 * 
+	 * @param task The task to check with
+	 * @return boolean True if reminder time indication is over, False otherwise.
+	 */
+	private boolean isReminderOver(Task task) {
+		//if reminder time is greater then current system time means not over
+		if (task.getReminder() >= System.currentTimeMillis()) {
+			return false;
+		}
+		return true;
+	}
+	
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+	 */
+
+	/**
+	 * Checks if the task to be added is same as the existed task.
+	 * 
+	 * @param existedTask The task to check with.
+	 * @param newTask Task that is to be added to check if it exists.
+	 * @return boolean True if task is same as existed Task, false otherwise.
+	 */
+	private boolean isTaskExist(Task existedTask, Task newTask) {
+		if (existedTask.getName().equals(newTask.getName()) 
+				&& existedTask.getDescription().equals(newTask.getDescription())
+				&& (existedTask.getTimeStamp() == newTask.getTimeStamp())
+				&& (existedTask.getLabel() == newTask.getLabel())
+				) {
+			return true;
+		}
+		return false;
+	}
+}
+
+
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicReminder.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public final class LogicSearch {
+	
+	// Constant
+	private static final String NO_MATCH_FOUND = "No match found!";
+	private static final long DAY_MILLISECOND = 86400000;
+	private final static String LOG_NAME = "Logic Search Logger";
+
+	//private Objects
+	private static LinkedList<String> suggestInputs = 
+			new LinkedList<String>();
+	private static LinkedList<String> tokenizedInputs = 
+			new LinkedList<String>(); 
+	
+	// Logger: Use to troubleshoot problems
+	private static Logger logger = Logger.getLogger(LOG_NAME);
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Enum for search types
+	 */
+	public enum SEARCH_TYPES {
+		//Types of search that could be available to search in a  task
+		SEARCH_DEADLINE,
+		TYPE_NAME,
+		TYPE_LABEL,
+		TYPE_DESCRIPTION,
+		TYPE_TIME_ADDED,
+		TYPE_DEADLINE,
+		TYPE_ALL,
+		
+		//Following constants are for the smart search
+		//Searches via name, description and labels ONLY
+		SEARCH_START_LETTER,
+		SEARCH_SUBSTRING_CONTAINS,
+		SEARCH_MATCH_WORD,
+		SEARCH_POWER_SEARCH
+	};
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Tokenizes the input parameter - searchString
+	 * 
+	 * @param searchString - search string input by user
+	 * @return a LinkedList of tokenized strings
+	 */
+	private static LinkedList<String> tokenizeSearchInput(
+			String searchString) {
+		
+		StringTokenizer strTokens = new StringTokenizer(searchString);
+		LinkedList<String> strToks = new LinkedList<String>();
+		
+		//Tokenizes the search String taken in
+		while (strTokens.hasMoreTokens()) {	
+			strToks.add(strTokens.nextToken());
+		}
+		return strToks;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Overloaded method searchTasks() for 'Long' datatype query
+	 * for outside call to retrieve Stored Task 
+	 * 
+	 * @param searchType - the type of query i.e. TYPE_DEADLINE/TYPE_TIME_ADDED
+	 * @param queryParam - query of 'Long' datatype variable is to input 
+	 * @return queryTasks returns a LinkedList with all task categorized with 
+	 * the same 'searchType' & 'Long' datatype variable
+	 */
+	public static LinkedList<Task> searchTasks(SEARCH_TYPES searchType, 
+				long queryParam, LinkedList<Task> bufferedTaskList) {
+		LinkedList<Task> storedTasks = bufferedTaskList;
+		LinkedList<Task> tempCollatedList = new LinkedList<Task>();
+
+		switch (searchType) {
+			case TYPE_DEADLINE:
+				for (Task t:storedTasks) {
+					int startOfDay = (int) (queryParam / DAY_MILLISECOND);
+					long startOfDayMs = startOfDay * DAY_MILLISECOND;
+					long endOfDayMs = startOfDayMs + DAY_MILLISECOND;
+	
+					if (t.getDeadline() >= startOfDayMs &&
+							t.getDeadline() < endOfDayMs) {
+						tempCollatedList.add(t);
+					}
+				}
+				break;
+	
+	
+			case TYPE_TIME_ADDED:
+				for (Task t:storedTasks) {
+					if (t.getTimeStamp() == queryParam) {
+						tempCollatedList.add(t);
+					}
+				}
+				break;
+	
+			default:
+				logger.log(Level.WARNING, 
+						"LogicSearch: Unable to Parse dates");
+				return new LinkedList<Task>();
+			}
+		return tempCollatedList;
+	}
+	
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * public overloaded method searchTasks() for 'String' datatype query
+	 * for outside call to retrieve Stored Task 
+	 * 
+	 * @param searchType - the type of query type i.e. 
+	 * 					   TYPE_NAME/TYPE_LABEL/TYPE_DESCRIPTION
+	 * @param queryParam - query of 'String' datatype variable is to input 
+	 * 
+	 * @return queryTasks returns a LinkedList with all task categorized with
+	 * the same 'searchType' & 'String' datatype variable
+	 */
+	public static LinkedList<Task> searchTasks( String queryString, 
+			LinkedList<Task> bufferedTaskList, 
+			SEARCH_TYPES searchType, SEARCH_TYPES... searchAlgoType) {
+		
+		LinkedList<Task> storedTasks = bufferedTaskList;
+		LinkedList<Task> tempCollatedList = new LinkedList();
+		queryString = queryString.toLowerCase();
+		
+		if (searchAlgoType.length > 0) {
+			tempCollatedList = smartSearch(queryString, 
+					bufferedTaskList, searchType, searchAlgoType[0]);
+		} else {
+			tempCollatedList =  smartSearch(queryString, 
+					bufferedTaskList, searchType, SEARCH_TYPES.TYPE_ALL);	
+		}
+		//Finally return the collated list of matched task
+		return tempCollatedList;
+	}	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Searches the user search inputs,  with the list of tasks via 
+	 * name/label/description.
+	 * ONLY Searches a char if present with the tokenized inputs, 
+	 * check the char with the 1st letter of every string if applies, 
+	 * matched tasks is then added to the list of return linkedlist string
+	 * 
+	 * @param collatedMatchedTaskList - accepts a LinkedList<Task> type list 
+	 *                                  that has been previously 
+	 * 						            initiated/accumulated 
+	 * 
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * 
+	 * @return returns the newly collated list
+	 */
+	private static LinkedList<Task> startLetterSearch(String queryString,
+			LinkedList<Task> collatedMatchedTaskList, 
+			LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchType) {
+		
+		LinkedList<Task> tempCollatedList = new LinkedList<Task>();
+		
+		//Tokenize the search input
+		tokenizedInputs = tokenizeSearchInput(queryString);
+		
+		for (String searchString:tokenizedInputs) {
+			//if the token is a character
+			if (searchString.length() == 1) {
+				//Compare the token with the list of stored tasks
+				for (Task t:bufferedTaskList) { 
+					//Tokenized the searchType string
+					LinkedList<LinkedList<String>> chkToks = 
+							new LinkedList<LinkedList<String>>();
+					
+					switch (searchType){
+						case TYPE_ALL:
+						
+						case TYPE_DESCRIPTION:
+							chkToks.add(tokenizeSearchInput(
+									t.getDescription().toLowerCase()));
+							
+							if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION) {
+								break;
+							}
+							
+						case TYPE_NAME:
+							chkToks.add(tokenizeSearchInput(
+									t.getName().toLowerCase()));
+							
+							if (searchType == SEARCH_TYPES.TYPE_NAME) {
+								break;
+							}
+							
+						case TYPE_LABEL:
+							chkToks.add(tokenizeSearchInput(
+									t.getLabelName().toLowerCase()));
+							
+							if (searchType == SEARCH_TYPES.TYPE_LABEL) {
+								break;
+							}
+					}
+					
+					for (LinkedList<String> chkTok:chkToks) {
+						boolean isTaskAdded = false;
+						
+						for (String chkT:chkTok) {	
+							//Search through the first Letter of every word
+							if (searchString.equals(
+									Character.toString(chkT.charAt(0)))) {
+								if (!isTaskExist(tempCollatedList, t)) {
+									tempCollatedList.add(t);
+									isTaskAdded = true;
+									break; //Break out of the current task
+								}
+							}
+						}
+						//if task is already added don't need to check 
+						//for the next type for double security of check 
+						//duplicated task purpose!
+						if (isTaskAdded) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		return tempCollatedList;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Searches the user search inputs, with the list of tasks via 
+	 * name/label/description, Simple substring search via .contains with 
+	 * the tokenized inputs if applies, matched task is added to the list 
+	 * of return linkedlist string
+	 * 
+	 * ***IMPT***
+	 * This search only searches 2char and above string because, this system 
+	 * assume users uses 1 char as the heading of the word to be search, 
+	 * which is covered in and advance search by 'startLetterSearch'
+	 * 
+	 * @param collatedList - accepts a LinkedList<Task> type list that has been
+	 * 						 previously initiated/accumulated 
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * @return returns the newly collated list
+	 */
+	private static LinkedList<Task> matchWordSearch(String queryString, 
+			LinkedList<Task> collatedMatchedTaskList, 
+			LinkedList<Task> bufferedTaskList, 
+			SEARCH_TYPES searchType, 
+			boolean isPowerSearch) {
+	
+		LinkedList<Task> tempCollatedList = 
+				new LinkedList(collatedMatchedTaskList);
+		
+		//Tokenize the search input
+		tokenizedInputs = tokenizeSearchInput(queryString);
+		
+		//Search each query string through all the stored task via name
+		for (String searchString:tokenizedInputs) {
+			//removes single character search if is not pwoer search, 
+			//this is to prevent a whole cluster of search as the single 
+			//character is already considered as only the start of each string
+			if (searchString.length() <= 1 && !isPowerSearch) {
+				break;
+			}
+			
+			for (Task t:bufferedTaskList) { 
+				//Tokenized the searchType string
+				LinkedList<String> chkString = new LinkedList<String>();
+				
+				switch (searchType) {
+					case TYPE_ALL:
+						
+					case TYPE_DESCRIPTION:
+						chkString.add(t.getDescription().toLowerCase());
+						
+						if (searchType == SEARCH_TYPES.TYPE_DESCRIPTION) {
+							break;
+						}
+						
+					case TYPE_NAME:
+						chkString.add(t.getName().toLowerCase());
+						
+						if (searchType == SEARCH_TYPES.TYPE_NAME) {
+							break;
+						}
+						
+					case TYPE_LABEL:
+						chkString.add(t.getLabelName().toLowerCase());
+						
+						if (searchType == SEARCH_TYPES.TYPE_LABEL) {
+							break;
+						}
+				}
+				
+				for (String chkStr:chkString) {
+					if (chkStr.contains(searchString)) {						
+						if (!isTaskExist(tempCollatedList, t)) {
+							tempCollatedList.add(t);
+							break; //Break out of the current task if added
+						}
+					}					
+				}
+			}
+		}
+		return tempCollatedList;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Smart Searches for user input via Stored Tasks
+	 * 
+	 * @param collatedList - accepts a LinkedList<Task> type list that has  
+	 * 						 been previously initiated/accumulated 
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * @return LinkedList<Task> - Returns the list of tasks that matches 
+	 *                            the search.
+	 */
+	public static LinkedList<Task> smartSearch(String searchLine, 
+			LinkedList<Task> bufferedTaskList, 
+			SEARCH_TYPES searchType, 
+			SEARCH_TYPES searchAlgoType){
+		
+		//Task that is collated through the searches.
+		LinkedList<Task> matchedTasks = new LinkedList<Task>(); 
+		
+		switch (searchAlgoType) {
+			case SEARCH_POWER_SEARCH:
+				LinkedList<LinkedList<?>> returnList = powerSearch(searchLine,
+						matchedTasks, bufferedTaskList, searchType);
+				
+				if (!(returnList.get(0).size() == 0)) {
+					suggestInputs = 
+							new LinkedList<String>(
+									(LinkedList<String>)returnList.get(1));	
+				} else {
+					suggestInputs.add(NO_MATCH_FOUND);
+				}
+				return (LinkedList<Task>) returnList.get(0); 
+					
+			case TYPE_ALL:
+			
+			case SEARCH_START_LETTER:
+				matchedTasks.addAll(startLetterSearch(searchLine, 
+						matchedTasks, bufferedTaskList, searchType));
+				
+				if (searchAlgoType == SEARCH_TYPES.SEARCH_START_LETTER) {
+					break;
+				}
+				
+			case SEARCH_MATCH_WORD:
+				matchedTasks.addAll(matchWordSearch(searchLine, 
+						matchedTasks, bufferedTaskList,searchType, false));
+				
+				if (searchAlgoType == SEARCH_TYPES.SEARCH_MATCH_WORD) {
+					break;
+				}
+		}
+		return removeDuplicate(matchedTasks);
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Getter method to get the suggested string.
+	 * 
+	 * @return LinkedList<String> returns the suggested inputs
+	 */
+	public static LinkedList<String> getSuggestedString() {
+		return suggestInputs;
+	}
+	
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * !!! IMPORANT WARNING !!! 
+	 * Do this search ONLY WHEN other match case = null collated List !!!
+	 * Or if user activates
+	 * 
+	 * Searches the user search inputs, with the list of tasks via description,
+	 * Extensive search with percentage of letter containment with suggestion 
+	 * to user to detect similar strings via the user inputs
+	 * if matches 40% and above by letter diff den add task to collatedList
+	 * if matches 50% by letter containment den suggest 
+	 * 
+	 * 
+	 * @param collatedList - accepts a LinkedList<Task> type list that has been
+	 * 						 previously initiated/accumulated 
+	 * 
+	 * @param bufferedTaskList - List of task that have been added by user
+	 * 
+	 * @return returns List of List, the first list represents the matched 
+	 * tasks, the 2nd list represents the suggested keywords
+	 */
+	public static LinkedList<LinkedList<?>> powerSearch(String queryString, 
+			LinkedList<Task> collatedMatchedTaskList, 
+			LinkedList<Task> bufferedTaskList, SEARCH_TYPES searchTypes) {
+
+		int PERCENT_TO_ADD = 40;
+		int PERCENT_TO_SUGGEST = 50;
+		int PERCENT_MATCHED_STR = 100;
+		
+		LinkedList<Task> tempCollatedList = 
+				new LinkedList(collatedMatchedTaskList);
+		LinkedList<String> suggestedString = new LinkedList<String>();
+		
+		//Breaks the task via tokenization method and search through
+		tokenizedInputs = tokenizeSearchInput(queryString);
+	
+		//If possible return suggestion like if user types ankalp but 
+		//ankalp is contained in sankalp
+		for (String tok:tokenizedInputs) {
+			for (Task t:bufferedTaskList) {	
+				switch (searchTypes) {				
+					case TYPE_ALL:
+					
+					case TYPE_DESCRIPTION:
+						//Double security to check if task has been added
+						if (!isTaskExist(collatedMatchedTaskList,t)) {
+							LinkedList<String> tokenizeDescription 
+									= tokenizeSearchInput(
+											t.getDescription().toLowerCase());
+							
+							//Check against each word in the Description
+							for (String desTok:tokenizeDescription) {
+								if (chkStrSimilarity(tok,desTok) 
+										> PERCENT_TO_ADD) {
+									//Check how similar the 2 strings are
+									if ((chkStrSimilarity(tok, desTok) 
+											> PERCENT_TO_SUGGEST)
+											&& (chkStrSimilarity(tok, desTok) 
+													!= PERCENT_MATCHED_STR)) {
+										suggestedString.add(desTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
+								}
+							}
+						}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_DESCRIPTION) {
+							break;
+						}
+					
+					case TYPE_NAME:
+						//Search Names
+						if (!isTaskExist(collatedMatchedTaskList,t)) {
+							LinkedList<String> tokenizeName
+							= tokenizeSearchInput(t.getName().toLowerCase());
+							
+							for (String nameTok:tokenizeName) {
+								//Check against names
+								if (chkStrSimilarity(tok, nameTok) 
+										> PERCENT_TO_ADD) {
+									if((chkStrSimilarity(tok, nameTok) 
+											> PERCENT_TO_SUGGEST) 
+											&& (chkStrSimilarity(tok, nameTok)
+													!= PERCENT_MATCHED_STR)) {
+										
+										suggestedString.add(nameTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
+								}
+							}
+						}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_NAME) {
+							break;
+						}
+					
+					case TYPE_LABEL:
+						//Double security to check if task has been added
+						if (!isTaskExist(collatedMatchedTaskList, t)) {
+							LinkedList<String> tokenizeLabel
+									= tokenizeSearchInput(
+											t.getLabelName().toLowerCase());
+							
+							//Check against each word in the label
+							for (String labelTok:tokenizeLabel) {
+								if (chkStrSimilarity(tok, labelTok) 
+										> PERCENT_TO_ADD) {
+									if ((chkStrSimilarity(tok, labelTok) 
+											> PERCENT_TO_SUGGEST)
+											&& (chkStrSimilarity(tok, labelTok)
+													!= PERCENT_MATCHED_STR)) {
+										
+										suggestedString.add(labelTok);
+									}
+									collatedMatchedTaskList.add(t);
+									break; //break out loop if task is added
+								}
+							}
+						}
+						
+						if (searchTypes == SEARCH_TYPES.TYPE_LABEL){
+							break;
+						}
+					
+					default:
+						logger.log(Level.WARNING, "LogicSearch-SearchType not"
+								+ "supported!");
+						break;
+				}
+			}
+		}
+		
+		LinkedList<LinkedList<?>> returnList = new LinkedList<LinkedList<?>>();
+		
+		returnList.add(collatedMatchedTaskList);
+		returnList.add(suggestedString);
+		return returnList;
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * String similarity checking and returns a percentage of
+	 * how similar the strings are
+	 * 
+	 * @param s1 - First string to check with.
+	 * @param s2 - Secnd string to check with.
+	 * @return double The percentage of the similarity of strings
+	 */
+    public static double chkStrSimilarity(String s1, String s2) {
+    	// s1 should always be bigger, for easy check thus the swapping.
+    	if (s2.length() > s1.length()) {
+            String tempStr = s1; 
+            s1 = s2; 
+            s2 = tempStr;
+        }
+    	
+    	int FULL_PERCENT = 100;
+        int bigLen = s1.length();
+        
+        if (bigLen == 0) { 
+        	return FULL_PERCENT; 
+        }
+        return ((bigLen - computeEditDistance(s1, s2)) /
+        		(double) bigLen) * FULL_PERCENT;
+    }
+
+    
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+    /**
+     * Computes the distance btw the 2 strings, via the 
+     * Levenshtein Distance Algorithm
+     * 
+	 * @param s1 - First string to check with.
+	 * @param s2 - Secnd string to check with.
+     * @return the new Cost to change to make the string same
+     */
+    public static int computeEditDistance(String s1, String s2) {
+    	
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+        int[] costToChange = new int[s2.length() + 1];
+        
+        for (int i = 0; i <= s1.length(); i++) {
+            int lastValue = i;
+            for (int j = 0; j <= s2.length(); j++) {
+                if (i == 0) {
+                	costToChange[j] = j;
+                }  else {
+                    if (j > 0) {
+                        int newValue = costToChange[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+                            newValue = Math.min(Math.min(newValue, lastValue),
+                            		costToChange[j]) + 1;
+                        }
+                        costToChange[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0) {
+            	costToChange[s2.length()] = lastValue;
+            }
+        }
+        return costToChange[s2.length()];
+    }
+
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Checks if the task to be added is already in the collated list of 
+	 * matched task
+	 * 
+	 * Reason why not to use the '.contains' but to create and use this 
+	 * function is because the '.equals' in task was override by the 
+	 * original creator for other important checking purpose.
+	 *
+	 * @param currentCollatedTasks the added list of task to check with
+	 * @param tobeAddedTask task that is to be added to check if it existed
+	 * 
+	 * @return returns true if task is already present in the collated task, 
+	 * and returns false if task hasn't been found in the collated task
+	 */
+	public static boolean isTaskExist(LinkedList<Task> currentCollatedTasks, 
+			Task taskToAdd) {
+		
+		for (Task t:currentCollatedTasks) {
+			if (t.getName().equals(taskToAdd.getName()) 
+					&& t.getDescription().equals(taskToAdd.getDescription())
+					&& (t.getTimeStamp() == taskToAdd.getTimeStamp())
+					&& (t.getLabel() == taskToAdd.getLabel())
+					) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+	 */
+
+	/**
+	 * Removes any duplicated tasks in the collated List
+	 *
+	 * @param currentCollatedTasks the added list of task to check with
+	 * @return returns a new linkedlist with any duplicated task removed 
+	 */
+	private static LinkedList<Task> removeDuplicate(
+			LinkedList<Task> currentCollatedTasks){
+		
+		LinkedList<Task> tempList = new LinkedList<Task>(currentCollatedTasks);
+		
+		Set<Task> newSet = new HashSet(tempList);
+		LinkedList<Task> tempList2 =  new LinkedList<Task>(newSet);
+		
+		return tempList2;
+	}
+	
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Logic\LogicSearch.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+	 */
+
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public abstract class StorageBase {
+	
+	//Constants
+	protected static final String FILENAME_EXTENSION = ".ser";
+	private final static String LOG_NAME = "Storage Base Logger";
+	
+	//Objects
+	FileOutputStream fileOut;
+	FileInputStream fileIn;
+	ObjectOutputStream objectOut;
+	ObjectInputStream objectIn;
+
+	// Logger: Use to troubleshoot problems
+	private static Logger logger = Logger.getLogger(LOG_NAME);
+	
+	//asbtract functions to be implemented by inherited objects
+	abstract public String getFileName();
+	abstract public void storeObject(Object obj);
+	abstract protected Object retrieveObject();
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+	 */
+
+	/**
+	 * Serializes the object to be save and stores in a .ser file
+	 * file's name, will prompt user if the given name is invalid.
+	 * 
+	 * @param filename - name of the file to be created i.e testfile.ser
+	 * @param obj - object to be serialized and stored
+	 */
+	void serializeObject (String filename, Object obj) {
+		try {
+			fileOut = new FileOutputStream(filename + FILENAME_EXTENSION);
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found! from serializeObject()");
+		}
+		
+		try {
+			objectOut = new ObjectOutputStream(fileOut);
+			objectOut.writeObject(obj);
+			objectOut.close();
+			fileOut.close();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, 
+					"StorageBase: Error with IO in serializeObject()");
+		}
+	}
+	
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+	 */
+
+	/**
+	 * Deserializes the file to retrieved stored object from a .ser file
+	 * 
+	 * @param filename - name of the file to be created i.e testfile.ser
+	 * @return obj - returns a object (which is the deserialized list)
+	 */
+	Object deSerializeObject (String filename) {
+		Object obj = null;	
+		//returns a null immediately if file is empty //Boundary case!
+		if (isEmptyFile(filename)) {			
+			return null;
+		}
+		
+		try {
+			fileIn = new FileInputStream(filename + FILENAME_EXTENSION);			
+			objectIn = new ObjectInputStream(fileIn);
+			obj = (Object) objectIn.readObject();
+			objectIn.close();
+			fileIn.close();	
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, 
+					"StorageBase: File not found!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, 
+					"StorageBase: Class not found!");
+		}
+		return obj;
+	}
+
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+	 */
+
+	/**
+	 * Checks for empty file
+	 * 
+	 * @param filename - name of the file to be Checked
+	 * @return true if file is empty else false is returned
+	 */
+	private boolean isEmptyFile(String filename) {
+		File storageFile = new File(filename + FILENAME_EXTENSION);
+		
+		if (storageFile.length() <= 0) {	
+			return true;
+		}
+		return false;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+	 */
+
+	/**
+	 * Creates a new file for storage purpose if file doesn't exist
+	 * 
+	 * @param filename - name of the file to be created i.e testfile.ser
+	 */
+	protected void createNewFile(String filename) {
+		File storageFile = new File(filename + FILENAME_EXTENSION);
+		
+		if (!storageFile.exists()) {
+			try {
+				//File not found, create a file
+				storageFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.log(Level.WARNING, 
+						"StorageBase: File can't be created");
+			}
+		}
+	}
+	
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageBase.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+
+import java.util.LinkedList;
+
+public class StorageLabel extends StorageBase {
+	
+	//Constants
+	private static final String STORAGE_LABEL_FILENAME = "StorageLabel";
+
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+	/**
+	 * Constructor Call for StorageLabel 
+	 * Also checks for the creation of the .ser storage file
+	 */
+	StorageLabel() {		
+		createNewFile(STORAGE_LABEL_FILENAME);
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+	/**
+	 * Returns the filename of the .ser file
+	 * 
+	 * @return the allocated filename of the .ser file
+	 */
+	@Override
+	public String getFileName() {
+		return STORAGE_LABEL_FILENAME + FILENAME_EXTENSION;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+	/**
+	 * Overrides base class storeObject() to implement
+	 * calls a must method from the super class 
+	 * - serializeObject for the object store
+	 * 
+	 * @param obj - object to be stored into the storage
+	 */
+	@Override
+	public void storeObject(Object obj) {
+		this.serializeObject(STORAGE_LABEL_FILENAME,obj);
+
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+	/**
+	 * Overrides base class retrieveObject() to implement
+	 * calls a method from the super class 
+	 * - deSerializeObject for the object retrieval
+	 *
+	 * @return LinkedList<Label> Returns a list of stored labels
+	 */
+	@Override
+	protected LinkedList<Label> retrieveObject() {
+		LinkedList<Label> storedLabels = new LinkedList<Label>();
+		storedLabels = 
+				(LinkedList<Label>) deSerializeObject(STORAGE_LABEL_FILENAME);
+		return storedLabels;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+	 */
+
+	/**
+	 * API method retrieveStoredLabels() 
+	 * for outside call to retrieve 'ALL' Stored Labels from the storage
+	 * 
+	 * @return LinkedList<Label> Returns a list of stored labels
+	 */
+	public LinkedList<Label> retrieveStoredLabels() {
+		return retrieveObject();
+	}
+
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageLabel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+	 */
+
+	/**
+	 * Enum for retrival and storing methods 
+	 */
+	public static enum OBJ_TYPES {
+		TYPE_TASK,
+		TYPE_LABEL
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+	 */
+
+	/**
+	 * StorageMain's constructor, initiates storage object types
+	 */
+	private StorageMain() {
+		taskStorage = new StorageTask();
+		labelStorage = new StorageLabel();
+	}
+	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+	 */
+
+	/**
+	 * StorageMain's Singleton's Accessor!
+	 * 
+	 * @return storageMain instance
+	 */
+	static public StorageMain getInstance() {
+		return storageMain;
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+	 */
+
+	/**
+	 * API - storeObject() for storing object into the storage
+	 * 
+	 * @param objType - the type of object that is to be stored 
+	 * @param obj - object to be stored into the storage
+	 * @return String - Msg to acknowledge object stored
+	 */
+	String storeObject(OBJ_TYPES objType, Object obj) {
+		switch (objType) {
+			case TYPE_TASK:
+				taskStorage.storeObject(obj);
+				return TASKS_STORED;	
+				
+			case TYPE_LABEL:
+				labelStorage.storeObject(obj);
+				return LABELS_STORED;
+				
+			default:
+				return FORMAT_NOT_SUPPORTED;
+		}
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+	 */
+
+	/**
+	 * API - retrieveObject() for stored object from the storage
+	 * 
+	 * @param objType - the type of object that is to be retrieved 
+	 * @return Object - returns the list of tasks from the .ser file 
+	 */
+	Object retrieveObject(OBJ_TYPES objType) {
+		switch (objType) {		
+			case TYPE_TASK:
+				return taskStorage.retrieveStoredTasks();	
+				
+			case TYPE_LABEL:
+				return labelStorage.retrieveStoredLabels();
+				
+			default:
+				return null;
+		}
+	}
+	
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+
+import java.util.LinkedList;
+
+
+public class StorageTask extends StorageBase {
+	
+	//Constants
+	private static final String STORAGE_TASK_FILENAME = "StorageTask";
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+	/**
+	 * Constructor of StorageTask, creates a storage file
+	 * if file doesn't exist.
+	 */
+	StorageTask() {
+		createNewFile(STORAGE_TASK_FILENAME);
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+	/**
+	 * Returns the filename of the .ser file
+	 * 
+	 * @return the allocated filename of the .ser file
+	 */
+	@Override
+	public String getFileName() {
+		return STORAGE_TASK_FILENAME + FILENAME_EXTENSION;
+	}
+	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+	/**
+	 * overrides base class storeObject() to implement
+	 * calls a must method from the super class - serializeObject for the object store
+	 * 
+	 * @param obj - object to be stored into the storage
+	 */
+	@Override
+	public void storeObject(Object objToStore) {
+		this.serializeObject(STORAGE_TASK_FILENAME, objToStore);
+	}
+	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+	/**
+	 * Overrides base class protected method retrieveObject() to 
+	 * implement calls a method from the super class 
+	 * - deSerializeObject for the object retrieval
+	 * 
+	 * @return LinkedList with all the Stored Task from the storage
+	 */
+	@Override
+	protected LinkedList<Task> retrieveObject() {
+		LinkedList<Task> storedTasks = new LinkedList<Task>();
+		storedTasks = (LinkedList<Task>) deSerializeObject(STORAGE_TASK_FILENAME);
+		
+		return storedTasks;
+	}
+	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+	 */
+
+	/**
+	 * Getter method to retrieve 'ALL' Stored Task from the storage
+	 * 
+	 * @return LinkedList return all Stored Task from the storage
+	 */
+	public LinkedList<Task> retrieveStoredTasks() {
+		return retrieveObject();
+	}	
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Storage\StorageTask.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+	 */
+
+	/**
+	 * Test cases for Remembra's Reminder System
+	 */	
+	@Test
+	public void testExecuteCommand() throws IOException {
+		LinkedList<Task> tasks = new LinkedList<Task>();
+		LogicReminder.initiateSingleton(tasks);
+		//TestCases
+		testCase_testRegenFunc();
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+	 */
+
+	/**
+	 * Test Cases to see if the regeneration function for reminder system works
+	 * This also test if the dates are added correctly when initialize function
+	 * is called as they used similar methods to add the tasks.
+	 * This test cases also test for 'checkIsTodayTask' function
+	 */
+	public static void testCase_testRegenFunc() {
+		
+		int offsetTime = 100;
+		SimpleDateFormat isoFormat = 
+				new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		Date date1 = null;
+		Date date2 = null;
+		Date date3 = null;
+		Date date4 = null;
+		
+		try {
+			//Test dates
+			date1 = isoFormat.parse("2013-11-03T16:13:30");
+			date2 = isoFormat.parse("2015-11-04T02:53:00");
+			date3 = isoFormat.parse("2014-11-03T15:08:00");
+			date4 = isoFormat.parse("2014-12-03T15:08:00");
+		} catch (ParseException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, "Unable to Parse the dates");
+		}
+		
+		//Test tasks
+		Task t1 = new Task("hi 1", "lalal", 
+				123123, date1.getTime() ,date1.getTime());
+		t1.editReminder(date1.getTime());
+		Task t2 = new Task("hi 2", "lalal", 
+				123123, date2.getTime() ,date2.getTime());
+		t2.editReminder(date2.getTime());
+		Task t3 = new Task("hi 3", "lalal", 
+				123123, date3.getTime() ,date3.getTime());
+		t3.editReminder(date3.getTime());
+		Task t4 = new Task("hi 4", "lalal", 
+				123123, date4.getTime() ,date4.getTime());
+		t4.editReminder(date4.getTime());
+		
+		LinkedList<Task> tasks = new LinkedList<Task>();
+		tasks.add(t1);
+		tasks.add(t2);
+		tasks.add(t3);
+		tasks.add(t4);
+		
+		LogicReminder.getInstance().regenReminderList(tasks);
+		
+		//Check for boundary case - last year's date
+		assertEquals("Test 1 - 'LogicReminder "
+				+ "- testRegenListFunc'", false, checkTaskAdded(t1));
+		
+		//Check for boundary case - next year's date
+		assertEquals("Test 2 - 'LogicReminder "
+				+ "- testRegenListFunc'", false, checkTaskAdded(t2));
+		
+		//Check for boundary case - date that had already passed but is this year
+		assertEquals("Test 3 - 'LogicReminder "
+				+ "- testRegenListFunc'", false, checkTaskAdded(t3));
+		
+		//Check for boundary case - date that haven't passed but is this year
+		assertEquals("Test 4 - 'LogicReminder "
+				+ "- testRegenListFunc'", false, checkTaskAdded(t4));
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+	 */
+
+	/**
+	 * Check if task with invalid date is added.
+	 * Invalid Date such as task with reminder set to tomorrow etc. 
+	 * 
+	 * @return boolean True if task is present, false if task is not
+	 */
+	public static boolean checkTaskAdded(Task inTask) {
+		//Create a new list from the reminder system's list
+		LinkedList<ReminderTask> rTasks = 
+				new LinkedList<ReminderTask>(
+						LogicReminder.getInstance().getReminderList());
+		
+		for (ReminderTask rTsk:rTasks) {
+			if (rTsk.getTask().equals(inTask)) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicReminderTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test cases for Remembra's LogicSearch - due to the nature of the search 
+	 * being a static class, the search will only return the latest 
+	 * return values, thus do uncomment searches one by one to test the Search.
+	 */	
+	@Test
+	public void testExecuteCommand() throws IOException {
+		//Test Cases - for LogicSearch - uncomment 1 by 1 to see results
+		testCases_startLetterSearch_testType1();
+		//testCases_startLetterSearch_testType2();
+		//testCases_matchWordSearch();
+		//testCases_CombineSearch();
+	}	
+	
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test cases/senarios type 1 for 'startLetterSearch' function
+	 */	
+	public void testCases_startLetterSearch_testType1() {
+		//Define the searching algorithm to test
+		LogicSearch.SEARCH_TYPES searchAlgoType = 
+				LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER;
+		
+		// Init Test Type 1 - all test cases are init with the same datas
+		// except their indexes
+		LinkedList<Task> testType1 = new LinkedList<Task>();
+		
+		for (int i = 0; i < 4; i++) {
+			testType1.add(new Task("t" + i , "task" + i + " lalala test"));
+		}
+		
+		// Predicted test results for testType 1
+		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testType1);
+		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
+
+		/*********************************************************************/
+		/********************** START TEST TYPE 1 - TEST CASES ***************/
+		
+		//Test for all applicable cases in 1st & 2nd token of the description
+		assertEquals("Test 1 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("t", testType1, 
+						predictedResult_1_1, searchAlgoType));
+		
+		assertEquals("Test 2 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("l", testType1,
+						predictedResult_1_1, searchAlgoType));
+
+		//Test for any applicable cases with many input token 
+		//only chars input should be checked
+		assertEquals("Test 3 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("9 think l", testType1, 
+						predictedResult_1_1, searchAlgoType));
+
+		//Test for all NOT - applicable cases
+		assertEquals("Test 4 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("0", testType1, 
+						predictedResult_1_2, searchAlgoType));
+		
+		/* Equivalence Partition Test - Test for boundary case
+		 * no 'single character' in the search String */
+		assertEquals("Test 5 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("test lalala", testType1, 
+						predictedResult_1_2, searchAlgoType));
+		
+		/************************ END TEST TYPE 1 - TEST CASES ***************/
+		/*********************************************************************/
+
+		
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test cases/senarios type 2 for 'startLetterSearch' function
+	 */	
+	public void testCases_startLetterSearch_testType2(){
+		
+
+		LogicSearch.SEARCH_TYPES searchAlgoType = 
+				LogicSearch.SEARCH_TYPES.SEARCH_START_LETTER;
+
+		/*********************************************************************/
+		/********************** START TEST TYPE 2 - TEST CASES ***************/
+		
+		//Init Test Type 2 - alternate test cases are init with the same datas
+		//except their indexes
+		LinkedList<Task> testType2 = new LinkedList<Task>();
+		
+		//Predicted test results for testType2
+		LinkedList<Task> predictedResult_2_1 = new LinkedList<Task>();
+		LinkedList<Task> predictedResult_2_2 = new LinkedList<Task>();
+		LinkedList<Task> predictedResult_2_3 = new LinkedList<Task>();
+		
+		for (int i = 4; i < 8; i++){
+			
+			if (i%2 == 0){
+				Task t = new Task("t" + i , "task" + i + " lalala test");
+				testType2.add(t);
+				predictedResult_2_2.add(t);
+				
+			}else {
+				Task t = new Task("t" + i , "task" + i + " bababa test");
+				testType2.add(t);			
+				predictedResult_2_3.add(t);
+			}
+		}
+
+		predictedResult_2_1.addAll(testType2);
+		Collections.sort(predictedResult_2_1);
+		
+		
+		//Test for all applicable cases in 1st & 2nd token of the description
+		assertEquals("Test 6 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("t", 
+						testType2, predictedResult_2_1, searchAlgoType));
+		
+		assertEquals("Test 7 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("l", 
+						testType2, predictedResult_2_2, searchAlgoType));
+
+		assertEquals("Test 8 - 'LogicSearch - startLetterSearch'", true, 
+				testSearchAlgo("b", 
+						testType2, predictedResult_2_3, searchAlgoType));
+		
+		/************************ END TEST TYPE 2 - TEST CASES ***************/
+		/*********************************************************************/
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test cases/senarios for 'matchWordSearch' function
+	 */	
+	public void testCases_matchWordSearch() {
+		//Define search type
+		LogicSearch.SEARCH_TYPES searchAlgoType = 
+				LogicSearch.SEARCH_TYPES.SEARCH_MATCH_WORD;
+		
+		// Init Test Type 1 - all test cases are init with the same datas 
+		// except their indexes
+		LinkedList<Task> testType1 = new LinkedList<Task>();
+		
+		for (int i = 0; i < 4; i++) {
+			testType1.add(new Task("t" + i , "task " + i 
+					+ " match Word test"));
+		}
+		
+		//predicted test results for testType 1
+		LinkedList<Task> predictedResult_1_1 = new LinkedList<Task>(testType1);
+		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
+
+		/*********************************************************************/
+		/********************** START TEST TYPE 1 - TEST CASES ***************/
+		
+		/* Equivalence Partition Test - Test for boundary case 
+		 * - 'single character' in the search String */
+		
+		//Test for 1 chacracter search input but match word doesn't search
+		//assume users uses 1 char as the heading of the word to be search
+		assertEquals("Test 1 - 'LogicSearch - testCases_matchWordSearch'", 
+				true, testSearchAlgo("t", 
+						testType1, predictedResult_1_2, searchAlgoType));
+		
+		//Test for 2 chacracter search input but task doesn't exist in the list
+		assertEquals("Test 2 - 'LogicSearch - testCases_matchWordSearch'", 
+				true, testSearchAlgo("tt", 
+						testType1, predictedResult_1_2, searchAlgoType));
+
+		//Test for any applicable cases with many input token 
+		//- only chars input should be checked
+		assertEquals("Test 3 - 'LogicSearch - testCases_matchWordSearch'", 
+				true, testSearchAlgo("task", 
+						testType1, predictedResult_1_1, searchAlgoType));
+
+		//Test for any duplicate result
+		assertEquals("Test 4 - 'LogicSearch - testCases_matchWordSearch'", 
+				true, testSearchAlgo("task match", 
+						testType1,predictedResult_1_1, searchAlgoType));
+		
+		/************************ END TEST TYPE 1 - TEST CASES ***************/		
+		/*********************************************************************/
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test cases/senarios for 'matchWordSearch' function
+	 */	
+	public void testCases_CombineSearch() {
+		LogicSearch.SEARCH_TYPES searchAlgoType = 
+				LogicSearch.SEARCH_TYPES.TYPE_ALL;
+		
+		//Init Test Type 1 - all test cases are init with the same datas 
+		//except their indexes
+		LinkedList<Task> testType1 = new LinkedList<Task>();
+		
+		for (int i = 0; i < 4; i++) {
+			testType1.add(new Task("t" + i ,
+					"task" + i + " matchWord test"));
+		}
+		
+		//predicted test results for testType 1
+		LinkedList<Task> predictedResult_1_1 = 
+				new LinkedList<Task>(testType1);
+		LinkedList<Task> predictedResult_1_2 = new LinkedList<Task>();
+
+		/*********************************************************************/
+		/********************** START TEST TYPE 1 - TEST CASES ***************/
+		
+		/* Equivalence Partition Test - Test for boundary case - 
+		 * 'single character' in the search String */
+		
+		//Test for 1 chacracter search input but match word doesn't search
+		//assume users uses 1 char as the heading of the word to be search
+		assertEquals("Test 1 - 'LogicSearch - testCases_CombineSearch'", 
+				true, testSearchAlgo("t", testType1, 
+						predictedResult_1_1, searchAlgoType));
+		
+		//Test for combine search input but task doesn't exist in the list
+		assertEquals("Test 2 - 'LogicSearch - testCases_CombineSearch'", 
+				true, testSearchAlgo("tt e", testType1, 
+						predictedResult_1_2, searchAlgoType));
+
+		//Test for any applicable cases with many input token 
+		//- only chars input should be checked
+		assertEquals("Test 3 - 'LogicSearch - testCases_CombineSearch'", 
+				true, testSearchAlgo("task", testType1, 
+						predictedResult_1_1, searchAlgoType));
+
+		//Test for any duplicate result
+		assertEquals("Test 4 - 'LogicSearch - testCases_CombineSearch'", 
+				true, testSearchAlgo("task match", testType1, 
+						predictedResult_1_1, searchAlgoType));
+
+		//Test for combine search type in a String
+		assertEquals("Test 5 - 'LogicSearch - testCases_CombineSearch'", 
+				true, testSearchAlgo("t task match", testType1, 
+						predictedResult_1_1, searchAlgoType));			
+
+		/************************ END TEST TYPE 1 - TEST CASES ***************/
+		/*********************************************************************/
+	}
+		
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+	 */
+
+	/**
+	 * Test for 'startLetterSearch' function | 
+	 * 'matchWordSearch' function | 
+	 * all Type function combined
+	 */	
+	public static boolean testSearchAlgo(String searchLine, 
+			LinkedList<Task> storedTasks, 
+			LinkedList<Task> predictedResult, 
+			LogicSearch.SEARCH_TYPES searchAlgoType) {
+		
+		LinkedList<Task> collatedTask = new LinkedList<Task>();
+		
+		collatedTask = LogicSearch.searchTasks(searchLine, 
+				storedTasks, 
+				LogicSearch.SEARCH_TYPES.TYPE_ALL, 
+				searchAlgoType);
+		
+		if (collatedTask.equals(predictedResult)) {
+			return true;
+		}
+		return false;
+	}
+
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\LogicSearchTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\Remembra_SUT.java
+	 */
+
+	/**
+	 * Test cases for Remembra's Programme will all component interaction
+	 */	
+	@Test
+	public void testExecuteCommand() throws IOException{
+		
+	
+		assertEquals("Test 1 - 'Remembra's SUT - Logic&Storage'", true, testLogicStorage());
+		
+	}	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\Remembra_SUT.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\Remembra_SUT.java
+	 */
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\Remembra_SUT.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\StorageTest.java
+	 */
+
+	/**
+	 * Test cases for Remembra's Storage
+	 */	
+	@Test
+	public void testExecuteCommand() throws IOException{
+		//Test Cases - for storageMain init()
+		assertEquals("Test - 'Remembra Storage .init()'", 
+				true, testStorageInit(StorageMain.getInstance()));
+	}	
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\StorageTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\Test\StorageTest.java
+	 */
+
+	/**
+	 * Test for storage initialization to make sure the task and label 
+	 * storages are initialized
+	 * Also to make sure that,upon initialization if the .ser files 
+	 * are not present, the initialization 
+	 * should create those files automatically
+	 * 
+	 * @param storageStub Takes in a storage stub
+	 * @return boolean for the test case
+	 */	
+	public boolean testStorageInit(StorageMain storageStub) {
+		
+		if (storageStub.taskStorage == null) {
+			assert(storageStub.taskStorage == null) : 
+				"taskStorage is not initialized";
+		}
+		
+		if (storageStub.labelStorage == null) {
+			assert(storageStub.labelStorage == null) 
+			: "labelStorage is not initialized";
+		}
+		
+		//If pass the above cases, test for file creation in directories
+		File testTaskStorageSer = 
+				new File(storageStub.taskStorage.getFileName());
+		
+		if (!testTaskStorageSer.exists()) {
+			assert(!testTaskStorageSer.exists()) : 
+				".ser file for Task Storage is not created!";
+			return false;
+		}
+		
+		File testLabelStorageSer = 
+				new File(storageStub.labelStorage.getFileName());
+
+		if (!testLabelStorageSer.exists()) {			
+			assert(!testLabelStorageSer.exists()) : 
+				".ser file for Label Storage is not created!";			
+			return false;
+		}
+		return true;
+	}
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\Test\StorageTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\scripts\wsPowerShell.vbs
+	 */
+
+set WshShell = WScript.CreateObject("WScript.Shell")
+strDesktop = WshShell.SpecialFolders("Desktop")
+set oShellLink = WshShell.CreateShortcut(strDesktop & "\Remembra.lnk")
+oShellLink.TargetPath = "[t15-3j][V0.5].jar"
+oShellLink.Hotkey = "CTRL+SHIFT+R"
+oShellLink.Save
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\scripts\wsPowerShell.vbs
+
+
+
+
+

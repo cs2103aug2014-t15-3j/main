@@ -1,0 +1,2271 @@
+//@author: a0116160w
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+	 */
+
+	/**
+	 * Detect letters to get updated for autocomplete
+	 * 
+	 * @param Document Event
+	 */
+	@Override
+	public void insertUpdate(DocumentEvent ev) {
+		if (ev.getLength() != 1)
+			return;
+
+		int pos = ev.getOffset();
+		String content = null;
+		try {
+			content = textField.getText(0, pos + 1);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+
+		//Find where the word starts
+		int w;
+		for (w = pos; w >= 0; w--) {
+			if (!Character.isLetter((content.charAt(w)))) {
+				break;
+			}
+		}
+
+		//Too few chars
+		if (pos - w < 1)
+			return;
+
+		String prefix = content.substring(w + 1).toLowerCase();
+		int n = Collections.binarySearch(keywords, prefix);
+		if (n < 0 && -n <= keywords.size()) {
+			String match = keywords.get(-n - 1);
+			if (match.startsWith(prefix)) {
+
+				String completion = match.substring(pos - w);
+				suggest(match);
+				// We cannot modify Document from within notification,
+				// so we submit a task that does the change later
+				SwingUtilities.invokeLater(new CompletionTask(completion, pos + 1));
+			}
+		} else {
+			//Found Nothing
+			mode = Mode.INSERT;
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+	 */
+
+	/**
+	 * Displays suggestion on the feedback panel
+	 * 
+	 * @param matching String
+	 */
+	private void suggest(String match) {
+		switch (match) {
+		case "add":
+			GuiMain.feedback.setText(addHelp);
+			break;
+		case "delete":
+			GuiMain.feedback.setText(deleteHelp);
+			break;
+		case "view":
+			GuiMain.feedback.setText(viewHelp);
+			break;
+		case "description":
+			GuiMain.feedback.setText(descriptionHelp);
+			break;
+		case "edit":
+			GuiMain.feedback.setText(editHelp);
+			break;
+		case "undo":
+			GuiMain.feedback.setText(undoHelp);
+			break;
+		case "by":
+			GuiMain.feedback.setText(deadlineHelp);
+			break;
+		case "label":
+			GuiMain.feedback.setText(labelHelp);
+			break;
+		case "find":
+			GuiMain.feedback.setText(findHelp);
+			break;
+		case "remind":
+			GuiMain.feedback.setText(remindHelp);
+			break;
+		}
+	}
+
+	public class CommitAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5794543109646743416L;
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+	 */
+
+		/**
+		 * Add space after completion text
+		 * 
+		 * @param ActionEvent
+		 */
+		@Override
+		public void actionPerformed(ActionEvent ev) {
+			if (mode == Mode.COMPLETION) {
+				int pos = textField.getSelectionEnd();
+				StringBuffer sb = new StringBuffer(textField.getText());
+				sb.insert(pos, " ");
+				textField.setText(sb.toString());
+				textField.setCaretPosition(pos + 1);
+				mode = Mode.INSERT;
+			} else {
+				textField.replaceSelection("\t");
+			}
+		}
+	}
+
+	private class CompletionTask implements Runnable {
+		private String completion;
+		private int position;
+
+		CompletionTask(String completion, int position) {
+			this.completion = completion;
+			this.position = position;
+		}
+		
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+	 */
+
+		/**
+		 * Perform autcompletion
+		 * 
+		 */
+		public void run() {
+			StringBuffer sb = new StringBuffer(textField.getText());
+			sb.insert(position, completion);
+			textField.setText(sb.toString());
+			textField.setCaretPosition(position + completion.length());
+			textField.moveCaretPosition(position);
+			mode = Mode.COMPLETION;
+		}
+	}
+
+}
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Autocomplete.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Calendar.java
+	 */
+
+	/**
+	 * Create the actual Calendar
+	 * 
+	 * @param JPanel for calendar to display on
+	 */
+	static void createCalendar(JPanel pane){
+
+		//Create controls
+		lblMonth = new JLabel ("January");
+		lblYear = new JLabel ("Change year:");
+		cmbYear = new JComboBox();
+		btnPrev = new JButton ("<<");
+		btnNext = new JButton (">>");
+		mtblCalendar = new DefaultTableModel(){
+			public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+			tblCalendar = new JTable(mtblCalendar);
+			stblCalendar = new JScrollPane(tblCalendar);
+
+			//Set border
+			pane.setBorder(BorderFactory.createTitledBorder("Calendar"));
+
+			//Register action listeners
+			btnPrev.addActionListener(new btnPrev_Action());
+			btnNext.addActionListener(new btnNext_Action());
+			cmbYear.addActionListener(new cmbYear_Action());
+
+			lblMonth.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 20));
+			lblYear.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 14));
+
+			//Add controls to pane
+			//pane.add(pnlCalendar);
+			pane.add(lblMonth);
+			pane.add(lblYear);
+			pane.add(cmbYear);
+			pane.add(btnPrev);
+			pane.add(btnNext);
+			pane.add(stblCalendar);
+
+			//Set bounds
+			//pane.setBounds(5, 5, 669, 372);
+			lblMonth.setBounds(334-lblMonth.getPreferredSize().width/2, 342, 100, 25);
+			lblYear.setBounds(505, 347, 80, 20);
+			cmbYear.setBounds(590, 347, 80, 20);
+			btnPrev.setBounds(225, 342, 50, 25);
+			btnNext.setBounds(390, 342, 50, 25);
+			stblCalendar.setBounds(5, 0, 739, 379);
+
+
+			//Get real month/year
+			GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+			realDay = cal.get(GregorianCalendar.DAY_OF_MONTH); //Get day
+			realMonth = cal.get(GregorianCalendar.MONTH); //Get month
+			realYear = cal.get(GregorianCalendar.YEAR); //Get year
+			currentMonth = realMonth; //Match month and year
+			currentYear = realYear;
+
+			//Add headers
+			String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+			for (int i=0; i<7; i++){
+				mtblCalendar.addColumn(headers[i]);
+			}
+
+			tblCalendar.getParent().setBackground(tblCalendar.getBackground());
+
+			//No resize/reorder
+			tblCalendar.getTableHeader().setResizingAllowed(false);
+			tblCalendar.getTableHeader().setReorderingAllowed(false);
+			tblCalendar.getTableHeader().setFont(new Font("Segoe UI Semilight", Font.PLAIN, 20));
+
+			//Single cell selection
+			tblCalendar.setColumnSelectionAllowed(true);
+			tblCalendar.setRowSelectionAllowed(true);
+			tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+			//Set row/column count
+			tblCalendar.setRowHeight(45);
+			mtblCalendar.setColumnCount(7);
+			mtblCalendar.setRowCount(6);
+
+			//Populate table
+			for (int i=realYear-100; i<=realYear+100; i++){
+				cmbYear.addItem(String.valueOf(i));
+			}
+
+			//Refresh calendar
+			refreshCalendar (realMonth, realYear); //Refresh calendar
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Calendar.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Calendar.java
+	 */
+
+	/**
+	 * Refreshes the calendar when new month or year is provided
+	 * 
+	 * @param month
+	 * @param year
+	 */
+	public static void refreshCalendar(int month, int year){
+		String[] months =  {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+		int nod, som; //Number Of Days, Start Of Month
+
+		//Allow/disallow buttons
+		btnPrev.setEnabled(true);
+		btnNext.setEnabled(true);
+		if (month == 0 && year <= realYear-10){btnPrev.setEnabled(false);} //Too early
+		if (month == 11 && year >= realYear+100){btnNext.setEnabled(false);} //Too late
+		lblMonth.setText(months[month]); //Refresh the month label (at the top)
+		lblMonth.setBounds(334-lblMonth.getPreferredSize().width/2, 342, 180, 25); //Re-align label with calendar
+		cmbYear.setSelectedItem(String.valueOf(year)); //Select the correct year in the combo box
+		lblMonth.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 20));
+		//Clear table
+		for (int i=0; i<6; i++){
+			for (int j=0; j<7; j++){
+				mtblCalendar.setValueAt(null, i, j);
+			}
+		}
+
+		//Get first day of month and number of days
+		GregorianCalendar cal = new GregorianCalendar(year, month, 1);
+		nod = cal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+		som = cal.get(GregorianCalendar.DAY_OF_WEEK);
+
+		//Draw calendar
+		for (int i=1; i<=nod; i++){
+			int row = new Integer((i+som-2)/7);
+			int column  =  (i+som-2)%7;
+			mtblCalendar.setValueAt(i, row, column);
+		}
+
+		//Apply renderers
+		tblCalendar.setDefaultRenderer(tblCalendar.getColumnClass(0), new tblCalendarRenderer());
+	}
+
+	static class tblCalendarRenderer extends DefaultTableCellRenderer{
+		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
+			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
+			if (column == 0 || column == 6){ //Week-end
+				setBackground(new Color(255, 220, 220));
+				setForeground(new Color(204, 0, 51));
+				setFont(new Font("Segoe UI Semilight", Font.BOLD, 15));
+			}
+			else{ //Week
+				setBackground(new Color(255, 255, 255));
+				setForeground(Color.black);
+				setFont(new Font("Segoe UI Semilight", Font.BOLD, 15));
+			}
+			if (value != null){
+				if (Integer.parseInt(value.toString()) == realDay && currentMonth == realMonth && currentYear == realYear){ //Today
+					setBackground(Color.LIGHT_GRAY);
+					setForeground(new Color(204, 0, 51));
+					setFont(new Font("Segoe UI Semilight", Font.BOLD, 22));
+				}
+			}
+			setBorder(null);
+
+
+			return this;  
+		}
+	}
+
+	static class btnPrev_Action implements ActionListener{
+		public void actionPerformed (ActionEvent e){
+			if (currentMonth == 0){ //Back one year
+				currentMonth = 11;
+				currentYear -= 1;
+			}
+			else{ //Back one month
+				currentMonth -= 1;
+			}
+			refreshCalendar(currentMonth, currentYear);
+		}
+	}
+	static class btnNext_Action implements ActionListener{
+		public void actionPerformed (ActionEvent e){
+			if (currentMonth == 11){ //Foward one year
+				currentMonth = 0;
+				currentYear += 1;
+			}
+			else{ //Foward one month
+				currentMonth += 1;
+			}
+			refreshCalendar(currentMonth, currentYear);
+		}
+	}
+	static class cmbYear_Action implements ActionListener{
+		public void actionPerformed (ActionEvent e){
+			if (cmbYear.getSelectedItem() != null){
+				String b = cmbYear.getSelectedItem().toString();
+				currentYear = Integer.parseInt(b);
+				refreshCalendar(currentMonth, currentYear);
+			}
+		}
+	}
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Calendar.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\CellColorRenderer.java
+	 */
+
+	/**
+	 * Color the cell
+	 */
+	public void paint(Graphics g) {
+		g.setColor(curColor);
+		g.fillRect(0, 0, 6, getHeight());
+	}
+} 
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\CellColorRenderer.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Dialog.java
+	 */
+
+	/**
+	 * Creates the dialog box
+	 * 
+	 */
+	public void displayDialog() {
+
+		this.setLayout(new GridBagLayout());
+		setUndecorated(true);
+		AWTUtilities.setWindowOpaque(this, false);
+
+
+		setTitle(title);
+
+		taskNameLabel = new JLabel(taskName);
+		taskNameLabel.setForeground(Color.DARK_GRAY);
+		taskNameLabel.setFont(new Font("WhitneyBook", Font.PLAIN, 15));		
+		taskDescLabel = new JLabel(taskDesc);
+		taskDescLabel.setForeground(Color.DARK_GRAY);
+		taskDescLabel.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
+		labelNameLabel = new JLabel(labelName);
+		labelNameLabel.setForeground(Color.DARK_GRAY);
+		labelNameLabel.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
+		deadlineLabel = new JLabel(deadline);
+		deadlineLabel.setForeground(Color.DARK_GRAY);
+		deadlineLabel.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
+
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 255, 255));
+		panel.setLayout(new GridLayout(0,1));
+		panel.add(taskNameLabel);
+		panel.add(taskDescLabel);
+		panel.add(labelNameLabel);
+		panel.add(deadlineLabel);
+		panel.setPreferredSize(new Dimension(300, 150));
+
+
+		// the following two lines are only needed because there is no
+		// focusable component in here, and the "hit escape to close" requires
+		// the focus to be in the dialog.
+		panel.setFocusable(true);
+		panel.requestFocusInWindow();
+
+		getContentPane().add(panel);
+
+		DialogFX.createDialogBackPanel(this, GuiMain.frameRemembra.getContentPane(),
+				command);
+		DialogFX.addEscapeToCloseSupport(this, true);
+		waitThenDisappear(this);
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Dialog.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Dialog.java
+	 */
+
+	/**
+	 * Waits for some time before fading out the dialog
+	 * 
+	 * @param Dialog
+	 */
+	void waitThenDisappear(JDialog d){
+		//current delay time 2.5 secs
+		Timer timer = new Timer(2500, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				DialogFX.fadeOut(d);
+			}
+		});
+		timer.setRepeats(false); // Only execute once
+		timer.start(); 
+	}
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\Dialog.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogBackPanel.java
+	 */
+
+	/**
+	 * Add the component to BackPanel to display dialog
+	 * 
+	 */
+	public void addComponent() {
+
+		setOpaque(false);
+		setLayout(null);
+		add(cmp);
+		
+		if (Image != saveImage){
+			cmp.setSize(300, 450);
+			cmp.setOpaque(true);
+			cmp.setBackground(new Color(0x000000, true));
+		} else{
+			//Because do not need a display box. But created 
+			//inorder for escape key to work 
+			cmp.setSize(0,0);
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogBackPanel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogBackPanel.java
+	 */
+
+	/**
+	 * To set the background as the Image and cover it in shadow
+	 * as well as position the text component onto it.
+	 * 
+	 * @param graphic
+	 */
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		int w = getWidth();
+		int h = getHeight();
+
+		int imageX = 0;
+		int imageY = 320;
+		cmp.setLocation(120, 200);
+
+
+		Graphics2D gg = (Graphics2D) g.create();
+		gg.setPaint(fill);
+		gg.fillRect(0, 0, w, h);
+		gg.drawImage(shadowImage.getImage(), -70, -70, GuiMain.frameRemembra.getSize().width+80, 
+				(int)GuiMain.frameRemembra.getSize().getHeight()+80 , null);
+		gg.drawImage(Image.getImage(), imageX, imageY, 806, 306 , null);
+		gg.dispose();
+	}
+
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogBackPanel.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+	 */
+
+	/**
+	 * Creates a semi-transparent panel behind the dialog to mask the parent content.
+	 * Creates the backpanel with the appropriate image.
+	 * 
+	 * @param Dialog
+	 * @param Parent window
+	 * @param command to detect which backpanel to create
+	 * 
+	 */
+	static void createDialogBackPanel(Dialog dialog, Component parent, String command) {
+		DialogBackPanel newContentPane = new DialogBackPanel(dialog, command);
+		newContentPane.addComponent();
+		dialog.setContentPane(newContentPane);
+		dialog.setSize(GuiMain.frameRemembra.getSize());
+		dialog.setLocation(GuiMain.frameRemembra.getLocationOnScreen());
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+	 */
+
+	/**
+	 * Adds a glass layer to the dialog to intercept all key events. If the
+	 * escape key is pressed, the dialog is disposed (either with a fadeout
+	 * animation, or directly).
+	 * 
+	 * @param Dialog
+	 * @param boolean
+	 */
+	@SuppressWarnings("serial")
+	static void addEscapeToCloseSupport(JDialog dialog, boolean fadeOnClose) {
+		LayerUI<Container> layerUI = new LayerUI<Container>() {
+			private boolean closing = false;
+
+			@Override
+			public void installUI(JComponent c) {
+				super.installUI(c);
+				((JLayer) c).setLayerEventMask(AWTEvent.KEY_EVENT_MASK);
+			}
+
+			@Override
+			public void uninstallUI(JComponent c) {
+				super.uninstallUI(c);
+				((JLayer) c).setLayerEventMask(0);
+			}
+
+			@Override
+			public void eventDispatched(AWTEvent e, JLayer<? extends Container> l) {
+				if (e instanceof KeyEvent && ((KeyEvent) e).getKeyCode() == KeyEvent.VK_ESCAPE) {
+					if (closing) {
+						return;
+					}
+					closing = true;
+					if (fadeOnClose) {
+						fadeOut(dialog);
+					}else {
+						dialog.dispose();
+					}
+				}
+			}
+		};
+
+		JLayer<Container> layer = new JLayer<>(dialog.getContentPane(), layerUI);
+		dialog.setContentPane(layer);
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+	 */
+
+	/**
+	 * Creates an animation to fade the dialog opacity from 0 to 1.
+	 * 
+	 * @param Dialog
+	 */
+	static void fadeIn(JDialog dialog) {
+		final Timer timer = new Timer(0, null);
+		timer.setRepeats(true);
+		timer.addActionListener(new ActionListener() {
+			private float opacity = 0;
+			@Override public void actionPerformed(ActionEvent e) {
+				opacity += 0.25f;
+				dialog.setOpacity(Math.min(opacity, 1));
+				if (opacity >= 1) {
+					timer.stop();
+				}
+			}
+		});
+
+		dialog.setOpacity(0);
+
+		dialog.setVisible(true);
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+	 */
+
+	/**
+	 * Creates an animation to fade the dialog opacity from 1 to 0.
+	 * 
+	 * @param Dialog
+	 */
+	static void fadeOut(JDialog dialog) {
+		final Timer timer = new Timer(10, null);
+		timer.setRepeats(true);
+		timer.addActionListener(new ActionListener() {
+			private float opacity = 1;
+			@Override public void actionPerformed(ActionEvent e) {
+				opacity -= 0.25f;
+				dialog.setOpacity(Math.max(opacity, 0));
+				if (opacity <= 0) {
+					timer.stop();
+					dialog.setVisible(false);
+				}
+			}
+		});
+
+		dialog.setOpacity(1);
+		timer.start();
+
+	}
+}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\DialogFX.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Displays specific help by reading through the input string to find any 
+	 * function name following 'help'.
+	 * 
+	 * @param inputStr
+	 */
+	static void displayHelp(String input) throws IOException {
+		String helpFunction = input.substring(4).trim();
+		GuiMain.feedback.setText("Try a valid help option next");
+		String fileContent;
+		switch (helpFunction){
+		case "":
+			fileContent = readFile(HELP_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.ADD_OPERATION:
+			fileContent = readFile(HELP_ADD_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.EDIT_OPERATION:
+			fileContent = readFile(HELP_EDIT_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.DELETE_OPERATION:
+			fileContent = readFile(HELP_DELETE_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case Operations.VIEW_OPERATION:
+			fileContent = readFile(HELP_VIEW_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "remind":
+			fileContent = readFile(HELP_REMIND_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "label":
+			fileContent = readFile(HELP_LABEL_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		case "save":
+			fileContent = readFile(HELP_SAVE_TXT);
+			GuiMain.feedback.setText(fileContent);
+			break;
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Reads the input string and displays lists provided by LogicMain
+	 * according to the operation requested in input string
+	 * 
+	 * @param inputStr
+	 */
+	static void display(String inputStr) {
+		LogicMain logic = new LogicMain();
+		LinkedList<Item> tasks = logic.processInput(inputStr);
+		LinkedList<Item> allTasks = 
+				new  LinkedList<Item> (LogicMain.getAllTasks());
+
+		assert(!inputStr.isEmpty()): "Input String was empty! Assertion Error!";
+
+		if(!tasks.isEmpty()) {
+
+			Item firstItem = tasks.get(0);
+			String state = firstItem.getState();
+
+			switch (state){
+			case Operations.ADD_OPERATION:
+				Task firstTask = (Task) firstItem;
+				GuiMain.feedback.setText(TASK_ADDED + 
+						firstItem.toString());
+				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+				updateDoneTable(logic.processInput(VIEW_DONE));
+				updateAllTable(allTasks);
+
+				//Acknowledgement pop-up
+				Dialog d = new Dialog(GuiMain.frameRemembra,
+						TASK_ADDED_SUCCESSFULLY, 
+						task + firstTask.getName(), desc + 
+						firstTask.getDescription(), label + 
+						firstTask.getLabelName(), deadline + 
+						firstTask.getFormattedDeadline(), "add");
+				d.displayDialog();
+				DialogFX.fadeIn(d);
+
+				//To display the tab where action happened
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+
+			case Operations.EDIT_OPERATION:
+				Task firstTask1 = (Task) firstItem;
+				GuiMain.feedback.setText(TASK_EDITED 
+						+ firstItem.toString() + 
+						VIEW_UNCOMPLETED_TASKS);
+				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+				updateDoneTable(logic.processInput(VIEW_DONE));
+				updateAllTable(allTasks);
+
+				Dialog d1 = new Dialog(GuiMain.frameRemembra, 
+						TASK_EDITED_SUCCESSFULLY, 
+						task + firstTask1.getName(), desc +
+						firstTask1.getDescription(), 
+						label + firstTask1.getLabelName(), 
+						deadline+ firstTask1.getFormattedDeadline(), "edit");
+				d1.displayDialog();
+				DialogFX.fadeIn(d1);
+				break;
+
+			case Operations.VIEW_OPERATION:
+				GuiMain.feedback.setText("All uncompleted tasks displayed!");
+
+				viewOperation(tasks, firstItem);
+				displayFloatingTasksTable(tasks, firstItem);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+
+			case Operations.VIEW_TASK_OPERATION:
+				GuiMain.feedback.setText(firstItem.toString());
+				break;
+
+			case Operations.VIEW_FLOAT_OPERATION:
+				GuiMain.feedback.setText("All floating tasks displayed below:\n");
+
+				viewOperation(tasks, firstItem);
+				displayFloatingTasksTable(tasks, firstItem);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+
+			case Operations.VIEW_ALL_OPERATION:
+				GuiMain.feedback.setText("All tasks displayed in the 'All Tasks' Tab!");
+
+				updateAllTable(tasks);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.allTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+
+			case Operations.VIEW_DONE_OPERATION:
+				updateDoneTable(tasks);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+
+			case Operations.FIND_OPERATION:
+				updateSearchTable(tasks, firstItem);
+				findOperation(tasks, inputStr);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.searchTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+
+				Operations.lastSearch = inputStr;
+				break;
+
+			case Operations.FIND_ERROR:
+				updateSearchTable(tasks, firstItem);
+				findOperation(tasks, inputStr);
+				break;
+
+			case Operations.DELETE_OPERATION:	
+				Task firstTask3 = (Task) firstItem;
+
+				deleteOperation(firstItem);
+				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+				updateDoneTable(logic.processInput(VIEW_DONE));
+				updateAllTable(allTasks);
+
+				Dialog d3 = new Dialog(GuiMain.frameRemembra,
+						TASK_DELETED_SUCCESSFULLY, 
+						task + firstTask3.getName(), desc + 
+						firstTask3.getDescription(), 
+						label + firstTask3.getLabelName(),
+						deadline + firstTask3.getFormattedDeadline(), 
+						"delete");
+				d3.displayDialog();
+				DialogFX.fadeIn(d3);
+				break;
+			case Operations.DONE_OPERATION:
+				GuiMain.feedback.setText(DONE_SUCCESSFULLY);
+
+				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+				updateDoneTable(logic.processInput(VIEW_DONE));
+				updateAllTable(allTasks);
+
+				GuiMain.tabbedPane.setSelectedComponent(GuiMain.doneTab);
+				GuiMain.tabbedPane.getSelectedComponent();
+				break;
+			case Operations.UNDO_OPERATION:
+				GuiMain.feedback.setText("Undo successful!\n" 
+						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
+
+				updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+				updateDoneTable(logic.processInput(VIEW_DONE));
+				updateAllTable(allTasks);
+				break;
+			case Operations.SAVE_OPERATION:
+				GuiMain.feedback.setText("Everything saved successfully!\n"
+						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
+
+				Dialog d4 = new Dialog(GuiMain.frameRemembra, "Save Successful!", 
+						"", "", "", "", "save");
+				d4.displayDialog();
+				DialogFX.fadeIn(d4);
+				break;
+			case Operations.ADD_LABEL_OPERATION:
+				GuiMain.feedback.setText(LABEL_ADDED + firstItem.toString() 
+						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
+				break;
+			case Operations.DELETE_LABEL_OPERATION:
+				GuiMain.feedback.setText(LABEL_DELETED + firstItem.toString() 
+						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
+				break;
+			case Operations.EDIT_LABEL_OPERATION:
+				GuiMain.feedback.setText(LABEL_EDITED+ firstItem.toString() 
+						+ "\n\n\n" + VIEW_UNCOMPLETED_TASKS);
+				break;
+			case Operations.VIEW_LABEL_OPERATION:
+				viewLabelsOperation(tasks, firstItem);
+				break;
+			default:
+				GuiMain.feedback.setText(ERROR_MESSAGE);
+			}
+			//Reload view
+			if (!state.equals(Operations.SAVE_OPERATION)) {
+				switch (Operations.viewState) {
+
+				case Operations.ALL_STATE:
+					tasks = logic.processInput(VIEW_ALL);
+					displayFloatingTasksTable(tasks, firstItem);
+					break;
+				case Operations.TODO_STATE:
+					tasks = logic.processInput(VIEW);
+					displayFloatingTasksTable(tasks, firstItem);
+					break;
+				case Operations.DONE_STATE:
+					tasks = logic.processInput(VIEW_DONE);
+					updateDoneTable(tasks);
+					break;
+				case Operations.FIND_STATE:
+					tasks = logic.processInput(Operations.lastSearch);
+					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+
+				}
+			}
+
+		}else {
+			GuiMain.feedback.setText(ERROR_MESSAGE);
+		}
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Update the done table in the done tab
+	 * 
+	 * @param done tasks
+	 */
+	protected static void updateDoneTable(LinkedList<Item> tasks) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.doneTable.getModel();
+		tableModel.setRowCount(0);
+
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+			GuiMain.myDoneData = 
+					(DefaultTableModel) GuiMain.doneTable.getModel();
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")) {
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + 
+								" to " + tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;
+					} else {
+						data[0] = Color.WHITE;
+					}
+
+					GuiMain.myDoneData.addRow(data);
+
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = 
+					new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+			GuiMain.doneTable.setModel(GuiMain.myDoneData);
+			GuiMain.doneTable.getColumnModel().
+			getColumn(3).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().
+			getColumn(4).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.getColumnModel().
+			getColumn(5).setCellRenderer(new MyCellRenderer());
+			GuiMain.doneTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.doneTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.doneTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Update the 'all' table in the 'all' tab
+	 * 
+	 * @param all tasks
+	 */
+	private static void updateAllTable(LinkedList<Item> tasks) {
+		DefaultTableModel tableModel =
+				(DefaultTableModel) GuiMain.allTable.getModel();
+		tableModel.setRowCount(0);
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+			GuiMain.allData = 
+					(DefaultTableModel) GuiMain.allTable.getModel();
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() + " to " 
+								+ tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = 
+								LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;
+					} else {
+						data[0] = Color.WHITE;
+					}
+
+					GuiMain.allData.addRow(data);
+
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+			GuiMain.allTable.setModel(GuiMain.allData);
+			GuiMain.allTable.getColumnModel().getColumn(3).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(4).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.getColumnModel().getColumn(5).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.allTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.allTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.allTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Update the 'todo' table in the 'todo' tab
+	 * 
+	 * @param all uncompleted tasks
+	 */
+	private static void updateTodoTable(LinkedList<Item> tasks) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
+		tableModel.setRowCount(0);
+		if (!(tasks.size()==0)){
+			Item firstTask = tasks.get(0);
+
+			GuiMain.myData = (DefaultTableModel) GuiMain.todoTable.getModel();
+
+			if(!firstTask.getName().equals(Operations.EMPTY_MESSAGE)) {
+				for(int i=0; i<tasks.size(); i++) {
+					Task tempTask = (Task) tasks.get(i);
+					Object[] data = new Object[7];
+
+					data[1] = i+1;
+					if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+						data[2] = "";
+
+					} else {
+						data[2] = tempTask.getLabelName();
+					}
+					data[3] = tempTask.getName();
+					data[4] = tempTask.getDescription();
+
+					if (!(tempTask.getFormattedStart().isEmpty())){
+						data[5] = tempTask.getFormattedStart() +
+								" to " + tempTask.getFormattedEnd();
+					}else {
+						data[5] = tempTask.getFormattedDeadline();
+					}
+
+					data[6] = tempTask.getDone();
+					if(!(data[2].toString().isEmpty())){
+						Color color = 
+								LogicMain.getLabelColor(tempTask.getLabel());
+						data[0] = color;
+					} else {
+						data[0] = Color.WHITE;
+					}
+
+					GuiMain.myData.addRow(data);
+
+				}
+			}
+			DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+			centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+			GuiMain.todoTable.setModel(GuiMain.myData);
+			GuiMain.todoTable.getColumnModel().getColumn(3).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(4).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.getColumnModel().getColumn(5).
+			setCellRenderer(new MyCellRenderer());
+			GuiMain.todoTable.setDefaultRenderer(Color.class, 
+					new CellColorRenderer());
+			GuiMain.todoTable.setDefaultRenderer(String.class, 
+					centerRenderer);
+			GuiMain.todoTable.setDefaultRenderer(Integer.class, 
+					centerRenderer);
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Update the 'todo' table in the 'todo' tab
+	 * 
+	 * @param all floating tasks
+	 * @param first task on the list
+	 */
+	protected static void displayFloatingTasksTable(LinkedList<Item> items, 
+			Item firstTask) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
+		tableModel.setRowCount(0);
+		GuiMain.myData = 
+				(DefaultTableModel) GuiMain.todoTable.getModel();
+		if (!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+
+			for (int i=0; i<items.size(); i++) {
+				Task tempTask = (Task) items.get(i);
+				Object[] data = new Object[7];
+
+				data[1] = i+1;
+				if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+					data[2] = "";
+
+				} else {
+					data[2] = tempTask.getLabelName();
+				}
+				data[3] = tempTask.getName();
+				data[4] = tempTask.getDescription();
+
+				if (!(tempTask.getFormattedStart().isEmpty())){
+					data[5] = tempTask.getFormattedStart() 
+							+ " to " + tempTask.getFormattedEnd();
+				}else {
+					data[5] = tempTask.getFormattedDeadline();
+				}
+
+				data[6] = tempTask.getDone();
+				if(!(data[2].toString().isEmpty())){
+					Color color = LogicMain.getLabelColor(tempTask.getLabel());
+					data[0] = color;
+				} else {
+					data[0] = Color.WHITE;
+				}
+				GuiMain.myData.addRow(data);
+			}
+		} else{
+			Object[] data = new Object[7];
+			data[3] = "No floating tasks found.";
+			GuiMain.myData.addRow(data);
+		}
+
+		GuiMain.todoTable.setModel(GuiMain.myData);
+		DefaultTableCellRenderer centerRenderer =
+				new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+		GuiMain.todoTable.setModel(GuiMain.myData);
+		GuiMain.todoTable.getColumnModel().getColumn(3).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.getColumnModel().getColumn(4).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.getColumnModel().getColumn(5).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.todoTable.setDefaultRenderer(Color.class, 
+				new CellColorRenderer());
+		GuiMain.todoTable.setDefaultRenderer(String.class, 
+				centerRenderer);
+		GuiMain.todoTable.setDefaultRenderer(Integer.class, 
+				centerRenderer);
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Displays the list of task found to feedback panel
+	 * 
+	 * @param tasks found 
+	 * @param String containing the keyword that needs to be searched
+	 */
+	private static void findOperation(LinkedList<Item> tasks, String str) {
+		String[] s = str.split(" ");
+		Item item = tasks.get(0);
+		GuiMain.feedback.setText("Search results for \"" 
+				+ s[s.length-1] + "\":\n");
+		if(!(item.getName().equals(Operations.EMPTY_MESSAGE))) {
+
+			GuiMain.feedback.setText(GuiMain.feedback.getText() +
+					"  - " + tasks.size() + " found\n");
+
+			GuiMain.feedback.setText(GuiMain.feedback.getText() 
+					+ VIEW_UNCOMPLETED_TASKS);
+		}
+		else {
+			GuiMain.feedback.setText("No Tasks Found "
+					+ "containing that keyword!\n");
+		}
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Displays the deleted task for confirmation onto feedback panel
+	 * 
+	 * @param the task deleted
+	 */
+	private static void deleteOperation(Item firstTask) {
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+			GuiMain.feedback.setText(
+					TASK_DELETED + 
+					firstTask.toString());
+			GuiMain.feedback.setText("Task deleted successfully!");
+		}
+		else {
+			GuiMain.feedback.setText(DELETE_ERROR_MESSAGE);
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Updates the todo Table with the list of tasks provided
+	 * 
+	 * @param all tasks that need to be showed
+	 * @param the first task on the list
+	 */
+	private static void viewOperation(LinkedList<Item> tasks, Item firstTask) {
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+			updateTodoTable(tasks);
+
+			GuiMain.tabbedPane.setSelectedComponent(GuiMain.todoTab);
+			GuiMain.tabbedPane.getSelectedComponent();
+		}
+		else {
+			GuiMain.feedback.setText("Sorry, No Tasks Found!\n");
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Diplays all the labels at the feedback panel
+	 * 
+	 * @param list of all labels
+	 * @param first label
+	 */
+	private static void viewLabelsOperation(LinkedList<Item> labels, 
+			Item firstLabel) {
+		GuiMain.feedback.setText("All Labels Displayed Below:\n");
+		if(!(firstLabel.getName().equals(Operations.EMPTY_MESSAGE))) {
+			for(int i=0; i<labels.size(); i++) {
+				Item tempLabel = labels.get(i);
+				GuiMain.feedback.setText(GuiMain.feedback.getText() +
+						"\n  " + (i+1) + ". "+ tempLabel + "\n");
+			}
+		}
+		else {
+			GuiMain.feedback.setText("Sorry, No Labels Found!\n");
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Reads a txt file and return it in string format
+	 * 
+	 * @param file location/filename
+	 * 
+	 * @return File text in string format
+	 */
+	static String readFile(String fileName) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			return sb.toString();
+		} finally {
+			br.close();
+		}
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Updates the 'search' table after search, showing the search results
+	 * in the 'search' tab.
+	 * 
+	 * @param Search Results List
+	 * @param First result
+	 */
+	public static void updateSearchTable(LinkedList<Item> items, Item firstTask) {
+		DefaultTableModel tableModel = 
+				(DefaultTableModel) GuiMain.searchTable.getModel();
+		tableModel.setRowCount(0);
+		GuiMain.searchData = (DefaultTableModel) GuiMain.searchTable.getModel();
+		if(!(firstTask.getName().equals(Operations.EMPTY_MESSAGE))) {
+
+			for(int i=0; i<items.size(); i++) {
+				Task tempTask = (Task) items.get(i);
+				Object[] data = new Object[7];
+
+				data[1] = i+1;
+				if (tempTask.getLabelName().equalsIgnoreCase("<empty>")){
+					data[2] = "";
+
+				} else {
+					data[2] = tempTask.getLabelName();
+				}
+				data[3] = tempTask.getName();
+				data[4] = tempTask.getDescription();
+
+				if (!(tempTask.getFormattedStart().isEmpty())){
+					data[5] = tempTask.getFormattedStart() 
+							+ " to " + tempTask.getFormattedEnd();
+				}else {
+					data[5] = tempTask.getFormattedDeadline();
+				}
+
+				data[6] = tempTask.getDone();
+				if(!(data[2].toString().isEmpty())){
+					Color color = LogicMain.getLabelColor(tempTask.getLabel());
+					data[0] = color;//will b the color function
+				} else {
+					data[0] = Color.WHITE;
+				}
+
+				GuiMain.searchData.addRow(data);
+			}
+		} else{
+			Object[] data = new Object[7];
+			data[3] = "No task found conatining the keyword.";
+			GuiMain.searchData.addRow(data);
+		}
+
+		GuiMain.searchTable.setModel(GuiMain.searchData);
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+		GuiMain.searchTable.setModel(GuiMain.searchData);
+		GuiMain.searchTable.getColumnModel().getColumn(3).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.getColumnModel().getColumn(4).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.getColumnModel().getColumn(5).
+		setCellRenderer(new MyCellRenderer());
+		GuiMain.searchTable.setDefaultRenderer(Color.class, 
+				new CellColorRenderer());
+		GuiMain.searchTable.setDefaultRenderer(String.class, 
+				centerRenderer);
+		GuiMain.searchTable.setDefaultRenderer(Integer.class, 
+				centerRenderer);
+
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+	 */
+
+	/**
+	 * Initializes Remembra by calling all update methods for 
+	 * displaying all the necessary details.
+	 */
+	static void initialize(){
+		LogicMain logic = new LogicMain();
+		logic.processInput(VIEW);
+		GuiMain.feedback.setText(WELCOME_MESSAGE);
+		updateDoneTable(logic.processInput(VIEW_DONE));
+		updateAllTable(logic.processInput(VIEW_ALL));
+		updateTodoTable(logic.processInput(VIEW_NOT_DONE));
+	}
+}
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Launch the GUI application and enable listeners.
+	 */
+	public void launch() {
+		EventQueue.invokeLater(new Runnable() {
+			@SuppressWarnings("static-access")
+			public void run() {
+				try {
+					GuiMain window = new GuiMain();
+					window.frameRemembra.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				//To update system to only work on the list that is displayed,
+				//whenever tab is changed
+				activateTabChangeListener();
+
+
+				activateInputListner();
+			}
+		});
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Initialize the application.
+	 */
+	public GuiMain() {
+		new Splash();
+		initialize();
+		GuiDisplay.initialize();
+
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Activate listener to detect tab change and perform actions accordingly.
+	 */
+	private void activateTabChangeListener() {
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JTabbedPane p = (JTabbedPane)e.getSource();
+				int idx = p.getSelectedIndex(); 
+				LogicMain logic = new LogicMain();
+				LinkedList<Item> tasks;
+				if (idx == 0){
+					tasks = logic.processInput(";view ;!done");
+					GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.TODO_STATE;
+				} else if (idx == 1){
+					tasks = logic.processInput(";view ;done");
+					GuiDisplay.updateDoneTable(tasks);
+					Operations.viewState = Operations.DONE_STATE;
+				} else if (idx == 2){
+					tasks = logic.processInput(";view ;all");
+					GuiDisplay.displayFloatingTasksTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.ALL_STATE;
+				} else if (idx == 3 && !Operations.lastSearch.isEmpty()){
+					tasks = logic.processInput(Operations.lastSearch);
+					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+					Operations.viewState = Operations.FIND_STATE;
+				}
+			}
+		};
+		tabbedPane.addChangeListener(changeListener);
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Activate the input listener for any commands
+	 */
+	private void activateInputListner() {
+		inputField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg) {
+				
+				String inputStr = inputField.getText();
+
+				inputField.setText("");
+
+				//To identify if the user is asking for help or other commands
+				if (inputStr.toLowerCase().startsWith("help")) {
+					try {
+						GuiDisplay.displayHelp(inputStr);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					GuiDisplay.display(inputStr);
+				}
+
+			}
+
+
+		});
+	}
+	
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	@SuppressWarnings("serial")
+	private void initialize() {
+		frameRemembra = new JFrame("Remembra");
+		frameRemembra.setResizable(false);
+		frameRemembra.setFont(new Font("WhitneyBook", Font.PLAIN, 12));
+		frameRemembra.setForeground(new Color(0, 0, 0));
+		frameRemembra.setTitle("Remembra V0.4");
+		
+		//Creates the Time Display
+		Timer timer = new Timer(500, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				createTimeLabel();
+			}
+		});
+		timer.setRepeats(true);
+		timer.setCoalesce(true);
+		timer.start();
+
+		try {
+			frameRemembra.setUndecorated(true);
+			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+			UIManager.put("TabbedPane.tabAreaInsets", new javax.swing.plaf.InsetsUIResource(0,30,0,0));
+			UIManager.put("RootPane.setupButtonVisible", false);		
+			AWTUtilities.setWindowOpaque(frameRemembra, false);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		frameRemembra.addWindowListener(new WindowAdapter() {
+			@Override
+			//this pops-up a confirmation dialog box when the user tries to exit the program
+			public void windowClosing(WindowEvent arg0) {
+				int option = JOptionPane.showConfirmDialog(frameRemembra, 
+						"Are you sure?", 
+						"Do you want to Exit?", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					System.exit(0);
+				}
+
+			}
+
+		});
+		frameRemembra.getContentPane().setBackground(Color.LIGHT_GRAY);
+		frameRemembra.setBounds(100, 100, 1109, 704);
+		frameRemembra.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		frameRemembra.getContentPane().setLayout(null);
+
+
+		colorPanel4 = new JPanel();
+		colorPanel4.setBounds(31, 465, 752, 5);
+		frameRemembra.getContentPane().add(colorPanel4);
+		colorPanel4.setLayout(null);
+		colorPanel4.setBackground(SystemColor.controlHighlight);
+
+		colorPanel3 = new JPanel();
+		colorPanel3.setBackground(new Color(204, 0, 51));
+		colorPanel3.setBounds(0, 80, 39, 30);
+		frameRemembra.getContentPane().add(colorPanel3);
+
+		coloarPanel2 = new JPanel();
+		coloarPanel2.setBackground(new Color(204, 0, 51));
+		coloarPanel2.setBounds(31, 80, 752, 5);
+		frameRemembra.getContentPane().add(coloarPanel2);
+
+		colorPanel1 = new JPanel();
+		colorPanel1.setBackground(new Color(204, 0, 51));
+		colorPanel1.setBounds(780, 80, 28, 30);
+		frameRemembra.getContentPane().add(colorPanel1);
+
+		JLayeredPane displayPanel = new JLayeredPane();
+		displayPanel.setBackground(SystemColor.controlHighlight);
+		displayPanel.setBounds(34, 80, 749, 425);
+		frameRemembra.getContentPane().add(displayPanel);
+		
+		//Create a tabbed pane
+		tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+		tabbedPane.setBounds(0, 0, 750, 425);
+
+		tabbedPane.setBackground(SystemColor.controlHighlight);
+		tabbedPane.setBorder(null);
+		tabbedPane.setFont(new Font("Levenim MT", Font.PLAIN, 13));
+		displayPanel.setLayout(null);
+
+		todoTab = new PanelWithShadow(5);
+		todoTab.setForeground(Color.BLACK);
+		todoTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("To-do", null, todoTab, null);
+
+		myData = new DefaultTableModel(objects, tableHeaders) {
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+		
+		//Create a new table with myData as a model
+		todoTable = new JTable(myData);
+		todoTable.setEnabled(false);
+		todoTable.setRequestFocusEnabled(false);
+		todoTable.setFocusable(false);
+		todoTable.setFocusTraversalKeysEnabled(false);
+		todoTable.setRowSelectionAllowed(false);
+		todoTable.setForeground(new Color(0, 0, 0));
+		todoTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		todoTable.setBorder(null);
+		
+		//To remove header and fix the column width 
+		todoTable.setTableHeader(null);
+		todoTab.setLayout(null);
+		todoTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		todoTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		todoTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		todoTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		todoTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		todoTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		todoTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+
+		todoTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		//Create own table header
+		tableHeading1 = new JTextPane();
+		tableHeading1.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading1.setText("     ID     LABEL          TASK                   DESCRIPTION                          DEADLINE");
+		tableHeading1.setForeground(new Color(204, 0, 0));
+		tableHeading1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading1.setEditable(false);
+		tableHeading1.setBounds(5, 4, 623, 30);
+		todoTab.add(tableHeading1);
+
+		JScrollPane todoScroll = new JScrollPane(todoTable);
+		todoScroll.setBounds(5, 32, 739, 346);
+		todoTab.add(todoScroll);
+		todoScroll.setBackground(new Color(255, 255, 255));
+		todoScroll.setBorder(null);
+		todoTable.setFillsViewportHeight(true);
+		displayPanel.add(tabbedPane);
+
+		doneTab = new PanelWithShadow(5);
+		doneTab.setForeground(Color.BLACK);
+		doneTab.setPaintBorderInsets(true);
+		doneTab.setInheritAlpha(true);
+		doneTab.setLayout(null);
+		doneTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("Done", null, doneTab, null);
+		tableHeading1.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading1.setForeground(new Color(204, 0, 0));
+		tableHeading1.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading1.setEditable(false);
+		tableHeading1.setBounds(5, 4, 739, 30);
+
+		myDoneData = new DefaultTableModel(objects, tableHeaders) {
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+
+		doneTable = new JTable(myDoneData);
+		doneTable.setEnabled(false);
+		doneTable.setRequestFocusEnabled(false);
+		doneTable.setFocusable(false);
+		doneTable.setFocusTraversalKeysEnabled(false);
+		doneTable.setRowSelectionAllowed(false);
+		doneTable.setForeground(new Color(0, 0, 0));
+		doneTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		doneTable.setBorder(null);
+
+		doneTable.setTableHeader(null);
+		doneTab.setLayout(null);
+		doneTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		doneTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		doneTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		doneTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		doneTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		doneTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		doneTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		doneTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		tableHeading2 = new JTextPane();
+		tableHeading2.setBounds(5, 4, 739, 30);
+		doneTab.add(tableHeading2);
+		tableHeading2.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading2.setForeground(new Color(204, 0, 0));
+		tableHeading2.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading2.setEditable(false);
+		tableHeading2.setDisabledTextColor(new Color(204, 0, 51));
+		doneTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		doneScroll = new JScrollPane(doneTable);
+		doneScroll.setBounds(5, 32, 739, 346);
+		doneScroll.setBackground(new Color(255, 255, 255));
+		doneScroll.setBorder(null);
+		doneTable.setFillsViewportHeight(true);
+		doneTab.add(doneScroll);
+		doneScroll.setViewportView(doneTable);
+
+		allTab = new PanelWithShadow(5);
+		allTab.setLayout(null);
+		allTab.setPaintBorderInsets(true);
+		allTab.setInheritAlpha(true);
+		allTab.setForeground(Color.BLACK);
+		allTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("All Tasks", null, allTab, null);
+
+		tableHeading3 = new JTextPane();
+		tableHeading3.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading3.setForeground(new Color(204, 0, 0));
+		tableHeading3.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading3.setEditable(false);
+		tableHeading3.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading3.setBounds(5, 4, 739, 30);
+		allTab.add(tableHeading3);
+
+		allScroll = new JScrollPane();
+		allScroll.setBounds(5, 32, 739, 346);
+		allTab.add(allScroll);
+
+		allData = new DefaultTableModel(objects, tableHeaders) {
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+		
+		allTable = new JTable(allData);
+		allTable.setFillsViewportHeight(true);
+		allScroll.setViewportView(allTable);
+		allTable.setEnabled(false);
+		allTable.setRequestFocusEnabled(false);
+		allTable.setFocusable(false);
+		allTable.setFocusTraversalKeysEnabled(false);
+		allTable.setRowSelectionAllowed(false);
+		allTable.setForeground(new Color(0, 0, 0));
+		allTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		allTable.setBorder(null);
+
+		allTable.setTableHeader(null);
+		allTab.setLayout(null);
+		allTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		allTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		allTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		allTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		allTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		allTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		allTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		allTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		searchTab = new PanelWithShadow(5);
+		searchTab.setLayout(null);
+		searchTab.setPaintBorderInsets(true);
+		searchTab.setInheritAlpha(true);
+		searchTab.setForeground(Color.BLACK);
+		searchTab.setBackground(Color.WHITE);
+		tabbedPane.addTab("Search", null, searchTab, null);
+
+
+		tableHeading4 = new JTextPane();
+		tableHeading4.setText("     ID    LABEL         TASK                     DESCRIPTION                              DEADLINE");
+		tableHeading4.setForeground(new Color(204, 0, 0));
+		tableHeading4.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+		tableHeading4.setEditable(false);
+		tableHeading4.setDisabledTextColor(new Color(204, 0, 51));
+		tableHeading4.setBounds(5, 4, 739, 30);
+		searchTab.add(tableHeading4);
+
+		searchScroll = new JScrollPane();
+		searchScroll.setBounds(5, 32, 739, 346);
+		searchTab.add(searchScroll);
+
+		searchData = new DefaultTableModel(objects, tableHeaders){
+			public Class getColumnClass(int columnIndex) {
+				int rowIndex = 0;
+				Object o = getValueAt(rowIndex, columnIndex);
+				if (o == null) {
+					return Object.class;
+				} else {
+					return o.getClass();
+				}
+			}
+		};
+
+		searchTable = new JTable(searchData);
+		searchTable.setFillsViewportHeight(true);
+		searchScroll.setViewportView(searchTable);
+		searchTable.setEnabled(false);
+		searchTable.setRequestFocusEnabled(false);
+		searchTable.setFocusable(false);
+		searchTable.setFocusTraversalKeysEnabled(false);
+		searchTable.setRowSelectionAllowed(false);
+		searchTable.setForeground(new Color(0, 0, 0));
+		searchTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
+		searchTable.setBorder(null);
+
+		searchTable.setTableHeader(null);
+		searchTab.setLayout(null);
+		searchTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		searchTable.getColumnModel().getColumn(1).setPreferredWidth(35);
+		searchTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		searchTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+		searchTable.getColumnModel().getColumn(4).setPreferredWidth(260);
+		searchTable.getColumnModel().getColumn(5).setPreferredWidth(140);
+		searchTable.getColumnModel().getColumn(6).setPreferredWidth(20);
+		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		calendarTab = new PanelWithShadow(5);
+		tabbedPane.addTab("Calendar", null, calendarTab, null);
+		calendarTab.setBorder(BorderFactory.createTitledBorder("Calendar"));
+		Calendar.createCalendar(calendarTab);
+		calendarTab.setLayout(null);
+
+		//switch between tabs
+		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+
+		inputBarColorPanel = new JPanel();
+		inputBarColorPanel.setBounds(35, 508, 12, 76);
+		frameRemembra.getContentPane().add(inputBarColorPanel);
+		inputBarColorPanel.setBackground(new Color(51, 51, 51));
+		inputBarColorPanel.setLayout(null);
+
+		PanelWithShadow inputPanel = new PanelWithShadow(5);
+		inputPanel.setBounds(34, 517, 749, 60);
+		frameRemembra.getContentPane().add(inputPanel);
+		inputPanel.setBackground(new Color(255, 255, 255));
+
+		inputField =  new JTextField();
+		inputField.setBounds(25, 0, 719, 54);
+		inputField.setMargin(new Insets(0, 0, 0, 0));
+		inputField.setCaretColor(new Color(0, 0, 0));
+		inputField.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+		inputPanel.setLayout(null);
+
+		JPanel inputColorPanel = new JPanel();
+		inputColorPanel.setBackground(Color.WHITE);
+		inputColorPanel.setBounds(12, 0, 24, 55);
+		inputPanel.add(inputColorPanel);
+		inputField.setFont(new Font("Tahoma", Font.BOLD, 18));
+		inputField.setForeground(new Color(165, 42, 42));
+		inputField.setBackground(new Color(255, 255, 255));
+		inputPanel.add(inputField);
+		inputField.setColumns(49);
+		
+		//To focus inputfield on start-up
+		inputField.setFocusTraversalKeysEnabled(false);
+
+
+		PanelWithShadow feedbackpanel = new PanelWithShadow(5);
+		feedbackpanel.setBounds(806, 80, 251, 545);
+		frameRemembra.getContentPane().add(feedbackpanel);
+		feedbackpanel.setBackground(new Color(51, 51, 51));
+		feedbackpanel.setLayout(null);
+
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(12, 12, 238, 533);
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_1.setBorder(null);
+		feedbackpanel.add(scrollPane_1);
+		scrollPane_1.setBackground(new Color(51, 51, 51));
+
+		feedback = new JTextArea();
+		feedback.setLineWrap(true);
+		feedback.setWrapStyleWord(true);
+		feedback.setAutoscrolls(false);
+		feedback.setColumns(6);
+		scrollPane_1.setViewportView(feedback);
+		feedback.setForeground(UIManager.getColor("Button.background"));
+		feedback.setBackground(new Color(51, 51, 51));
+		feedback.setRows(4);
+		feedback.setFont(new Font("WhitneyBook", Font.PLAIN, 15));
+		feedback.setEditable(false);
+
+		JPanel feedbackColorPanel = new JPanel();
+		feedbackColorPanel.setBackground(new Color(51, 51, 51));
+		feedbackColorPanel.setBounds(5, 5, 244, 539);
+		feedbackpanel.add(feedbackColorPanel);
+
+		headerPanel = new PanelWithShadow(5);
+		headerPanel.setLayout(null);
+		headerPanel.setBackground(new Color(204, 0, 51));
+		headerPanel.setBounds(0, 0, 1057, 114);
+		frameRemembra.getContentPane().add(headerPanel);
+
+		timeLabel.setFont(new Font("Segoe UI Light", Font.BOLD, 15));
+		timeLabel.setForeground(new Color(255, 255, 255));
+		timeLabel.setBounds(849, 0, 208, 22);
+		headerPanel.add(timeLabel);
+		timeLabel.setText("Time");
+
+		JTextPane txtpnRemembra = new JTextPane();
+		txtpnRemembra.setEditable(false);
+		txtpnRemembra.setForeground(new Color(255, 255, 255));
+		txtpnRemembra.setBackground(new Color(204, 0, 51));
+		txtpnRemembra.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 41));
+		txtpnRemembra.setText("REMEMBRA");
+		txtpnRemembra.setBounds(12, 22, 770, 66);
+		headerPanel.add(txtpnRemembra);
+
+		headerColorPanel = new JPanel();
+		headerColorPanel.setBounds(0, 0, 1057, 110);
+		headerPanel.add(headerColorPanel);
+		headerColorPanel.setBackground(new Color(204, 0, 51));
+
+		JPanel backgroundColorPanel = new JPanel();
+		backgroundColorPanel.setBackground(SystemColor.controlHighlight);
+		backgroundColorPanel.setBounds(0, 0, 1057, 625);
+		frameRemembra.getContentPane().add(backgroundColorPanel);
+		SpringLayout sl_backgroundColorPanel = new SpringLayout();
+		backgroundColorPanel.setLayout(sl_backgroundColorPanel);
+
+		JCheckBox chckbxStillIncomplete = new JCheckBox("Still Incomplete");
+		sl_backgroundColorPanel.putConstraint(SpringLayout.NORTH, chckbxStillIncomplete, 465, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.WEST, chckbxStillIncomplete, 547, SpringLayout.WEST, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.SOUTH, chckbxStillIncomplete, 495, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.EAST, chckbxStillIncomplete, 678, SpringLayout.WEST, backgroundColorPanel);
+		chckbxStillIncomplete.setHorizontalAlignment(SwingConstants.RIGHT);
+		chckbxStillIncomplete.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
+		chckbxStillIncomplete.setFocusable(false);
+		chckbxStillIncomplete.setEnabled(false);
+		chckbxStillIncomplete.setBackground(SystemColor.controlHighlight);
+		backgroundColorPanel.add(chckbxStillIncomplete);
+
+		JCheckBox chckbxTasksDone = new JCheckBox("Tasks Done!");
+		sl_backgroundColorPanel.putConstraint(SpringLayout.NORTH, chckbxTasksDone, 465, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.WEST, chckbxTasksDone, 673, SpringLayout.WEST, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.SOUTH, chckbxTasksDone, 495, SpringLayout.NORTH, backgroundColorPanel);
+		sl_backgroundColorPanel.putConstraint(SpringLayout.EAST, chckbxTasksDone, 780, SpringLayout.WEST, backgroundColorPanel);
+		backgroundColorPanel.add(chckbxTasksDone);
+		chckbxTasksDone.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 12));
+		chckbxTasksDone.setFocusable(false);
+		chckbxTasksDone.setEnabled(false);
+		chckbxTasksDone.setBackground(SystemColor.controlHighlight);
+		chckbxTasksDone.setSelected(true);
+		chckbxTasksDone.setHorizontalAlignment(SwingConstants.RIGHT);
+
+		//To prevent autoscrolling
+		DefaultCaret caret1 = (DefaultCaret) feedback.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
+		//keywords for auto-complete to detect
+		keywords.add("add");
+		keywords.add("view");
+		keywords.add("delete");
+		keywords.add("edit");
+		keywords.add("description");
+		keywords.add("undo");
+		keywords.add("find");
+		keywords.add("by");
+		keywords.add("remind");
+		keywords.add("label");
+		keywords.add("search");
+		keywords.add("power");
+		keywords.add("start");
+		keywords.add("end");
+
+		Autocomplete autoComplete = new Autocomplete(inputField, keywords);
+		inputField.getDocument().addDocumentListener(autoComplete);
+
+		// Maps the tab key to the commit action, which finishes the autocomplete
+		// when given a suggestion
+		inputField.getInputMap().put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
+		inputField.getActionMap().put(COMMIT_ACTION, autoComplete.new CommitAction());
+
+		//Sets the Frame's display icon
+		setFrameIcon();
+
+		//Check for system tray support before initializing system tray
+		if (checkSystemTraySupport()) {
+			initSystemTray();
+		}
+
+		//Activate Jframe windowstate listener for hiding program into system tray
+		activateWindowStateListener();
+		frameRemembra.addWindowListener( new WindowAdapter() {
+			public void windowOpened( WindowEvent e ) {
+				inputField.requestFocus();
+			}
+		} );
+		
+		//To center the frame on startup w.r.t device screen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		frameRemembra.setLocation(dim.width/2-frameRemembra.getSize().width/2, dim.height/2-frameRemembra.getSize().height/2);
+
+	}
+
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+	 */
+
+	/**
+	 * Updates the label which displays the time
+	 * 
+	 */
+	void createTimeLabel() {
+		Date date = new Date();
+		String str = DateFormat.getDateTimeInstance().format(date);
+		timeLabel.setText(str);
+	}
+	
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\GuiMain.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\SLYJ91\Documents\GitHub\main\GUI\PanelWithShadow.java
+	 */
+
+    /**
+     * Create a shadow
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        int shade = 0;
+        int topOpacity = 80;
+        for (int i = 0; i < pixels; i++) {
+            g.setColor(new Color(shade, shade, shade, ((topOpacity / pixels) * i)));
+            g.drawRect(i, i, this.getWidth() - ((i * 2) + 1), this.getHeight() - ((i * 2) + 1));
+        }
+    }
+}
+	// End of segment: C:\Users\SLYJ91\Documents\GitHub\main\GUI\PanelWithShadow.java
+
+
+
+
+
