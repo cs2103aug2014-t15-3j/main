@@ -113,6 +113,7 @@ public class LogicReminder {
 		    	
 		    	//Add task to system's list.
 		    	taskToBeReminded.add(rTask);
+		    	assert(checkIsTodayTask(t) && !(isReminderOver(t))): "Not Today's task and is over! Assertion Error!";
 		    }
 		}
 	}

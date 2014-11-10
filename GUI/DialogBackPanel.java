@@ -37,6 +37,8 @@ public class DialogBackPanel extends JPanel {
 		case "save":
 			Image = saveImage;
 			break;
+		default:
+			Image = shadowImage;
 		}
 	}
 

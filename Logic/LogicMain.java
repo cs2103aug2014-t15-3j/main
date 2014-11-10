@@ -68,6 +68,7 @@ public class LogicMain {
 			isInitialize = true;
 
 			logger.log(Level.INFO, "Initializing is complete");
+			assert(isInitialize): "Initializing not done properly! Assertion Error!";
 		} else {
 			
 			logger.log(Level.INFO, "LogicMain has already been initiated");
@@ -204,6 +205,7 @@ public class LogicMain {
 	 * @return LinkedList<Item> with corresponding items to operation
 	 */
 	public LinkedList<Item> processInput(String input) {
+		assert(!input.isEmpty()): "Empty String Passed! Assertion Error!";
 		
 		LinkedList<Item> returnTasks = new LinkedList<Item>();
 
@@ -382,7 +384,7 @@ public class LogicMain {
 				returnItem.editState(Operations.ADD_LABEL_OPERATION);
 			}
 
-			
+			assert(addTask != null): "Added item is NULL! Assertion Error!";
 		} else {
 			
 			if (!isLabel) {
@@ -801,7 +803,7 @@ public class LogicMain {
 
 			bufferTasksList.add(newTask);
 			editItem = newTask;
-
+			assert(!isLabel): "It's a label! It shouldn't be! Assertion Error!";
 		} else {
 
 			// PROCESSING FOR LABEL
@@ -863,6 +865,9 @@ public class LogicMain {
 				tempList = new LinkedList<Item>( getNotDoneTasks() );
 				
 				state = Operations.VIEW_OPERATION;
+				
+				assert(inputList.size() == 1 && bufferTasksList.size() != 0
+						&& !isNumeric(viewOperation.getContent())): "Input list is not 1! Assertion Error!";
 
 			} else if (inputList.size() == 1 && bufferTasksList.size() != 0) {
 				
@@ -950,7 +955,7 @@ public class LogicMain {
 				tempLabel.editState(Operations.VIEW_LABEL_OPERATION);
 
 				returningItems.set(0, tempLabel);
-
+				assert(bufferLabelsList.size() > 0): "BufferList is empty! Assertion Error!";
 			} else {
 
 				returnLabel = new Label(Operations.EMPTY_MESSAGE);
@@ -1116,6 +1121,7 @@ public class LogicMain {
 					searchField = searchFieldPair.getOperation();
 					keyword = searchFieldPair.getContent();
 				}
+				assert(Operations.POWER_OPERATION.contains(searchField)): "Its not Power Search! Assertion Error!";
 			}
 			
 			

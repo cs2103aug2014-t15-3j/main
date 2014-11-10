@@ -271,6 +271,8 @@ public class GuiDisplay {
 			case Operations.VIEW_LABEL_OPERATION:
 				viewLabelsOperation(tasks, firstItem);
 				break;
+			default:
+				GuiMain.feedback.setText(ERROR_MESSAGE);
 			}
 			//Reload view
 			if (!state.equals(Operations.SAVE_OPERATION)) {
@@ -291,6 +293,8 @@ public class GuiDisplay {
 				case Operations.FIND_STATE:
 					tasks = logic.processInput(Operations.lastSearch);
 					GuiDisplay.updateSearchTable(tasks, tasks.get(0));
+				default:
+					GuiMain.feedback.setText(ERROR_MESSAGE);
 				}
 			}
 

@@ -343,7 +343,6 @@ public class GuiMain {
 		todoTable.setRowSelectionAllowed(false);
 		todoTable.setForeground(new Color(0, 0, 0));
 		todoTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		todoTable.setShowHorizontalLines(false);
 		todoTable.setBorder(null);
 		
 		//To remove header and fix the column width 
@@ -410,7 +409,6 @@ public class GuiMain {
 		doneTable.setRowSelectionAllowed(false);
 		doneTable.setForeground(new Color(0, 0, 0));
 		doneTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		doneTable.setShowHorizontalLines(false);
 		doneTable.setBorder(null);
 
 		doneTable.setTableHeader(null);
@@ -485,7 +483,6 @@ public class GuiMain {
 		allTable.setRowSelectionAllowed(false);
 		allTable.setForeground(new Color(0, 0, 0));
 		allTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		allTable.setShowHorizontalLines(false);
 		allTable.setBorder(null);
 
 		allTable.setTableHeader(null);
@@ -543,7 +540,6 @@ public class GuiMain {
 		searchTable.setRowSelectionAllowed(false);
 		searchTable.setForeground(new Color(0, 0, 0));
 		searchTable.setFont(new Font("WhitneyBook", Font.PLAIN, 14));
-		searchTable.setShowHorizontalLines(false);
 		searchTable.setBorder(null);
 
 		searchTable.setTableHeader(null);
