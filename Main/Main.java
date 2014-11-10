@@ -69,7 +69,7 @@ public class Main {
 	 */
 	public static void runWsShell() throws IOException {
 		//Run windows PowerShell Script
-		Runtime.getRuntime().exec("wscript wsPowerShell.vbs");
+		//Runtime.getRuntime().exec("wscript wsPowerShell.vbs");
 	}
 }
 

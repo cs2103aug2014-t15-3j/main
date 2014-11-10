@@ -206,12 +206,12 @@ public class GuiMain {
 			@Override
 			public void actionPerformed(ActionEvent arg) {
 				
-				String inputStr = inputField.getText().toLowerCase();
+				String inputStr = inputField.getText();
 
 				inputField.setText("");
 
 				//To identify if the user is asking for help or other commands
-				if (inputStr.startsWith("help")) {
+				if (inputStr.toLowerCase().startsWith("help")) {
 					try {
 						GuiDisplay.displayHelp(inputStr);
 					} catch (IOException e) {
@@ -753,7 +753,7 @@ public class GuiMain {
 	 * Sets the JFrame's top left programme displayIcon
 	 */
 	void setFrameIcon() {
-		frameRemembra.setIconImage(Toolkit.getDefaultToolkit().getImage("media/logo.png"));	
+		frameRemembra.setIconImage(Toolkit.getDefaultToolkit().getImage("logo.png"));	
 	}
 
 
